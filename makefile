@@ -11,7 +11,7 @@ all : $(objs)
 nmos.o : nmos.c color.h
 	@cc -c nmos.c $(CFLAGS)
 	
-color.o : color.h
+color.o : color.c color.h
 	@cc -c color.c $(CFLAGS)
 
 run : nmos.c a.out
@@ -22,5 +22,5 @@ run : nmos.c a.out
 clean :
 	@rm a.out $(objs) *~
 
-commit : nmos.c makefile .gitignore
+commit : 
 	@git commit -a && git push

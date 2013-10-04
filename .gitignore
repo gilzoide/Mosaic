@@ -2,3 +2,5 @@
 a.out
 # text backups
 *~
+# object files, after compilation
+*.o
