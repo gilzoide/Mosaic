@@ -24,9 +24,9 @@ void CursInit () {
 
 /* Draw the hud, with shortcuts, asks for things, that kinda stuff */
 WINDOW *CreateHud () {
-	WINDOW *win = newwin (1, COLS, LINES - 1, 0);
+	WINDOW *win = subwin (stdscr, 1, COLS, LINES - 1, 0);
 	
-	wbkgd (win, WG);
+	wbkgd (win, COLOR_PAIR (WG) | A_BOLD);
 	waddstr (win, "Help: '?'");
 
 	wrefresh (win);
@@ -43,5 +43,8 @@ int main () {
 		printw ("%d ", c);
 	}
 	
+
+
 	endwin ();
+	return 0;
 }
