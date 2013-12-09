@@ -26,8 +26,10 @@ void CursInit () {
 WINDOW *CreateHud () {
 	WINDOW *win = newwin (1, COLS, LINES - 1, 0);
 	
-	
-	
+	wbkgd (win, WG);
+	waddstr (win, "Help: '?'");
+
+	wrefresh (win);
 	return win;
 }
 
