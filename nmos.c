@@ -3,6 +3,7 @@
 #include <stdio.h>
 
 #include "color.h"
+#include "img.h"
 
 #define CTRL_Q 17
 
