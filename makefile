@@ -20,7 +20,7 @@ run : nmos.c a.out
 
 
 clean :
-	@rm a.out $(objs) *~
+	@rm -r html a.out *.o *~
 
 commit : 
 	@git commit -a && git push
