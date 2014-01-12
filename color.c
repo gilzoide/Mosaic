@@ -1,4 +1,3 @@
-#include <ncurses.h>
 #include "color.h"
 
 void InitColors () {

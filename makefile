@@ -1,26 +1,30 @@
 # Nmos: Ncurses mosaic asc art editor
 
-objs = nmos.o color.o
-CFLAGS = -lncurses -O3 -march=native
+source = main.c nmos.c nmos.h img.h img.c color.h color.c
+objs = main.o nmos.o color.o img.o
+
+CFLAGS = -lncurses -lpanel -O2 -march=native
 
 
 all : $(objs)
-	@cc $(objs) $(CFLAGS)
+	$(CC) $(objs) $(CFLAGS)
 
+
+main.o : main.c nmos.o
+	$(CC) -c $< $(CFLAGS)
 	
-nmos.o : nmos.c color.h
-	@cc -c nmos.c $(CFLAGS)
+nmos.o : nmos.c nmos.h color.o img.o
+	$(CC) -c $< $(CFLAGS)
 	
 color.o : color.c color.h
-	@cc -c color.c $(CFLAGS)
+	$(CC) -c $< $(CFLAGS)
 
-run : nmos.c a.out
+img.o : img.c img.h
+	$(CC) -c $< $(CFLAGS)
+
+
+run : all
 	@./a.out
 
-
-
 clean :
-	@rm -r html a.out *.o *~
-
-commit : 
-	@git commit -a && git push
+	@rm -rf html a.out *.o *~

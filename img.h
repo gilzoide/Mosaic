@@ -1,7 +1,9 @@
-/// @file img.h
+/** @file img.h
+ * .mos format definitions and operations
+ */
 
 /**
- * @brief "Image" in Nmos mosaic format
+ * "Image" in Nmos mosaic format
  *
  *
  */
