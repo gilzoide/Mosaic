@@ -1,6 +1,8 @@
 #include "nmos.h"
-#include "color.h"
-#include "img.h"
+
+
+int index = 0;
+
 
 void CursInit () {
 	initscr ();	// init curses screen
@@ -16,11 +18,13 @@ void CursInit () {
 
 
 WINDOW *CreateHud () {
-	WINDOW *win = subwin (stdscr, 1, COLS, LINES - 2, 0);
+	WINDOW *win = subwin (stdscr, 1, COLS, LINES - 1, 0);
 	
-	wbkgd (win, COLOR_PAIR (WG) | A_BOLD);
-	waddstr (win, "Help: '^H'");
-
+	wattron (win, A_BOLD);
+	waddstr (win, "^?: ");
+	wattroff (win, A_BOLD);
+	waddstr (win, "Help");
+	
 	wrefresh (win);
 	return win;
 }
@@ -60,8 +64,6 @@ void Help () {
 	mvwaddstr (help, 6, 4, "food: eat it for some points");
 	mvwaddstr (help, 8, 6, "apple: eat it with both heads for 500 points!");
 	mvwaddstr (help, 10, 4, "K stands for Hunter: it'll try to kill you!");
-	// but actually you need to spend 500 - (dificulty + 1) points in it, so is it worth it? xP
-
 
 // writes the help window, wait for some key to be pressed and delete the help window
 	wrefresh (help);
@@ -71,4 +73,17 @@ void Help () {
 	wrefresh (help);
 	del_panel (up);
 	delwin (help);
+}
+
+
+void InitIMGS (IMGS *everyone) {
+	everyone->imgs = NULL;
+	everyone->size = 0;
+}
+
+
+void CreateNewImg (IMGS *everyone) {
+	
+	everyone->size++;
+	index++;
 }

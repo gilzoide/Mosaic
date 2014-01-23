@@ -3,7 +3,7 @@
 source = main.c nmos.c nmos.h img.h img.c color.h color.c
 objs = main.o nmos.o color.o img.o
 
-CFLAGS = -lncurses -lpanel -O2 -march=native
+CFLAGS = -g -lncurses -lpanel -O2 -march=native
 
 
 all : $(objs)
