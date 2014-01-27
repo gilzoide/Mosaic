@@ -1,9 +1,6 @@
 #include "nmos.h"
 
 
-int index = 0;
-
-
 void CursInit () {
 	initscr ();	// init curses screen
 	
@@ -21,7 +18,7 @@ WINDOW *CreateHud () {
 	WINDOW *win = subwin (stdscr, 1, COLS, LINES - 1, 0);
 	
 	wattron (win, A_BOLD);
-	waddstr (win, "^?: ");
+	waddstr (win, "F1: ");
 	wattroff (win, A_BOLD);
 	waddstr (win, "Help");
 	
@@ -76,14 +73,43 @@ void Help () {
 }
 
 
+int Menu () {
+	int c;
+	
+	WINDOW *menu;
+	PANEL *up;
+
+	menu = newwin (12, HELP_WIDTH, 0, 0);
+	up = new_panel (menu);
+	update_panels ();
+	doupdate ();
+	
+	return c;
+}
+
+
 void InitIMGS (IMGS *everyone) {
-	everyone->imgs = NULL;
+	everyone->list = NULL;
 	everyone->size = 0;
 }
 
 
 void CreateNewImg (IMGS *everyone) {
-	
+	int new_height = 10, new_width = 10;
 	everyone->size++;
-	index++;
+	
+	if (everyone->list == NULL) {
+		everyone->list = NewImg (new_height, new_width);
+		everyone->list->prev = everyone->list->next = NULL;
+	}
+}
+
+
+void DestroyIMGS (IMGS *everyone) {
+	MOSIMG *aux, *next;
+	
+	for (aux = everyone->list; aux != NULL; aux = next) {
+		next = aux->next;
+		FreeImg (aux);
+	}
 }
