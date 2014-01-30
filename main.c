@@ -47,8 +47,8 @@ int main () {
 				if (current->next != NULL)
 					current = current->next;
 				break;
-				
-			case KEY_CTRL_INTERROGATION:
+
+			case KEY_F(1):
 				Help ();
 				break;
 		}

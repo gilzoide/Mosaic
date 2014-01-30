@@ -13,7 +13,6 @@
 
 #define KEY_ESC 27
 #define KEY_CTRL_Q 17
-#define KEY_CTRL_INTERROGATION 127
 
 #define HELP_WIDTH 54
 

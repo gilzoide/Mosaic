@@ -18,7 +18,7 @@ WINDOW *CreateHud () {
 	WINDOW *win = subwin (stdscr, 1, COLS, LINES - 1, 0);
 	
 	wattron (win, A_BOLD);
-	waddstr (win, "^?: ");
+	waddstr (win, "F1: ");
 	wattroff (win, A_BOLD);
 	waddstr (win, "Help");
 	
