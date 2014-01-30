@@ -8,21 +8,23 @@
 #include <ncurses.h>
 #include <panel.h>
 #include <stdio.h>
+#include <ctype.h>
 #include "color.h"
 #include "img.h"
 
 #define KEY_ESC 27
 #define KEY_CTRL_Q 17
+#define KEY_SUP 337
+#define KEY_SDOWN 336
 
 #define HELP_WIDTH 54
+#define HELP_HEIGHT 54
 
 /// UI current cursor position
 typedef struct {
 	int y;	///< vertical position
 	int x;	///< horizontal position
 } Cursor;
-
-
 
 
 
@@ -34,14 +36,38 @@ typedef struct {
 
 
 
+/// The movement directions
+typedef enum {
+	UP,	///< move up!
+	DOWN,	///< move down!
+	LEFT,	///< move left!
+	RIGHT	///< move right, not wrong!
+} Direction;
+
+
+
 /// Ncurses initializations routines, including interactive mode and colors
 void CursInit ();
-/// Draw the hud, with shortcuts, asks for things, that kinda stuff
+/// Draw the hud, with a few shortcuts and the cursor position
 WINDOW *CreateHud ();
+/// Updates the position in the hud
+void UpdateHud (WINDOW *hud, Cursor cur, Direction dir);
 /// Draw the non-interactive help screen
 void Help ();
 /// Show the options and actions interactive menu
 int Menu ();
+
+
+
+/** Move the cursor
+ * 
+ * @param[in] position actual working position
+ * 
+ * @param[in] dir direction of the movement
+ */
+inline void Move (Cursor *position, MOSIMG *current, Direction dir);
+
+
 
 /// Initializes the IMGS
 void InitIMGS (IMGS *everyone);

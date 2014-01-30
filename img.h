@@ -16,7 +16,7 @@
 typedef struct mosimg_t {
 	int height;				///< img height
 	int	width;				///< img width
-	char *mosaic;			/**< a height * width sized _string_: the drawing itself */
+	char *mosaic;			/**< a height * width sized string: the drawing itself */
 	unsigned char *attr;	/**< a height * width sized array with the attributes for each char.
 							 * It's bits are masked, from most to less significative as the color 
 							 * (6 bits), bold (1 bit on/off) and underline (1 bit on/off).
@@ -39,6 +39,8 @@ inline int ImgSize (MOSIMG *img);
 /** Create a new @ref MOSIMG, allocating the necessary memory
  * 
  * @param new_height New Image height
+ * 
+ * @param new_width New Image width
  * 
  * @return New Image, clean and unlinked
  */

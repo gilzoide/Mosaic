@@ -5,6 +5,7 @@ int main () {
 	WINDOW *hud = CreateHud ();
 	
 	Cursor position;	position.x = position.y = 0;
+	Direction default_direction = RIGHT;
 	IMGS everyone;
 	InitIMGS (&everyone);
 	CreateNewImg (&everyone);
@@ -18,24 +19,39 @@ int main () {
 		
 		//printw ("%d ", c);
 		switch (c) {
+			case 0:
+				break;
+				
 			case KEY_UP:
-				if (position.y > 0)
-					move (--position.y, position.x);
+				Move (&position, current, UP);
+				break;
+
+			case KEY_SUP:
+				default_direction = UP;
 				break;
 
 			case KEY_DOWN:
-				if (position.y < current->height)
-					move (++position.y, position.x);
+				Move (&position, current, DOWN);
+				break;
+				
+			case KEY_SDOWN:
+				default_direction = DOWN;
 				break;
 				
 			case KEY_LEFT:
-				if (position.x > 0)
-					move (position.y, --position.x);
+				Move (&position, current, LEFT);
+				break;
+				
+			case KEY_SLEFT:
+				default_direction = LEFT;
 				break;
 				
 			case KEY_RIGHT:
-				if (position.x < current->width)
-					move (position.y, ++position.x);
+				Move (&position, current, RIGHT);
+				break;
+				
+			case KEY_SRIGHT:
+				default_direction = RIGHT;
 				break;
 				
 			case KEY_PPAGE:
@@ -51,9 +67,21 @@ int main () {
 			case KEY_F(1):
 				Help ();
 				break;
+			
+			/// @todo arrumar isso
+			case KEY_BACKSPACE:
+				echochar (' ');
+				break;
+				
+			default:
+				if (isalnum (c)) {
+					echochar (c);
+					Move (&position, current, default_direction);
+				}
 		}
 		
-		 c = getch ();
+		UpdateHud (hud, position, default_direction);
+		c = getch ();
 	}
 	
 

@@ -20,10 +20,31 @@ WINDOW *CreateHud () {
 	wattron (win, A_BOLD);
 	waddstr (win, "F1: ");
 	wattroff (win, A_BOLD);
-	waddstr (win, "Help");
+	waddstr (win, "Help   ");
+	wattron (win, A_BOLD);
+	waddstr (win, "Esc: ");
+	wattroff (win, A_BOLD);
+	waddstr (win, "Menu");	
 	
 	wrefresh (win);
 	return win;
+}
+
+
+void UpdateHud (WINDOW *hud, Cursor cur, Direction dir) {
+	char c;
+	switch (dir) {
+		case UP: c = 'A'; break;
+		case DOWN: c = 'V'; break;
+		case LEFT: c = '<'; break;
+		case RIGHT: c = '>'; break;
+	}
+	
+	mvwprintw (hud, 0, COLS - 9, "%dx%d", cur.y, cur.x);
+	mvwprintw (hud, 0, COLS - 1, "%c", c);
+	wclrtoeol (hud);
+	wrefresh (hud);
+	move (cur.y, cur.x);
 }
 
 
@@ -32,7 +53,7 @@ void Help () {
 	WINDOW *help;
 	PANEL *up;
 
-	help = newwin (12, HELP_WIDTH, LINES - 15, 0);
+	help = newwin (HELP_HEIGHT, HELP_WIDTH, LINES - 15, 0);
 	up = new_panel (help);
 	update_panels ();
 	doupdate ();
@@ -74,7 +95,7 @@ void Help () {
 
 
 int Menu () {
-	int c;
+	int c = 0;
 	
 	WINDOW *menu;
 	PANEL *up;
@@ -86,6 +107,32 @@ int Menu () {
 	
 	return c;
 }
+
+
+inline void Move (Cursor *position, MOSIMG *current, Direction dir) {
+	switch (dir) {
+		case UP:
+			if (position->y > 0)
+				move (--position->y, position->x);
+			break;
+		
+		case DOWN:
+			if (position->y < current->height)
+				move (++position->y, position->x);
+			break;
+			
+		case LEFT:
+			if (position->x > 0)
+				move (position->y, --position->x);
+			break;
+			
+		case RIGHT:
+			if (position->x < current->width)
+				move (position->y, ++position->x);
+			break;
+	}
+}
+
 
 
 void InitIMGS (IMGS *everyone) {
