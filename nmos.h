@@ -11,8 +11,9 @@
 #include "color.h"
 #include "img.h"
 
-#define CTRL_Q 17
-#define CTRL_INTERROGATION 127
+#define KEY_ESC 27
+#define KEY_CTRL_Q 17
+#define KEY_CTRL_INTERROGATION 127
 
 #define HELP_WIDTH 54
 
@@ -23,31 +24,31 @@ typedef struct {
 } Cursor;
 
 
-/// Images array
+
+
+
+/// Whole images list and it's size
 typedef struct {
-	MOSIMG *imgs;	///< the images
+	MOSIMG *list;	///< the first image
 	int size;	///< the array size
 } IMGS;
-
-
-/// index of the current image we're working on, starting from 0
-extern int index;
 
 
 
 /// Ncurses initializations routines, including interactive mode and colors
 void CursInit ();
-
 /// Draw the hud, with shortcuts, asks for things, that kinda stuff
 WINDOW *CreateHud ();
-
 /// Draw the non-interactive help screen
 void Help ();
+/// Show the options and actions interactive menu
+int Menu ();
 
 /// Initializes the IMGS
 void InitIMGS (IMGS *everyone);
-
-/// Create a new image and stores it in the main array
+/// Create a new image and stores it in the images list
 void CreateNewImg (IMGS *everyone);
+/// Destroy and free memory from the images list
+void DestroyIMGS (IMGS *everyone);
 
 #endif

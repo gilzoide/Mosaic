@@ -4,14 +4,19 @@ int main () {
 	CursInit ();
 	WINDOW *hud = CreateHud ();
 	
-	Cursor position;
+	Cursor position;	position.x = position.y = 0;
 	IMGS everyone;
 	InitIMGS (&everyone);
+	CreateNewImg (&everyone);
 	
-	int c;
-	while ((c = getch ()) != CTRL_Q) {
-		//printw ("%d ", c);
+	MOSIMG *current = everyone.list;
+	
+	int c = KEY_ESC;
+	while (c != KEY_CTRL_Q) {
+		if (c == KEY_ESC)
+			c = Menu ();
 		
+		//printw ("%d ", c);
 		switch (c) {
 			case KEY_UP:
 				if (position.y > 0)
@@ -19,7 +24,7 @@ int main () {
 				break;
 
 			case KEY_DOWN:
-				if (position.y < CURRENT.height)
+				if (position.y < current->height)
 					move (++position.y, position.x);
 				break;
 				
@@ -29,18 +34,30 @@ int main () {
 				break;
 				
 			case KEY_RIGHT:
-				if (position.x < CURRENT.width)
+				if (position.x < current->width)
 					move (position.y, ++position.x);
 				break;
 				
-			case CTRL_INTERROGATION:
+			case KEY_PPAGE:
+				if (current->prev != NULL)
+					current = current->prev;
+				break;
+				
+			case KEY_NPAGE:
+				if (current->next != NULL)
+					current = current->next;
+				break;
+				
+			case KEY_CTRL_INTERROGATION:
 				Help ();
 				break;
 		}
+		
+		 c = getch ();
 	}
 	
 
-	DestroyImg (&CURRENT);
+	DestroyIMGS (&everyone);
 
 	endwin ();
 	return 0;
