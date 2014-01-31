@@ -1,4 +1,5 @@
 #include "nmos.h"
+#include <ctype.h>
 
 int main () {
 	CursInit ();
@@ -19,7 +20,7 @@ int main () {
 		
 		//printw ("%d ", c);
 		switch (c) {
-			case 0:
+			case 0:	// if nothing is returned by the menu, do nothing
 				break;
 				
 			case KEY_UP:
@@ -67,15 +68,23 @@ int main () {
 			case KEY_F(1):
 				Help ();
 				break;
+				
+			case KEY_CTRL_S:
+				SaveImg (current, "teste.mosi");
+				PrintHud (hud, "Saved successfully!");
+				break;
 			
 			/// @todo arrumar isso
 			case KEY_BACKSPACE:
+				current->img.mosaic[current->img.width*position.y + position.x] = ' ';
 				echochar (' ');
 				break;
 				
 			default:
-				if (isalnum (c)) {
-					echochar (c);
+				if (isprint (c)) {
+					current->img.mosaic[current->img.width*position.y + position.x] = c;
+					mvwaddch (current->win, position.y, position.x, c);
+					wrefresh (current->win);
 					Move (&position, current, default_direction);
 				}
 		}

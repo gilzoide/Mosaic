@@ -24,7 +24,7 @@ WINDOW *CreateHud () {
 	wattron (win, A_BOLD);
 	waddstr (win, "Esc: ");
 	wattroff (win, A_BOLD);
-	waddstr (win, "Menu");	
+	waddstr (win, "Menu");
 	
 	wrefresh (win);
 	return win;
@@ -41,10 +41,20 @@ void UpdateHud (WINDOW *hud, Cursor cur, Direction dir) {
 	}
 	
 	mvwprintw (hud, 0, COLS - 9, "%dx%d", cur.y, cur.x);
-	mvwprintw (hud, 0, COLS - 1, "%c", c);
 	wclrtoeol (hud);
+	mvwprintw (hud, 0, COLS - 1, "%c", c);
 	wrefresh (hud);
 	move (cur.y, cur.x);
+}
+
+
+void PrintHud (WINDOW *hud, const char *message) {
+	mvwaddstr (hud, 0, 23, message);
+	wrefresh (hud);
+	getch ();
+	wmove (hud, 0, 23);
+	wclrtoeol (hud);
+	wrefresh (hud);
 }
 
 
@@ -110,27 +120,30 @@ int Menu () {
 
 
 inline void Move (Cursor *position, MOSIMG *current, Direction dir) {
+	// change the cursor position, deppending on the direction
 	switch (dir) {
 		case UP:
 			if (position->y > 0)
-				move (--position->y, position->x);
+				--position->y;
 			break;
 		
 		case DOWN:
-			if (position->y < current->height)
-				move (++position->y, position->x);
+			if (position->y < current->img.height - 1)
+				++position->y;
 			break;
 			
 		case LEFT:
 			if (position->x > 0)
-				move (position->y, --position->x);
+				--position->x;
 			break;
 			
 		case RIGHT:
-			if (position->x < current->width)
-				move (position->y, ++position->x);
+			if (position->x < current->img.width - 1)
+				++position->x;
 			break;
 	}
+	// and move!
+	move (position->y, position->x);
 }
 
 
