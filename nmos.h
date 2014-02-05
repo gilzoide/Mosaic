@@ -23,13 +23,15 @@
 
 /// UI current cursor position
 typedef struct {
-	int y;	///< vertical position
-	int x;	///< horizontal position
+	int y;	///< main y coordinate; upper-left corner
+	int x;	///< main x coordinate; upper-left corner
+	int bot_y;	///< bottom-right corner y coordinate: for copy/paste and attribute setting
+	int bot_x;	///< bottom-right corner x coordinate: for copy/paste and attribute setting
 } Cursor;
 
 
 
-/// Whole images list and it's size
+/// Whole images circular double linked list and it's size
 typedef struct {
 	MOSIMG *list;	///< the first image
 	int size;	///< the array size
@@ -49,6 +51,8 @@ typedef enum {
 
 /// Ncurses initializations routines, including interactive mode and colors
 void CursInit ();
+/// initializes the cursor values
+void InitCursor (Cursor *cursor);
 /// Draw the HUD, with a few shortcuts and the cursor position
 WINDOW *CreateHud ();
 /// Updates the position in the HUD
@@ -63,7 +67,8 @@ void PrintHud (WINDOW *hud, const char *message);
 void Help ();
 /// Show the options and actions interactive menu
 int Menu ();
-
+/// Show the attributes table
+int AttrTable (MOSIMG *current, Cursor cur);
 
 
 /** 

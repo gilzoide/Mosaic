@@ -5,7 +5,8 @@ int main () {
 	CursInit ();
 	WINDOW *hud = CreateHud ();
 	
-	Cursor position;	position.x = position.y = 0;
+	Cursor cursor;
+	InitCursor (&cursor);
 	Direction default_direction = RIGHT;
 	IMGS everyone;
 	InitIMGS (&everyone);
@@ -23,76 +24,78 @@ int main () {
 			case 0:	// if nothing is returned by the menu, do nothing
 				break;
 				
-			case KEY_UP:
-				Move (&position, current, UP);
+			case KEY_UP:	// move up
+				Move (&cursor, current, UP);
 				break;
 
-			case KEY_SUP:
+			case KEY_SUP:	// default direction is now up
 				default_direction = UP;
 				break;
 
-			case KEY_DOWN:
-				Move (&position, current, DOWN);
+			case KEY_DOWN:	// move down
+				Move (&cursor, current, DOWN);
 				break;
 				
-			case KEY_SDOWN:
+			case KEY_SDOWN:	// default direction is now down
 				default_direction = DOWN;
 				break;
 				
-			case KEY_LEFT:
-				Move (&position, current, LEFT);
+			case KEY_LEFT:	// move left
+				Move (&cursor, current, LEFT);
 				break;
 				
-			case KEY_SLEFT:
+			case KEY_SLEFT:	// default direction is now left
 				default_direction = LEFT;
 				break;
 				
-			case KEY_RIGHT:
-				Move (&position, current, RIGHT);
+			case KEY_RIGHT:	// move right
+				Move (&cursor, current, RIGHT);
 				break;
 				
-			case KEY_SRIGHT:
+			case KEY_SRIGHT:	// default direction is now right
 				default_direction = RIGHT;
 				break;
 				
-			case KEY_PPAGE:
-				if (current->prev != NULL)
-					current = current->prev;
+			case KEY_PPAGE:	// previous mosaic
+				current = current->prev;
 				break;
 				
-			case KEY_NPAGE:
-				if (current->next != NULL)
-					current = current->next;
+			case KEY_NPAGE:	// next mosaic
+				current = current->next;
 				break;
 
-			case KEY_F(1):
+			case KEY_F(1):	// show help
 				Help ();
 				break;
 				
-			case KEY_CTRL_S:
+			case KEY_CTRL_S:	// save mosaic
 				SaveImg (current, "teste.mosi");
 				PrintHud (hud, "Saved successfully!");
 				break;
 				
-			case KEY_CTRL_Q:
-				// pergunta se quer sair mesmo
+			case KEY_CTRL_Q:	// quit; aww =/
+				// asks if you really want to quit this tottally awesome software
+				break;
+				
+			case '\t':	// attribute table
+				wattrset (current->win, AttrTable (current, cursor));
 				break;
 			
-			/// @todo arrumar isso, backspace
+			/// @todo get this right, backspace
 			case '\r':
 				c = ' ';
 				
-			default:
+			default:	// write at the mosaic, and show it to us
 				if (isprint (c)) {
-					current->img.mosaic[current->img.width*position.y + position.x] = c;
-					mvwaddch (current->win, position.y, position.x, c);
+					current->img.mosaic[cursor.y][cursor.x] = c;
+					mvwaddch (current->win, cursor.y, cursor.x, c);
 					wrefresh (current->win);
-					Move (&position, current, default_direction);
+					Move (&cursor, current, default_direction);
 				}
 				break;
 		}
 		
-		UpdateHud (hud, position, default_direction);
+		UpdateHud (hud, cursor, default_direction);
 		c = getch ();
 	}
 	

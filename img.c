@@ -17,19 +17,29 @@ MOSIMG *NewImg (int new_height, int new_width) {
 	new_image->img.width = new_width;
 	
 	// alloc the dinamic stuff
-	if ((new_image->img.mosaic = (char*) malloc (ImgSize (new_image) * sizeof (char))) == NULL)
+	// mosaic:
+	if ((new_image->img.mosaic = (char**) malloc (new_height * sizeof (char*))) == NULL)
+		return NULL;
+	// attributes:
+	if ((new_image->img.attr = (unsigned char**) malloc (new_height * sizeof (char*))) == NULL)
 		return NULL;
 
-	if ((new_image->img.attr = (unsigned char*) calloc (ImgSize (new_image), sizeof (char))) == NULL)
-		return NULL;
+	int i;
+	for (i = 0; i < new_height; i++) {
+		if ((new_image->img.mosaic[i] = (char*) malloc (new_width * sizeof (char))) == NULL)
+			return NULL;
+		if ((new_image->img.attr[i] = (unsigned char*) malloc (new_width * sizeof (char))) == NULL)
+			return NULL;
+	}
 
 	// clear the mosaic with whitespaces
-	int i;
-	for (i = 0; i < ImgSize (new_image); i++)
-		new_image->img.mosaic[i] = ' ';
+	int j;
+	for (i = 0; i < new_height; i++)
+		for (j = 0; j < new_width; j++)
+			new_image->img.mosaic[i][j] = ' ';
 
 	// create the curses window and panel
-	new_image->win = newwin (new_height, new_width, 0, 0);
+	new_image->win = newwin (new_height, new_width, 0, 0);	
 	new_image->pan = new_panel (new_image->win);
 	update_panels ();
 	doupdate ();
@@ -47,7 +57,7 @@ int SaveImg (MOSIMG *image, const char *file_name) {
 	
 	int i;
 	for (i = 0; i < image->img.height; i++) {
-		fprintf (f, "%.*s\n", image->img.width, (image->img.mosaic + i * image->img.width));
+		fprintf (f, "%.*s\n", image->img.width, (image->img.mosaic[i]));
 	}
 	
 	fclose (f);
@@ -57,6 +67,11 @@ int SaveImg (MOSIMG *image, const char *file_name) {
 
 
 void FreeImg (MOSIMG *image) {
+	int i;
+	for (i = 0; i < image->img.height; i++) {
+		free (image->img.attr[i]);
+		free (image->img.mosaic[i]);
+	}
 	free (image->img.attr);
 	free (image->img.mosaic);
 	del_panel (image->pan);
