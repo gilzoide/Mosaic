@@ -4,7 +4,7 @@ source = main.c nmos.c img.c color.c
 include = nmos.h img.h color.h
 objs = main.o nmos.o color.o img.o
 
-CFLAGS = -g -O2 -lpanel -lncursesw -march=native
+CFLAGS = -g -O2 -lpanel -lncurses -march=native
 
 
 all : $(objs)
@@ -29,8 +29,8 @@ document :
 	doxygen
 	xdg-open html/index.html
 
-run : all
+run :
 	@./a.out
 
 clean :
-	@rm -rf html a.out *.o *~
+	@rm -rf html a.out *.o *~ teste.mos*

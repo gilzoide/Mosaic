@@ -24,7 +24,11 @@ WINDOW *CreateHud () {
 	wattron (win, A_BOLD);
 	waddstr (win, "Esc: ");
 	wattroff (win, A_BOLD);
-	waddstr (win, "Menu");
+	waddstr (win, "Menu ");
+	wattron (win, A_BOLD);
+	waddstr (win, "^Q: ");
+	wattroff (win, A_BOLD);
+	waddstr (win, "quit");
 	
 	wrefresh (win);
 	return win;
@@ -32,17 +36,17 @@ WINDOW *CreateHud () {
 
 
 void UpdateHud (WINDOW *hud, Cursor cur, Direction dir) {
-	char c;
+	int c;
 	switch (dir) {
-		case UP: c = 'A'; break;
-		case DOWN: c = 'V'; break;
-		case LEFT: c = '<'; break;
-		case RIGHT: c = '>'; break;
+		case UP: c = ACS_UARROW; break;
+		case DOWN: c = ACS_DARROW; break;
+		case LEFT: c = ACS_LARROW; break;
+		case RIGHT: c = ACS_RARROW; break;
 	}
 	
-	mvwprintw (hud, 0, COLS - 9, "%dx%d", cur.y, cur.x);
+	mvwprintw (hud, 0, COLS - 11, "%dx%d", cur.y, cur.x);
 	wclrtoeol (hud);
-	mvwprintw (hud, 0, COLS - 1, "%c", c);
+	mvwaddch (hud, 0, COLS - 1, c);
 	wrefresh (hud);
 	move (cur.y, cur.x);
 }
@@ -60,10 +64,12 @@ void PrintHud (WINDOW *hud, const char *message) {
 
 /* Displays the help (in a created window and panel, for going back to the normal field after) */
 void Help () {
+	curs_set (0);
+	
 	WINDOW *help;
 	PANEL *up;
 
-	help = newwin (HELP_HEIGHT, HELP_WIDTH, LINES - 15, 0);
+	help = newwin (HELP_HEIGHT, HELP_WIDTH, 0, 0);
 	up = new_panel (help);
 	update_panels ();
 	doupdate ();
@@ -71,27 +77,54 @@ void Help () {
 	box (help, 0, 0);
 	wbkgd (help, COLOR_PAIR (WBl));
 	wrefresh (help);
-	mvwaddstr (help, 0, HELP_WIDTH/2 - 2, "HELP");
-	wattron (help, A_BOLD);
-	mvwaddstr (help, 1, 1, "Arrow Keys or W,A,S,D:");
-	mvwaddstr (help, 2, 1, "'z':");
-	mvwaddstr (help, 3, 1, "Space:");
-	mvwaddstr (help, 4, 1, "'q':");
+	mvwaddstr (help, 0, HELP_WIDTH/2 - 3, " HELP ");
+	wattron (help, A_BOLD | A_UNDERLINE);
+	// subtitles
+	mvwaddstr (help, 1, 1, "Nmos commands");
+	mvwaddstr (help, 6, 1, "Mosaic editing");
+	wattroff (help, A_UNDERLINE);
+	// hotkeys
+	mvwaddstr (help, 2, 1, "F1:");
+	mvwaddstr (help, 3, 1, "Esc:");
+	mvwaddstr (help, 4, 1, "^Q:");
+	
+	mvwaddstr (help, 7, 1, "Arrow Keys:");
+	mvwaddstr (help, 8, 1, "Shifted Arrow Keys:");
+	mvwaddstr (help, 9, 1, "^S:");
+	mvwaddstr (help, 10, 1, "^O:");
+	mvwaddstr (help, 11, 1, "^N:");
+	
+	mvwaddstr (help, 12, 1, "^C:");
+	mvwaddstr (help, 13, 1, "^V:");
+	
+	
 
-	mvwaddstr (help, 6, 1, "O:");
-	mvwaddstr (help, 7, 1,  "/VC");
-	mvwaddstr (help, 8, 1, "\\_/:");
-
-	mvwaddstr (help, 10, 1, "K:");
 
 	wattrset (help, COLOR_PAIR (WBl));
-	mvwaddstr (help, 1, 24, "turn");
-	mvwaddstr (help, 2, 6, "change second head's side");
-	mvwaddstr (help, 3, 8, "pause");
-	mvwaddstr (help, 4, 6, "quit");
-	mvwaddstr (help, 6, 4, "food: eat it for some points");
-	mvwaddstr (help, 8, 6, "apple: eat it with both heads for 500 points!");
-	mvwaddstr (help, 10, 4, "K stands for Hunter: it'll try to kill you!");
+	// what the hotkeys do
+	mvwaddstr (help, 2, 5, "show this help window");
+	mvwaddstr (help, 3, 6, "show the menu");
+	mvwaddstr (help, 4, 5, "quit Nmos");
+	
+	mvwaddstr (help, 7, 13, "move through the mosaic");
+	mvwaddstr (help, 8, 21, "change the moving direction after input");
+	mvwaddstr (help, 9, 5, "save mosaic");
+	mvwaddstr (help, 10, 5, "load mosaic");
+	mvwaddstr (help, 11, 5, "new mosaic");
+	mvwaddstr (help, 12, 5, "copy selection");
+	mvwaddstr (help, 13, 5, "paste selection");
+	
+	// HUD explanation
+	mvwaddch (help, HELP_HEIGHT - 1, 0, ACS_ULCORNER);
+	waddch (help, ACS_HLINE); waddch (help, ACS_HLINE); waddch (help, ACS_HLINE);
+	waddstr (help, " Nmos basic hotkeys ");
+	waddch (help, ACS_HLINE); waddch (help, ACS_HLINE); waddch (help, ACS_HLINE); waddch (help, ACS_HLINE); waddch (help, ACS_URCORNER);
+	wclrtoeol (help);
+	mvwaddch (help, HELP_HEIGHT - 1, HELP_WIDTH - 11, ACS_ULCORNER);
+	waddstr (help, "position");
+	waddch (help, ACS_URCORNER); waddch (help, ACS_VLINE);
+	mvwaddstr (help, HELP_HEIGHT - 2, HELP_WIDTH - 18, "default direction");
+	waddch (help, ACS_URCORNER);
 
 // writes the help window, wait for some key to be pressed and delete the help window
 	wrefresh (help);
@@ -101,6 +134,8 @@ void Help () {
 	wrefresh (help);
 	del_panel (up);
 	delwin (help);
+	
+	curs_set (1);
 }
 
 

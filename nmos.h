@@ -18,8 +18,8 @@
 #define KEY_SUP 337
 #define KEY_SDOWN 336
 
-#define HELP_WIDTH 54
-#define HELP_HEIGHT 54
+#define HELP_WIDTH COLS
+#define HELP_HEIGHT (LINES - 1)
 
 /// UI current cursor position
 typedef struct {

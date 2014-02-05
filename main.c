@@ -73,12 +73,14 @@ int main () {
 				SaveImg (current, "teste.mosi");
 				PrintHud (hud, "Saved successfully!");
 				break;
-			
-			/// @todo arrumar isso
-			case KEY_BACKSPACE:
-				current->img.mosaic[current->img.width*position.y + position.x] = ' ';
-				echochar (' ');
+				
+			case KEY_CTRL_Q:
+				// pergunta se quer sair mesmo
 				break;
+			
+			/// @todo arrumar isso, backspace
+			case '\r':
+				c = ' ';
 				
 			default:
 				if (isprint (c)) {
@@ -87,6 +89,7 @@ int main () {
 					wrefresh (current->win);
 					Move (&position, current, default_direction);
 				}
+				break;
 		}
 		
 		UpdateHud (hud, position, default_direction);
