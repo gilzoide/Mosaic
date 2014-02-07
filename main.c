@@ -10,9 +10,8 @@ int main () {
 	Direction default_direction = RIGHT;
 	IMGS everyone;
 	InitIMGS (&everyone);
-	CreateNewImg (&everyone);
 	
-	MOSIMG *current = everyone.list;
+	MOSIMG *current = CreateNewImg (&everyone);
 	
 	int c = KEY_ESC;
 	while (c != KEY_CTRL_Q) {
@@ -28,44 +27,39 @@ int main () {
 				Move (&cursor, current, UP);
 				break;
 
-			case KEY_SUP:	// default direction is now up
-				default_direction = UP;
-				break;
-
 			case KEY_DOWN:	// move down
 				Move (&cursor, current, DOWN);
-				break;
-				
-			case KEY_SDOWN:	// default direction is now down
-				default_direction = DOWN;
 				break;
 				
 			case KEY_LEFT:	// move left
 				Move (&cursor, current, LEFT);
 				break;
 				
-			case KEY_SLEFT:	// default direction is now left
-				default_direction = LEFT;
-				break;
-				
 			case KEY_RIGHT:	// move right
 				Move (&cursor, current, RIGHT);
 				break;
-				
-			case KEY_SRIGHT:	// default direction is now right
-				default_direction = RIGHT;
+
+			case KEY_CTRL_D:	// next click change direction
+				ChangeDefaultDirection (hud, &default_direction);
 				break;
 				
 			case KEY_PPAGE:	// previous mosaic
 				current = current->prev;
+				DisplayCurrentPanel (current);
 				break;
 				
 			case KEY_NPAGE:	// next mosaic
 				current = current->next;
+				DisplayCurrentPanel (current);
 				break;
 
 			case KEY_F(1):	// show help
 				Help ();
+				break;
+				
+			case KEY_F(2):	// new mosaic
+				current = CreateNewImg (&everyone);
+				DisplayCurrentPanel (current);
 				break;
 				
 			case KEY_CTRL_S:	// save mosaic

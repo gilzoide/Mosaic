@@ -12,11 +12,10 @@
 #include "img.h"
 
 #define KEY_ESC 27
+#define KEY_CTRL_D 4
 #define KEY_CTRL_O 15
 #define KEY_CTRL_Q 17
 #define KEY_CTRL_S 19
-#define KEY_SUP 337
-#define KEY_SDOWN 336
 
 #define HELP_WIDTH COLS
 #define HELP_HEIGHT (LINES - 1)
@@ -61,8 +60,10 @@ void UpdateHud (WINDOW *hud, Cursor cur, Direction dir);
  * Prints a message in the HUD and waits for keystroke
  * 
  * @param[in] message Message to be written in the HUD
+ * 
+ * @return the key pressed for leaving
  */
-void PrintHud (WINDOW *hud, const char *message);
+int PrintHud (WINDOW *hud, const char *message);
 /// Draw the non-interactive help screen
 void Help ();
 /// Show the options and actions interactive menu
@@ -71,7 +72,7 @@ int Menu ();
 int AttrTable (MOSIMG *current, Cursor cur);
 
 
-/** 
+/**
  * Move the cursor
  * 
  * @param[in] position Actual working position
@@ -79,13 +80,31 @@ int AttrTable (MOSIMG *current, Cursor cur);
  * @param[in] dir Direction of the movement
  */
 inline void Move (Cursor *position, MOSIMG *current, Direction dir);
-
+/**
+ * Changes the default direction for the movement
+ * 
+ * @param[in] hud we need the hud for the message
+ * @param[in|out] dir The current direction; might be changed
+ */
+void ChangeDefaultDirection (WINDOW *hud, Direction *dir);
 
 
 /// Initializes the IMGS
 void InitIMGS (IMGS *everyone);
-/// Create a new image and stores it in the images list
-void CreateNewImg (IMGS *everyone);
+/**
+ * Create a new image and store it in the images list
+ * 
+ * @param[in] everyone the mosaics list
+ * 
+ * @return pointer to the created MOSIMG, to be stored in the 'current'
+ */
+MOSIMG *CreateNewImg (IMGS *everyone);
+/**
+ * Displays current MOSIMG in the stdscr
+ * 
+ * @param[in] current MOSIMG
+ */
+void DisplayCurrentPanel (MOSIMG *current);
 /// Destroy and free memory from the images list
 void DestroyIMGS (IMGS *everyone);
 
