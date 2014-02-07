@@ -15,7 +15,7 @@ void CursInit () {
 
 
 void InitCursor (Cursor *cur) {
-	cur->x = cur->y = cur->bot_x = cur->bot_y = 0;
+	cur->x = cur->y = cur->origin_x = cur->origin_y = 0;
 }
 
 
@@ -86,52 +86,49 @@ void Help () {
 	wbkgd (help, COLOR_PAIR (WBl));
 	
 	mvwaddstr (help, 0, HELP_WIDTH/2 - 3, " HELP ");
-	wattron (help, A_BOLD | A_UNDERLINE);
-	// subtitles
-	mvwaddstr (help, 1, 1, "Nmos commands (basic hotkeys)");
-	mvwaddstr (help, 6, 1, "Navigation");
-	mvwaddstr (help, 13, 1, "Mosaic editing");
-	wattroff (help, A_UNDERLINE);
-	// hotkeys
-	mvwaddstr (help, 2, 1, "F1:");
-	mvwaddstr (help, 3, 1, "Esc:");
-	mvwaddstr (help, 4, 1, "^Q:");
 	
-	mvwaddstr (help, 7, 1, "Arrow Keys:");
-	mvwaddstr (help, 8, 1, "^D:");
-	mvwaddstr (help, 9, 1, "^V:");
-	mvwaddstr (help, 10, 1, "PgUp:");
-	mvwaddstr (help, 11, 1, "PgDn:");
-	
-	mvwaddstr (help, 14, 1, "F2:");
-	mvwaddstr (help, 15, 1, "^S:");
-	mvwaddstr (help, 16, 1, "^O:");
-	mvwaddstr (help, 17, 1, "^C:");
-	mvwaddstr (help, 18, 1, "^V:");
-	mvwaddstr (help, 19, 1, "^X:");
-	mvwaddstr (help, 20, 1, "Tab:");
-
-
-	wstandend (help);
+	// the subtitles
+	char *subtitles[] = {
+		"Nmos commands (basic hotkeys)",
+		"Navigation",
+		"Mosaic editing"
+	};
+	// the hotkeys
+	char *hotkeys[] = {
+		"F1", "Esc", "^Q",
+		"Arrow Keys", "^D", "^B", "Page Up", "Page Down",
+		"F2", "^S", "^O", "^C", "^V", "^X", "Tab"
+	};
+	// and how many are there for each subtitle
+	int n_hotkeys[] = {3, 5, 7};
 	// what the hotkeys do
-	mvwaddstr (help, 2, 5, "show this help window");
-	mvwaddstr (help, 3, 6, "show the menu");
-	mvwaddstr (help, 4, 5, "quit Nmos");
+	char *explanations[] = {
+		"show this help window", "show the menu", "quit Nmos",
+		"move through the mosaic", "change the moving direction after input", "box/selection mode; press enter to exit", "previous mosaic", "next mosaic",
+		"new mosaic", "save mosaic", "load mosaic", "copy selection", "paste selection", "cut selection", "show color/attribute table"
+	};
 	
-	mvwaddstr (help, 7, 13, "move through the mosaic");
-	mvwaddstr (help, 8, 5, "change the moving direction after input");
-	mvwaddstr (help, 9, 5, "visual/selection mode; press enter to exit");
-	mvwaddstr (help, 10, 7, "next mosaic");
-	mvwaddstr (help, 11, 7, "previous mosaic");
-	
-	mvwaddstr (help, 14, 5, "new mosaic");
-	mvwaddstr (help, 15, 5, "save mosaic");
-	mvwaddstr (help, 16, 5, "load mosaic");
-	mvwaddstr (help, 17, 5, "copy selection");
-	mvwaddstr (help, 18, 5, "paste selection");
-	mvwaddstr (help, 19, 5, "cut selection");
-	mvwaddstr (help, 20, 6, "show color/attribute table");
-	
+	// aux counters; only 'i' gets reseted at 0, as it counts until n_hotkeys ends
+	int sub, hot, i, line = 1;
+	// for each subtitle
+	for (sub = hot = 0; sub < 4; sub++, line++) {	// ATENTION! ignore warning (aggressive-loop-optimizations)
+		// write subtitle
+		wattron (help, A_BOLD | A_UNDERLINE);
+		mvwaddstr (help, line, 1, subtitles[sub]);
+		wattroff (help, A_UNDERLINE);
+		line++;
+		// write rest =P
+		for (i = 0; i < n_hotkeys[sub]; i++, hot++) {
+			mvwaddstr (help, line++, 1, hotkeys[hot]);
+			waddstr (help, ": ");
+			wattroff (help, A_BOLD);
+			waddstr (help, explanations[hot]);
+			wattron (help, A_BOLD);
+		}
+	}
+
+
+	wstandend (help);	
 	// HUD explanation
 	mvwaddch (help, HELP_HEIGHT - 1, 0, ACS_ULCORNER);
 	waddch (help, ACS_HLINE); waddch (help, ACS_HLINE);
@@ -141,7 +138,6 @@ void Help () {
 	
 	int aux = COLS - 44;
 	mvwaddch (help, HELP_HEIGHT - 1, 29, ACS_ULCORNER);
-	int i;
 	for (i = 0; i < aux; i++) {
 		wechochar (help, ACS_HLINE);
 	}
@@ -235,8 +231,8 @@ inline void Move (Cursor *position, MOSIMG *current, Direction dir) {
 			break;
 	}
 	// upper-left corner and bottom-right corner are one now
-	position->bot_y = position->y;
-	position->bot_x = position->x;
+	position->origin_y = position->y;
+	position->origin_x = position->x;
 	// and move!
 	move (position->y, position->x);
 }

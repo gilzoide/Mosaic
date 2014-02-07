@@ -24,8 +24,8 @@
 typedef struct {
 	int y;	///< main y coordinate; upper-left corner
 	int x;	///< main x coordinate; upper-left corner
-	int bot_y;	///< bottom-right corner y coordinate: for copy/paste and attribute setting
-	int bot_x;	///< bottom-right corner x coordinate: for copy/paste and attribute setting
+	int origin_y;	///< origin of where box/selection started (y coordinate)
+	int origin_x;	///< origin of where box/selection started (x coordinate)
 } Cursor;
 
 

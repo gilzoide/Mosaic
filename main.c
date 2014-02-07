@@ -76,7 +76,7 @@ int main () {
 				break;
 			
 			/// @todo get this right, backspace
-			case '\r':
+			case KEY_DC:
 				c = ' ';
 				
 			default:	// write at the mosaic, and show it to us
