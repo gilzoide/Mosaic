@@ -124,19 +124,23 @@ int LoadImg (MOSIMG *image, const char *file_name) {
 		return -1;
 	
 	int new_height, new_width;
-	if (!fscanf (f, "%dx%d\n", &new_height, &new_width))
+	if (!fscanf (f, "%dx%d", &new_height, &new_width))
 		return 1;
 	
 	ResizeImg (image, new_height, new_width);
+
+	char c;
+	// there's supposed to have a '\n' to discard after %dx%d, but if don't, we read what's after
+	if ((c = fgetc (f)) != '\n')
+		ungetc (c, f);
 	
 	int i, j;
-	char c = 0;
 	wmove (image->win, 0, 0);
 	for (i = 0; i < image->img.height; i++) {
 		// read the line until the end or no more width is available
 		for (j = 0; j < image->img.width; j++) {
 			if ((c = fgetc (f)) == EOF)
-				goto FILL_WITH_BLANK;
+				goto FILL_WITH_BLANK;	// yes, that's right, a f**king goto! blablabla good programming, blablabla; F**K OFF! (actually, used so won't need a flag or more comparisons to break both the fors)
 			// if it reached newline before width...
 			else if (c == '\n')
 				break;

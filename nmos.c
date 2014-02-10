@@ -104,14 +104,14 @@ void Help () {
 	// what the hotkeys do
 	char *explanations[] = {
 		"show this help window", "show the menu", "quit Nmos",
-		"move through the mosaic", "change the moving direction after input (default direction)", "toggle box/selection mode", "previous/next mosaic", "move to first/last character (in the default direction)",
+		"move through the mosaic", "change the moving direction after input (default direction)", "toggle box selection mode", "previous/next mosaic", "move to first/last character (in the default direction)",
 		"new mosaic", "save mosaic", "load mosaic", "copy/cut selection", "paste selection", "show the attribute table"
 	};
 	
 	// aux counters; only 'i' gets reseted at 0, as it counts until n_hotkeys ends
 	int sub, hot, i, line = 1;
 	// for each subtitle
-	for (sub = hot = 0; sub < 3; sub++, line++) {	// ATENTION! ignore warning (aggressive-loop-optimizations)
+	for (sub = hot = 0; sub < 3; sub++, line++) {
 		// write subtitle
 		wattron (help, A_BOLD | A_UNDERLINE);
 		mvwaddstr (help, line, 1, subtitles[sub]);
@@ -126,9 +126,6 @@ void Help () {
 			wattron (help, A_BOLD);
 		}
 	}
-	
-	
-
 
 	wstandend (help);	
 	// HUD explanation
@@ -238,6 +235,9 @@ void Move (Cursor *position, MOSIMG *current, Direction dir) {
 		position->origin_y = position->y;
 		position->origin_x = position->x;
 	}
+	else
+		PrintSelection (position, current, dir);
+
 	// and move!
 	move (position->y, position->x);
 }
@@ -268,8 +268,88 @@ void MoveAll (Cursor *position, MOSIMG *current, Direction dir) {
 		position->origin_y = position->y;
 		position->origin_x = position->x;
 	}
+	else
+		PrintSelection (position, current, dir);
+
 	// and move!
 	move (position->y, position->x);
+}
+
+
+inline int min (int a, int b) {
+	return (a < b ? a : b);
+}
+
+
+inline int max (int a, int b) {
+	return (a > b ? a : b);
+}
+
+
+void PrintSelection (Cursor *position, MOSIMG *current, Direction dir) {
+	int ULy = min (position->origin_y, position->y);
+	int ULx = min (position->origin_x, position->x);
+	int BRy = max (position->origin_y, position->y);
+	int BRx = max (position->origin_x, position->x);
+	
+	UnprintSelection (current);
+	
+	int i;
+	for (i = ULy; i <= BRy; i++) {
+		mvwchgat (current->win, i, ULx, BRx - ULx + 1, A_REVERSE, 0, NULL);
+	}
+	/*
+	char vertical = 0, horizontal = 0;
+	
+	switch (dir) {
+		case UP:
+			if (position.origin_y > position.y)
+				mvwchgat (current->win, 
+			else
+			
+			break;
+			
+		case DOWN:
+			if (position.origin_y < position.y)
+			
+			else
+			
+			break;
+			
+		case LEFT:
+			if (position.origin_x > position.x)
+			
+			else
+			
+			break;
+			
+		case RIGHT:
+			if (position.origin_x < position.x)
+			
+			else
+			
+			break;
+	}
+	
+	if (vertical < 0)
+		mvwchgat (current->win, );
+	else if	(vertical > 0)
+		mvwchgat (current->win, );
+	else if (horizontal < 0)
+		mvwchgat (current->win, );
+	else
+		mvwchgat (current->win, );
+	*/
+	wrefresh (current->win);
+}
+
+
+void UnprintSelection (MOSIMG *current) {
+	int i;
+	for (i = 0; i < current->img.height; i++)
+		mvwchgat (current->win, i, 0, current->img.width, A_NORMAL, 0, NULL);
+	
+	wrefresh (current->win);
 }
 
 

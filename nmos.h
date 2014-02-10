@@ -129,6 +129,14 @@ void MoveAll (Cursor *position, MOSIMG *current, Direction dir);
  * @param[inout] dir The current direction; might be changed
  */
 void ChangeDefaultDirection (WINDOW *hud, Direction *dir);
+/**
+ * 
+ */
+void PrintSelection (Cursor *position, MOSIMG *current, Direction dir);
+/**
+ * 
+ */
+void UnprintSelection (MOSIMG *current);
 
 
 /**

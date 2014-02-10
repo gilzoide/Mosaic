@@ -86,6 +86,7 @@ int main () {
 				
 			case KEY_CTRL_B:	// Box selection mode!
 				TOGGLE_(SELECTION);
+				UnprintSelection (current);
 				break;
 				
 			case '\t':	// attribute table
