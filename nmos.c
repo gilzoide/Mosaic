@@ -96,22 +96,22 @@ void Help () {
 	// the hotkeys
 	char *hotkeys[] = {
 		"F1", "Esc", "^Q",
-		"Arrow Keys", "^D", "^B", "Page Up", "Page Down",
-		"F2", "^S", "^O", "^C", "^V", "^X", "Tab"
+		"Arrow Keys", "^D", "^B", "Page Up/Page Down", "Home/End",
+		"F2", "^S", "^O", "^C/^X", "^V", "Tab"
 	};
 	// and how many are there for each subtitle
-	int n_hotkeys[] = {3, 5, 7};
+	int n_hotkeys[] = {3, 5, 6};
 	// what the hotkeys do
 	char *explanations[] = {
 		"show this help window", "show the menu", "quit Nmos",
-		"move through the mosaic", "change the moving direction after input", "box/selection mode; press enter to exit", "previous mosaic", "next mosaic",
-		"new mosaic", "save mosaic", "load mosaic", "copy selection", "paste selection", "cut selection", "show color/attribute table"
+		"move through the mosaic", "change the moving direction after input (default direction)", "toggle box/selection mode", "previous/next mosaic", "move to first/last character (in the default direction)",
+		"new mosaic", "save mosaic", "load mosaic", "copy/cut selection", "paste selection", "show the attribute table"
 	};
 	
 	// aux counters; only 'i' gets reseted at 0, as it counts until n_hotkeys ends
 	int sub, hot, i, line = 1;
 	// for each subtitle
-	for (sub = hot = 0; sub < 4; sub++, line++) {	// ATENTION! ignore warning (aggressive-loop-optimizations)
+	for (sub = hot = 0; sub < 3; sub++, line++) {	// ATENTION! ignore warning (aggressive-loop-optimizations)
 		// write subtitle
 		wattron (help, A_BOLD | A_UNDERLINE);
 		mvwaddstr (help, line, 1, subtitles[sub]);
@@ -126,6 +126,8 @@ void Help () {
 			wattron (help, A_BOLD);
 		}
 	}
+	
+	
 
 
 	wstandend (help);	
@@ -207,7 +209,7 @@ int AttrTable (MOSIMG *current, Cursor cur) {
 }
 
 
-inline void Move (Cursor *position, MOSIMG *current, Direction dir) {
+void Move (Cursor *position, MOSIMG *current, Direction dir) {
 	// change the cursor position, deppending on the direction
 	switch (dir) {
 		case UP:
@@ -230,9 +232,42 @@ inline void Move (Cursor *position, MOSIMG *current, Direction dir) {
 				++position->x;
 			break;
 	}
-	// upper-left corner and bottom-right corner are one now
-	position->origin_y = position->y;
-	position->origin_x = position->x;
+	// if not in selection mode
+	if (!IS_(SELECTION)) {
+		// upper-left corner and bottom-right corner are one now
+		position->origin_y = position->y;
+		position->origin_x = position->x;
+	}
+	// and move!
+	move (position->y, position->x);
+}
+
+
+void MoveAll (Cursor *position, MOSIMG *current, Direction dir) {
+	// change the cursor position, deppending on the direction
+	switch (dir) {
+		case UP:
+			position->y = 0;
+			break;
+		
+		case DOWN:
+			position->y = current->img.height - 1;
+			break;
+			
+		case LEFT:
+			position->x = 0;
+			break;
+			
+		case RIGHT:
+			position->x = current->img.width - 1;
+			break;
+	}
+	// if not in selection mode
+	if (!IS_(SELECTION)) {
+		// upper-left corner and bottom-right corner are one now
+		position->origin_y = position->y;
+		position->origin_x = position->x;
+	}
 	// and move!
 	move (position->y, position->x);
 }
@@ -250,39 +285,22 @@ void ChangeDefaultDirection (WINDOW *hud, Direction *dir) {
 }
 
 
-void InitIMGS (IMGS *everyone) {
-	everyone->list = NULL;
-	everyone->size = 0;
-}
-
-
-MOSIMG *CreateNewImg (IMGS *everyone) {
-	int new_height = 15, new_width = 10;
+MOSIMG *CreateNewImg (IMGS *everyone, MOSIMG *current) {
+	int new_height = INITIAL_HEIGHT, new_width = INITIAL_WIDTH;
 	everyone->size++;
+	
+	MOSIMG *new_image = NewImg (new_height, new_width);
 	
 	// first image: no one's after or before
 	if (everyone->list == NULL) {
-		everyone->list = NewImg (new_height, new_width);
-		everyone->list->prev = everyone->list->next = everyone->list;	// yep, a circular list with only one item
-		return everyone->list;
+		everyone->list = new_image;
+		new_image->next = new_image->prev = new_image;
 	}
-	// not the first, so put it in the end
-	else {
-		MOSIMG *last = everyone->list->prev;
-		MOSIMG *new_image = NewImg (new_height, new_width);
-		
-		everyone->list->prev = last->next = new_image;
-		new_image->next = everyone->list;
-		new_image->prev = last;
-		return new_image;
-	}
-}
-
-
-void DisplayCurrentPanel (MOSIMG *current) {
-	top_panel (current->pan);
-	update_panels ();
-	doupdate ();
+	// not the first, so link it to someone
+	else
+		LinkImg (current, new_image, before);
+	
+	return new_image;
 }
 
 

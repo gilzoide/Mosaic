@@ -6,6 +6,12 @@ inline int ImgSize (MOSIMG *img) {
 }
 
 
+void InitIMGS (IMGS *everyone) {
+	everyone->list = NULL;
+	everyone->size = 0;
+}
+
+
 MOSIMG *NewImg (int new_height, int new_width) {
 	// create new image
 	MOSIMG *new_image;
@@ -48,6 +54,52 @@ MOSIMG *NewImg (int new_height, int new_width) {
 }
 
 
+int ResizeImg (MOSIMG *target, int new_height, int new_width) {
+	// new dimensions
+	target->img.height = new_height;
+	target->img.width = new_width;
+	
+	// realloc the dinamic stuff
+	// mosaic:
+	if ((target->img.mosaic = (char**) realloc (target->img.mosaic, new_height * sizeof (char*))) == NULL)
+		return -1;
+	// attributes:
+	if ((target->img.attr = (unsigned char**) realloc (target->img.attr, new_height * sizeof (char*))) == NULL)
+		return -1;
+		
+	int i;
+	for (i = 0; i < new_height; i++) {
+		if ((target->img.mosaic[i] = (char*) realloc (target->img.mosaic[i], new_width * sizeof (char))) == NULL)
+			return -1;
+		if ((target->img.attr[i] = (unsigned char*) realloc (target->img.attr[i], new_width * sizeof (char))) == NULL)
+			return -1;
+	}
+
+	return 0;
+}
+
+
+void LinkImg (MOSIMG *dest, MOSIMG *src, enum direction dir) {
+	if (dest != NULL) {
+		MOSIMG *aux;
+		if (dir == before) {
+			aux = dest->prev;
+			dest->prev = aux->next = src;
+			src->next = dest;
+			src->prev = aux;			
+		}
+		else {		// after
+			aux = dest->next;
+			dest->next = aux->prev = src;
+			src->prev = dest;
+			src->next = aux;
+		}
+	}
+	else
+		fprintf (stderr, "Error: trying to link a MOSIMG to a NULL pointer!!");
+}
+
+
 int SaveImg (MOSIMG *image, const char *file_name) {
 	FILE *f;
 	if ((f = fopen (file_name, "w")) == NULL)
@@ -63,6 +115,67 @@ int SaveImg (MOSIMG *image, const char *file_name) {
 	fclose (f);
 
 	return 0;
+}
+
+
+int LoadImg (MOSIMG *image, const char *file_name) {
+	FILE *f;
+	if ((f = fopen (file_name, "r")) == NULL)
+		return -1;
+	
+	int new_height, new_width;
+	if (!fscanf (f, "%dx%d\n", &new_height, &new_width))
+		return 1;
+	
+	ResizeImg (image, new_height, new_width);
+	
+	int i, j;
+	char c = 0;
+	wmove (image->win, 0, 0);
+	for (i = 0; i < image->img.height; i++) {
+		// read the line until the end or no more width is available
+		for (j = 0; j < image->img.width; j++) {
+			if ((c = fgetc (f)) == EOF)
+				goto FILL_WITH_BLANK;
+			// if it reached newline before width...
+			else if (c == '\n')
+				break;
+			image->img.mosaic[i][j] = c;
+			wechochar (image->win, c);
+		}
+		// ...complete with whitespaces
+		for ( ;  j < image->img.width; j++) {
+			image->img.mosaic[i][j] = ' ';
+			wechochar (image->win, ' ');
+		}
+		
+		// we read the whole line, but the tailing '\n', we need to discard it
+		if (c != '\n')
+			// may happen it's not a newline yet, so let's reread it =P
+			if ((c = fgetc (f)) != '\n')
+				ungetc (c, f);
+	}
+	
+FILL_WITH_BLANK:
+	// well, maybe we reached OEF, so everything else is a blank...
+	for ( ; i < image->img.height; i++) {
+		for ( ;  j < image->img.width; j++) {
+			image->img.mosaic[i][j] = ' ';
+			wechochar (image->win, ' ');
+		}
+		
+		j = 0;
+	}
+	
+	
+	return 0;
+}
+
+
+void DisplayCurrentImg (MOSIMG *current) {
+	top_panel (current->pan);
+	update_panels ();
+	doupdate ();
 }
 
 

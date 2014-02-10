@@ -27,7 +27,7 @@ img.o : img.c img.h
 
 document :
 	doxygen
-	xdg-open html/index.html
+	xdg-open html/index.html &
 
 run :
 	@./a.out

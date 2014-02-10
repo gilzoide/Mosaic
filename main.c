@@ -11,7 +11,7 @@ int main () {
 	IMGS everyone;
 	InitIMGS (&everyone);
 	
-	MOSIMG *current = CreateNewImg (&everyone);
+	MOSIMG *current = CreateNewImg (&everyone, current);
 	
 	int c = KEY_ESC;
 	while (c != KEY_CTRL_Q) {
@@ -45,12 +45,20 @@ int main () {
 				
 			case KEY_PPAGE:	// previous mosaic
 				current = current->prev;
-				DisplayCurrentPanel (current);
+				DisplayCurrentImg (current);
 				break;
 				
 			case KEY_NPAGE:	// next mosaic
 				current = current->next;
-				DisplayCurrentPanel (current);
+				DisplayCurrentImg (current);
+				break;
+				
+			case KEY_HOME:
+				MoveAll (&cursor, current, REVERSE (default_direction));
+				break;
+			
+			case KEY_END:
+				MoveAll (&cursor, current, default_direction);
 				break;
 
 			case KEY_F(1):	// show help
@@ -58,8 +66,8 @@ int main () {
 				break;
 				
 			case KEY_F(2):	// new mosaic
-				current = CreateNewImg (&everyone);
-				DisplayCurrentPanel (current);
+				current = CreateNewImg (&everyone, current);
+				DisplayCurrentImg (current);
 				break;
 				
 			case KEY_CTRL_S:	// save mosaic
@@ -67,16 +75,31 @@ int main () {
 				PrintHud (hud, "Saved successfully!");
 				break;
 				
-			case KEY_CTRL_Q:	// quit; aww =/
-				// asks if you really want to quit this tottally awesome software
+			case KEY_CTRL_L:	// load mosaic
+				switch (LoadImg (current, "teste.mosi")) {
+					case 0:	PrintHud (hud, "Loaded successfully!"),	DisplayCurrentImg (current);	break;
+					case 1: PrintHud (hud, "No dimensions in this file, dude! =/");	break;
+
+					default:	PrintHud (hud, "Sorry, no can load this... =/");	break;
+				}
+				break;
+				
+			case KEY_CTRL_B:	// Box selection mode!
+				TOGGLE_(SELECTION);
 				break;
 				
 			case '\t':	// attribute table
 				wattrset (current->win, AttrTable (current, cursor));
 				break;
+				
+			case KEY_CTRL_Q:	// quit; aww =/
+				// asks if you really want to quit this tottally awesome software
+				break;
 			
-			/// @todo get this right, backspace
-			case KEY_DC:
+			case KEY_BACKSPACE: case 127:	// Backspace: delete the char before (the curses definition says something else, but in general it's 127)
+				Move (&cursor, current, REVERSE (default_direction));
+			case KEY_DC:	// delete: well, just erase the damn char (put a ' ' in it, default takes care of this for us =P)
+				ENTER_(ERASED);
 				c = ' ';
 				
 			default:	// write at the mosaic, and show it to us
@@ -84,7 +107,10 @@ int main () {
 					current->img.mosaic[cursor.y][cursor.x] = c;
 					mvwaddch (current->win, cursor.y, cursor.x, c);
 					wrefresh (current->win);
-					Move (&cursor, current, default_direction);
+					if (!IS_(ERASED))	// didn't erase anything, so move to the next
+						Move (&cursor, current, default_direction);
+					else 	// we erased something, so it erased and that's that
+						UN_(ERASED);
 				}
 				break;
 		}
@@ -93,7 +119,6 @@ int main () {
 		c = getch ();
 	}
 	
-
 	DestroyIMGS (&everyone);
 
 	endwin ();

@@ -15,8 +15,8 @@
  * "Image" in Nmos mosaic format
  */
 typedef struct {
-	int height;				///< img height
-	int	width;				///< img width
+	int height;	///< img height
+	int	width;	///< img width
 	char **mosaic;			/**< a height * width sized string: the drawing itself */
 	unsigned char **attr;	/**< a height * width sized array with the attributes for each char.
 							 * It's bits are masked, from most to less significative as the color 
@@ -39,6 +39,15 @@ typedef struct mosimg_t {
 } MOSIMG;
 
 
+
+/// Whole images circular double linked list and it's size
+typedef struct {
+	MOSIMG *list;	///< the first image
+	int size;	///< the array size
+} IMGS;
+
+
+
 /**
  * Inline function that measures the total size of an image
  * 
@@ -47,6 +56,9 @@ typedef struct mosimg_t {
  * @return image size: height * width
  */
 inline int ImgSize (MOSIMG *img);
+
+/// Initializes the IMGS
+void InitIMGS (IMGS *everyone);
 
 /** 
  * Create a new @ref MOSIMG, allocating the necessary memory
@@ -58,10 +70,33 @@ inline int ImgSize (MOSIMG *img);
  * @return __NULL__ if allocation failed
  */
 MOSIMG *NewImg (int new_height, int new_width);
+/**
+ * Resize a @ref MOSIMG, reallocating the necessary memory
+ * 
+ * @param[in] new_height Image's new height
+ * @param[in] new_width Image's new width
+ * 
+ * @return Resized @ref MOSIMG, clean and unlinked
+ * @return __NULL__ if allocation failed
+ */
+int ResizeImg (MOSIMG *target, int new_height, int new_width);
 
 /**
- * Saves the image in a file
+ * Only to say if you want to link the img before or after the other in LinkImg
+ */
+enum direction {before, after};
+/**
+ * Link an image to another, before or after it
  * 
+ * @param[in] dest image linked to
+ * @parem[in] src image to link to dest
+ * @param[in] direction link src before or after dest
+ * 
+ * @return pointer to the linked MOSIMG, to be stored in the 'current'
+ */
+void LinkImg (MOSIMG *dest, MOSIMG *src, enum direction dir);
+/**
+ * Saves the image in a file
  * 
  * The file has a header with the mosaic dimensions, the asc art itself and it's attributes.
  * 
@@ -75,6 +110,24 @@ MOSIMG *NewImg (int new_height, int new_width);
  * @return 0 on success, -1 on failure
  */
 int SaveImg (MOSIMG *image, const char *file_name);
+/**
+ * Loads the image from a file
+ * 
+ * It's the same scheme from the @ref SaveImg function
+ * 
+ * @param[in] image The image to be loaded onto
+ * @param[in] file_name The new file name
+ * 
+ * @return 0 on success, -1 on failure
+ */
+int LoadImg (MOSIMG *image, const char *file_name);
+
+/**
+ * Displays current MOSIMG in the stdscr
+ * 
+ * @param[in] current MOSIMG
+ */
+void DisplayCurrentImg (MOSIMG *current);
 
 /// Destroy an image, deallocating the used memory
 void FreeImg (MOSIMG *img);
