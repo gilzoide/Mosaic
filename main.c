@@ -8,6 +8,8 @@ int main () {
 	Cursor cursor;
 	InitCursor (&cursor);
 	Direction default_direction = RIGHT;
+	CopyBuffer buffer;
+	InitCopyBuffer (&buffer);
 	IMGS everyone;
 	InitIMGS (&everyone);
 	
@@ -76,19 +78,38 @@ int main () {
 				break;
 				
 			case KEY_CTRL_L:	// load mosaic
+				/// @todo arrumar o cursor, se resizar pra menos
 				switch (LoadImg (current, "teste.mosi")) {
-					case 0:	PrintHud (hud, "Loaded successfully!"),	DisplayCurrentImg (current);	break;
+					case 0:	PrintHud (hud, "Loaded successfully!"),	DisplayCurrentImg (current); break;
 					case 1: PrintHud (hud, "No dimensions in this file, dude! =/");	break;
-
-					default:	PrintHud (hud, "Sorry, no can load this... =/");	break;
+					default: PrintHud (hud, "Sorry, no can load this... =/"); break;
 				}
 				break;
 				
-			case KEY_CTRL_B:	// Box selection mode!
+			case KEY_CTRL_B:	// box selection mode!
 				TOGGLE_(SELECTION);
 				UnprintSelection (current);
 				break;
 				
+			case KEY_CTRL_C:	// copy selected area
+				UnprintSelection (current);
+				UN_(SELECTION);
+				Copy (&buffer, current, cursor);
+				break;
+
+			case KEY_CTRL_X:	// cut selected area
+				UnprintSelection (current);
+				UN_(SELECTION);
+				Cut (&buffer, current, cursor);
+				break;
+
+			case KEY_CTRL_V:	// paste copy buffer
+				UnprintSelection (current);
+				UN_(SELECTION);
+				if (!Paste (current, &buffer, cursor))
+					PrintHud (hud, "Nothing in the buffer...");
+				break;
+
 			case '\t':	// attribute table
 				wattrset (current->win, AttrTable (current, cursor));
 				break;
@@ -120,6 +141,7 @@ int main () {
 		c = getch ();
 	}
 	
+	DestroyCopyBuffer (&buffer);
 	DestroyIMGS (&everyone);
 
 	endwin ();

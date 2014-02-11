@@ -357,11 +357,75 @@ void ChangeDefaultDirection (WINDOW *hud, Direction *dir) {
 	int c = PrintHud (hud, "new default direction (arrow keys)");
 	
 	switch (c) {
-		case KEY_UP:	*dir = UP;	break;
+		case KEY_UP:	*dir = UP;		break;
 		case KEY_DOWN:	*dir = DOWN;	break;
 		case KEY_LEFT:	*dir = LEFT;	break;
 		case KEY_RIGHT:	*dir = RIGHT;	break;
 	}
+}
+
+
+void InitCopyBuffer (CopyBuffer *buffer) {
+	buffer->buff = NULL;
+	buffer->coordinates.x = buffer->coordinates.y = buffer->coordinates.origin_y = buffer->coordinates.origin_x = 0;
+}
+
+
+inline void DestroyCopyBuffer (CopyBuffer *buffer) {
+	delwin (buffer->buff);
+}
+
+
+void Copy (CopyBuffer *buffer, MOSIMG *current, Cursor selection) {
+	// if there was something stored, bye bye
+	DestroyCopyBuffer (buffer);
+
+	// copy buffer is a copy of the entire window, since the curses implementation certainly is better than I would do =P
+	buffer->buff = dupwin (current->win);
+	// set it's coordinates, so we know what part the user want to copy
+	buffer->coordinates.origin_y = min (selection.y, selection.origin_y);
+	buffer->coordinates.origin_x = min (selection.x, selection.origin_x);
+	buffer->coordinates.y = abs (selection.y - selection.origin_y);
+	buffer->coordinates.x = abs (selection.x - selection.origin_x);
+}
+
+
+void Cut (CopyBuffer *buffer, MOSIMG *current, Cursor selection) {
+	// we copy to the buffer
+	Copy (buffer, current, selection);
+	// and erase what was in there
+	int i, j;
+	int y = min (selection.y, selection.origin_y), x = min (selection.x, selection.origin_x);	// we need the upper-left corner only
+	for (i = 0; i <= buffer->coordinates.y; i++) {
+		for (j = 0; j <= buffer->coordinates.x; j++) {
+			mvwaddch (current->win, y + i, x + j, ' ');
+			current->img.mosaic[y + i][x + j] = ' ';
+		}
+	}
+	wrefresh (current->win);
+}
+
+
+int Paste (MOSIMG *current, CopyBuffer *buffer, Cursor cursor) {
+	if (buffer->buff != NULL) {
+		int i, j, c;
+		for (i = 0; i <= buffer->coordinates.y; i++) {
+			for (j = 0; j <= buffer->coordinates.x; j++) {
+				// read the char
+				c = mvwinch (buffer->buff, buffer->coordinates.origin_y + i, buffer->coordinates.origin_x + j);
+				// if outside MOSIMG window, don't try to put 'c' in it, or it'll crash
+				if (mvwaddch (current->win, cursor.y + i, cursor.x + j, c) == ERR)
+					break;
+				// fill the mosaic
+				current->img.mosaic[cursor.y + i][cursor.x + j] = c;
+			}
+		}
+
+		wrefresh (current->win);
+		return 1;
+	}
+	else
+		return 0;
 }
 
 

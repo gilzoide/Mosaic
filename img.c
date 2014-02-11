@@ -45,7 +45,7 @@ MOSIMG *NewImg (int new_height, int new_width) {
 			new_image->img.mosaic[i][j] = ' ';
 
 	// create the curses window and panel
-	new_image->win = newwin (new_height, new_width, 0, 0);	
+	new_image->win = newwin (new_height, new_width, 0, 0);
 	new_image->pan = new_panel (new_image->win);
 	update_panels ();
 	doupdate ();

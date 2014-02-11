@@ -13,11 +13,14 @@
 
 #define KEY_ESC 27
 #define KEY_CTRL_B 2
+#define KEY_CTRL_C 3
 #define KEY_CTRL_D 4
 #define KEY_CTRL_L 12
 #define KEY_CTRL_O 15
 #define KEY_CTRL_Q 17
 #define KEY_CTRL_S 19
+#define KEY_CTRL_V 22
+#define KEY_CTRL_X 24
 
 #define HELP_WIDTH COLS
 #define HELP_HEIGHT (LINES - 1)
@@ -139,6 +142,28 @@ void PrintSelection (Cursor *position, MOSIMG *current, Direction dir);
 void UnprintSelection (MOSIMG *current);
 
 
+typedef struct {
+	WINDOW *buff;		///< WINDOW that stores the mosaic
+	Cursor coordinates;	///< copy coordinates: origin_y/x for the upper-left corner, y/x for the size (how many chars in each direction)
+} CopyBuffer;
+/**
+ * Initializes the copy buffer with default empty falues
+ */
+void InitCopyBuffer (CopyBuffer *buffer);
+/**
+ * Destroy the copy buffer, deallocating memory and erasing the buffered copy
+ * 
+ * @warning This function should be called before exiting the program,
+ * unless you know what you're doing...
+ */
+inline void DestroyCopyBuffer (CopyBuffer *buffer);
+/**
+ * Copies the current selection (may be only one char, whatever) into the buffer
+ */
+void Copy (CopyBuffer *buffer, MOSIMG *current, Cursor selection);
+void Cut (CopyBuffer *buffer, MOSIMG *current, Cursor selection);
+int Paste (MOSIMG *current, CopyBuffer *buffer, Cursor cursor);
+
 /**
  * Create a new image and store it in the images list
  * 
@@ -148,7 +173,12 @@ void UnprintSelection (MOSIMG *current);
  * @return pointer to the created MOSIMG, to be stored in the 'current'
  */
 MOSIMG *CreateNewImg (IMGS *everyone, MOSIMG *current);
-/// Destroy and free memory from the images list
+/**
+ * Destroy and free memory from the images list
+ * 
+ * @warning This function should be called before exiting the program,
+ * unless you know what you're doing...
+ */
 void DestroyIMGS (IMGS *everyone);
 
 #endif
