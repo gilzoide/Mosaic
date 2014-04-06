@@ -45,10 +45,15 @@ MOSIMG *NewImg (int new_height, int new_width) {
 			new_image->img.mosaic[i][j] = ' ';
 
 	// create the curses window and panel
-	new_image->win = newwin (new_height, new_width, 0, 0);
+	new_image->win = newpad (new_height + 2, new_width + 2);
 	new_image->pan = new_panel (new_image->win);
 	update_panels ();
 	doupdate ();
+	
+	new_image->y = new_image->x = 0;
+	
+	box (new_image->win, 0, 0);
+	prefresh (new_image->win, 1, 1, new_image->y, new_image->x, new_height, new_width);
 
 	return new_image;
 }
@@ -170,8 +175,15 @@ FILL_WITH_BLANK:
 		
 		j = 0;
 	}
-	
-	
+
+	return 0;
+}
+
+
+int mos_addch (MOSIMG *image, int y, int x, int c) {
+	if (mvwaddch (image->win, y + 1, x + 1, c) == ERR)
+		return ERR;
+	image->img.mosaic[y][x] = c;
 	return 0;
 }
 
@@ -180,6 +192,7 @@ void DisplayCurrentImg (MOSIMG *current) {
 	top_panel (current->pan);
 	update_panels ();
 	doupdate ();
+	prefresh (current->win, 1, 1, 0, 0, current->img.height, current->img.width);
 }
 
 

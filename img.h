@@ -32,8 +32,10 @@ typedef struct {
  */
 typedef struct mosimg_t {
 	Image img;	///< the asc art itself
-	struct mosimg_t *prev;	///< previous MOSIMG
-	struct mosimg_t *next;	///< next MOSIMG
+	int y,		///< the Y coordinate of the piece of @ref img showed at the pad
+		x;		///< the Y coordinate of the piece of @ref img showed at the pad
+	struct mosimg_t *prev,	///< previous MOSIMG
+					*next;	///< next MOSIMG
 	WINDOW *win;	///< window to show the Image
 	PANEL *pan;	///< panel for showing the window
 } MOSIMG;
@@ -121,6 +123,17 @@ int SaveImg (MOSIMG *image, const char *file_name);
  * @return 0 on success, -1 on failure
  */
 int LoadImg (MOSIMG *image, const char *file_name);
+/**
+ * Add a char to the MOSIMG at position y/x and print it in it's WINDOW.
+ * 
+ * @note It doesn't refresh the WINDOW, so do it yourself whenever you feel ready
+ * 
+ * If position is outside image boundaries, returns ERR, as it calls mvwaddch, which calls wmove internally
+ * 
+ * @return 0 on success
+ * @return ERR on error
+ */
+int mos_addch (MOSIMG *image, int y, int x, int c);
 
 /**
  * Displays current MOSIMG in the stdscr

@@ -1,7 +1,7 @@
 #include "nmos.h"
 #include <ctype.h>
 
-int main () {
+int main (int argc, char *argv[]) {
 	CursInit ();
 	WINDOW *hud = CreateHud ();
 	
@@ -15,10 +15,11 @@ int main () {
 	
 	MOSIMG *current = CreateNewImg (&everyone, current);
 	
+	
 	int c = KEY_ESC;
 	while (c != KEY_CTRL_Q) {
-		if (c == KEY_ESC)
-			c = Menu ();
+//		if (c == KEY_ESC)
+//			c = Menu ();
 		
 		//printw ("%d ", c);
 		switch (c) {
@@ -65,6 +66,7 @@ int main () {
 
 			case KEY_F(1):	// show help
 				Help ();
+				DisplayCurrentImg (current);
 				break;
 				
 			case KEY_F(2):	// new mosaic
@@ -75,15 +77,20 @@ int main () {
 			case KEY_CTRL_S:	// save mosaic
 				SaveImg (current, "teste.mosi");
 				PrintHud (hud, "Saved successfully!");
+				UN_(TOUCHED);
 				break;
 				
-			case KEY_CTRL_L:	// load mosaic
-				/// @todo arrumar o cursor, se resizar pra menos
+			case KEY_CTRL_O:	// load mosaic
 				switch (LoadImg (current, "teste.mosi")) {
 					case 0:	PrintHud (hud, "Loaded successfully!"),	DisplayCurrentImg (current); break;
 					case 1: PrintHud (hud, "No dimensions in this file, dude! =/");	break;
 					default: PrintHud (hud, "Sorry, no can load this... =/"); break;
 				}
+				ENTER_(TOUCHED);
+				break;
+				
+			case KEY_CTRL_R:	// resize mosaic
+				ResizeImg (current, 20, 20);
 				break;
 				
 			case KEY_CTRL_B:	// box selection mode!
@@ -106,8 +113,10 @@ int main () {
 			case KEY_CTRL_V:	// paste copy buffer
 				UnprintSelection (current);
 				UN_(SELECTION);
-				if (!Paste (current, &buffer, cursor))
+				if (!Paste (&buffer, current, cursor))
 					PrintHud (hud, "Nothing in the buffer...");
+				else
+					ENTER_(TOUCHED);
 				break;
 
 			case '\t':	// attribute table
@@ -118,17 +127,18 @@ int main () {
 				// asks if you really want to quit this tottally awesome software
 				break;
 			
+			// WARNING: don't change BACKSPACE nor DC out of here nor out of order, as they deppend.on 'default' (so I guess you know we shouldn't put any 'break's either)
 			case KEY_BACKSPACE: case 127:	// Backspace: delete the char before (the curses definition says something else, but in general it's 127)
 				Move (&cursor, current, REVERSE (default_direction));
 			case KEY_DC:	// delete: well, just erase the damn char (put a ' ' in it, default takes care of this for us =P)
 				ENTER_(ERASED);
 				c = ' ';
-				
+
 			default:	// write at the mosaic, and show it to us
 				if (isprint (c)) {
-					current->img.mosaic[cursor.y][cursor.x] = c;
-					mvwaddch (current->win, cursor.y, cursor.x, c);
-					wrefresh (current->win);
+					mos_addch (current, cursor.y, cursor.x, c);
+					DisplayCurrentImg (current);
+					ENTER_(TOUCHED);
 					if (!IS_(ERASED))	// didn't erase anything, so move to the next
 						Move (&cursor, current, default_direction);
 					else 	// we erased something, so it erased and that's that

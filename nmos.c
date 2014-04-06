@@ -97,15 +97,15 @@ void Help () {
 	char *hotkeys[] = {
 		"F1", "Esc", "^Q",
 		"Arrow Keys", "^D", "^B", "Page Up/Page Down", "Home/End",
-		"F2", "^S", "^O", "^C/^X", "^V", "Tab"
+		"F2", "^S", "^O", "^R", "^C/^X", "^V", "Tab"
 	};
 	// and how many are there for each subtitle
-	int n_hotkeys[] = {3, 5, 6};
+	int n_hotkeys[] = {3, 5, 7};
 	// what the hotkeys do
 	char *explanations[] = {
 		"show this help window", "show the menu", "quit Nmos",
 		"move through the mosaic", "change the moving direction after input (default direction)", "toggle box selection mode", "previous/next mosaic", "move to first/last character (in the default direction)",
-		"new mosaic", "save mosaic", "load mosaic", "copy/cut selection", "paste selection", "show the attribute table"
+		"new mosaic", "save mosaic", "load mosaic", "resize mosaic", "copy/cut selection", "paste selection", "show the attribute table"
 	};
 	
 	// aux counters; only 'i' gets reseted at 0, as it counts until n_hotkeys ends
@@ -340,7 +340,7 @@ void PrintSelection (Cursor *position, MOSIMG *current, Direction dir) {
 	else
 		mvwchgat (current->win, );
 	*/
-	wrefresh (current->win);
+	prefresh (current->win, 1, 1, 0, 0, current->img.height, current->img.width);
 }
 
 
@@ -349,7 +349,7 @@ void UnprintSelection (MOSIMG *current) {
 	for (i = 0; i < current->img.height; i++)
 		mvwchgat (current->win, i, 0, current->img.width, A_NORMAL, 0, NULL);
 	
-	wrefresh (current->win);
+	prefresh (current->win, 1, 1, 0, 0, current->img.height, current->img.width);
 }
 
 
@@ -398,15 +398,14 @@ void Cut (CopyBuffer *buffer, MOSIMG *current, Cursor selection) {
 	int y = min (selection.y, selection.origin_y), x = min (selection.x, selection.origin_x);	// we need the upper-left corner only
 	for (i = 0; i <= buffer->coordinates.y; i++) {
 		for (j = 0; j <= buffer->coordinates.x; j++) {
-			mvwaddch (current->win, y + i, x + j, ' ');
-			current->img.mosaic[y + i][x + j] = ' ';
+			mos_addch (current, y + i, x + j, ' ');
 		}
 	}
-	wrefresh (current->win);
+	prefresh (current->win, 1, 1, 0, 0, current->img.height, current->img.width);
 }
 
 
-int Paste (MOSIMG *current, CopyBuffer *buffer, Cursor cursor) {
+int Paste (CopyBuffer *buffer, MOSIMG *current, Cursor cursor) {
 	if (buffer->buff != NULL) {
 		int i, j, c;
 		for (i = 0; i <= buffer->coordinates.y; i++) {
@@ -414,14 +413,12 @@ int Paste (MOSIMG *current, CopyBuffer *buffer, Cursor cursor) {
 				// read the char
 				c = mvwinch (buffer->buff, buffer->coordinates.origin_y + i, buffer->coordinates.origin_x + j);
 				// if outside MOSIMG window, don't try to put 'c' in it, or it'll crash
-				if (mvwaddch (current->win, cursor.y + i, cursor.x + j, c) == ERR)
+				if (mos_addch (current, cursor.y + i, cursor.x + j, c) == ERR)
 					break;
-				// fill the mosaic
-				current->img.mosaic[cursor.y + i][cursor.x + j] = c;
 			}
 		}
 
-		wrefresh (current->win);
+		prefresh (current->win, 1, 1, 0, 0, current->img.height, current->img.width);
 		return 1;
 	}
 	else

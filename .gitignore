@@ -1,11 +1,15 @@
 # executable
 a.out
+nmos
 # text backups
 *~
 # object files, after compilation
 *.o
 # any Nmos images
 *.mosi
+
+# scons stuff
+.sconsign*
 
 layout
 html

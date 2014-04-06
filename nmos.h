@@ -15,17 +15,17 @@
 #define KEY_CTRL_B 2
 #define KEY_CTRL_C 3
 #define KEY_CTRL_D 4
-#define KEY_CTRL_L 12
 #define KEY_CTRL_O 15
 #define KEY_CTRL_Q 17
+#define KEY_CTRL_R 18
 #define KEY_CTRL_S 19
 #define KEY_CTRL_V 22
 #define KEY_CTRL_X 24
 
 #define HELP_WIDTH COLS
 #define HELP_HEIGHT (LINES - 1)
-#define INITIAL_WIDTH 10
-#define INITIAL_HEIGHT 15
+#define INITIAL_WIDTH 40
+#define INITIAL_HEIGHT 30
 
 /**
  * Nmos State
@@ -159,10 +159,28 @@ void InitCopyBuffer (CopyBuffer *buffer);
 inline void DestroyCopyBuffer (CopyBuffer *buffer);
 /**
  * Copies the current selection (may be only one char, whatever) into the buffer
+ * 
+ * @param[in] current The current mosaic, to be copied from
+ * @param[in] selection The selection to be copied
+ * @param[out] buffer The copy buffer, to be stored the copied data
  */
 void Copy (CopyBuffer *buffer, MOSIMG *current, Cursor selection);
+/**
+ * Copies the current selection (may be only one char, whatever) into the buffer and erase the selection
+ * 
+ * @param[in] current The current mosaic, to be copied from
+ * @param[in] selection The selection to be copied
+ * @param[out] buffer The copy buffer, to be stored the copied data
+ */
 void Cut (CopyBuffer *buffer, MOSIMG *current, Cursor selection);
-int Paste (MOSIMG *current, CopyBuffer *buffer, Cursor cursor);
+/**
+ * Copies the current selection (may be only one char, whatever) into the buffer
+ * 
+ * @param[in] current The current mosaic, to be pasted to
+ * @param[in] cursor The position to paste from
+ * @param[out] buffer The copy buffer, where the data is stored
+ */
+int Paste (CopyBuffer *buffer, MOSIMG *current, Cursor cursor);
 
 /**
  * Create a new image and store it in the images list

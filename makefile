@@ -4,11 +4,11 @@ source = main.c nmos.c img.c color.c
 include = nmos.h img.h color.h
 objs = main.o nmos.o color.o img.o
 
-CFLAGS = -g -O2 -lpanel -lncurses -march=native
+CFLAGS = -g -Wall -O2 -lpanel -lncurses -march=native
 
 
 all : $(objs)
-	$(CC) $(objs) $(CFLAGS)
+	$(CC) $(objs) $(CFLAGS) -o nmos
 
 
 main.o : main.c nmos.o
@@ -30,7 +30,7 @@ document :
 	xdg-open html/index.html &
 
 run :
-	@./a.out
+	@./nmos
 
 clean :
 	@rm -rf html a.out *.o *~ teste.mos*
