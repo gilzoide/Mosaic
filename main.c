@@ -1,3 +1,4 @@
+#define _XOPEN_SOURCE_EXTENDED
 #include "nmos.h"
 #include <ctype.h>
 
@@ -13,10 +14,12 @@ int main (int argc, char *argv[]) {
 	IMGS everyone;
 	InitIMGS (&everyone);
 	
-	MOSIMG *current = CreateNewImg (&everyone, current);
+	MOSIMG *current = NULL;
+	current = CreateNewImg (&everyone, current);
 	
 	
 	int c = KEY_ESC;
+	int i;
 	while (c != KEY_CTRL_Q) {
 //		if (c == KEY_ESC)
 //			c = Menu ();
@@ -126,6 +129,12 @@ int main (int argc, char *argv[]) {
 			case KEY_CTRL_Q:	// quit; aww =/
 				// asks if you really want to quit this tottally awesome software
 				break;
+				
+			case KEY_CTRL_U:	// erase entire line/column before cursor;		it actually calls enough times the backspace button
+				i = max (current->img.height, current->img.width);
+				while (i > 0 && i--)
+					ungetch (KEY_BACKSPACE);
+				break;
 			
 			// WARNING: don't change BACKSPACE nor DC out of here nor out of order, as they deppend.on 'default' (so I guess you know we shouldn't put any 'break's either)
 			case KEY_BACKSPACE: case 127:	// Backspace: delete the char before (the curses definition says something else, but in general it's 127)
@@ -136,7 +145,7 @@ int main (int argc, char *argv[]) {
 
 			default:	// write at the mosaic, and show it to us
 				if (isprint (c)) {
-					mos_addch (current, cursor.y, cursor.x, c);
+					mosAddch (current, cursor.y, cursor.x, c);
 					DisplayCurrentImg (current);
 					ENTER_(TOUCHED);
 					if (!IS_(ERASED))	// didn't erase anything, so move to the next

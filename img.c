@@ -45,17 +45,33 @@ MOSIMG *NewImg (int new_height, int new_width) {
 			new_image->img.mosaic[i][j] = ' ';
 
 	// create the curses window and panel
-	new_image->win = newpad (new_height + 2, new_width + 2);
-	new_image->pan = new_panel (new_image->win);
-	update_panels ();
-	doupdate ();
-	
+	new_image->win = newpad (new_height + 1, new_width + 1);
+	dobox (new_image->win);	// put a border
+
 	new_image->y = new_image->x = 0;
+	scrollok (new_image->win, TRUE);
 	
-	box (new_image->win, 0, 0);
-	prefresh (new_image->win, 1, 1, new_image->y, new_image->x, new_height, new_width);
+	new_image->pan = new_panel (new_image->win);
+	DisplayCurrentImg (new_image);
+	//update_panels ();
+	//doupdate ();
+	//prefresh (new_image->win, 1, 1, new_image->y, new_image->x, new_height, new_width);
 
 	return new_image;
+}
+
+
+void dobox (WINDOW *win) {
+	int x, y;
+	getmaxyx (win, y, x);
+	int i;
+	for (i = 0; i < x; i++) {
+		mvwaddch (win, y - 1, i, ACS_HLINE);
+	}
+	for (i = 0; i < y; i++) {
+		mvwaddch (win, i, x - 1, ACS_VLINE);
+	}
+	mvwaddch (win, y - 1, x - 1, ACS_LRCORNER);
 }
 
 
@@ -180,9 +196,11 @@ FILL_WITH_BLANK:
 }
 
 
-int mos_addch (MOSIMG *image, int y, int x, int c) {
-	if (mvwaddch (image->win, y + 1, x + 1, c) == ERR)
+int mosAddch (MOSIMG *image, int y, int x, int c) {
+	if (y >= image->img.height || x >= image->img.width)
 		return ERR;
+
+	mvwaddch (image->win, y, x, c);
 	image->img.mosaic[y][x] = c;
 	return 0;
 }
@@ -192,7 +210,7 @@ void DisplayCurrentImg (MOSIMG *current) {
 	top_panel (current->pan);
 	update_panels ();
 	doupdate ();
-	prefresh (current->win, 1, 1, 0, 0, current->img.height, current->img.width);
+	prefresh (current->win, current->y, current->x, 0, 0, LINES - 2, COLS - 1);
 }
 
 

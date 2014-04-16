@@ -1,7 +1,20 @@
 #include "nmos.h"
+#include <locale.h>
+
+
+inline int min (int a, int b) {
+	return (a < b ? a : b);
+}
+
+
+inline int max (int a, int b) {
+	return (a > b ? a : b);
+}
 
 
 void CursInit () {
+	setlocale (LC_ALL, "");	// wide_chars!
+
 	initscr ();	// init curses screen
 	
 	keypad (stdscr, TRUE);	// we can now use the arrow keys and Fn keys
@@ -203,6 +216,8 @@ int AttrTable (MOSIMG *current, Cursor cur) {
 	wrefresh (table);
 	del_panel (up);
 	delwin (table);
+	
+	return 0;
 }
 
 
@@ -276,16 +291,6 @@ void MoveAll (Cursor *position, MOSIMG *current, Direction dir) {
 }
 
 
-inline int min (int a, int b) {
-	return (a < b ? a : b);
-}
-
-
-inline int max (int a, int b) {
-	return (a > b ? a : b);
-}
-
-
 void PrintSelection (Cursor *position, MOSIMG *current, Direction dir) {
 	int ULy = min (position->origin_y, position->y);
 	int ULx = min (position->origin_x, position->x);
@@ -340,7 +345,7 @@ void PrintSelection (Cursor *position, MOSIMG *current, Direction dir) {
 	else
 		mvwchgat (current->win, );
 	*/
-	prefresh (current->win, 1, 1, 0, 0, current->img.height, current->img.width);
+	DisplayCurrentImg (current);
 }
 
 
@@ -349,7 +354,7 @@ void UnprintSelection (MOSIMG *current) {
 	for (i = 0; i < current->img.height; i++)
 		mvwchgat (current->win, i, 0, current->img.width, A_NORMAL, 0, NULL);
 	
-	prefresh (current->win, 1, 1, 0, 0, current->img.height, current->img.width);
+	DisplayCurrentImg (current);
 }
 
 
@@ -398,10 +403,10 @@ void Cut (CopyBuffer *buffer, MOSIMG *current, Cursor selection) {
 	int y = min (selection.y, selection.origin_y), x = min (selection.x, selection.origin_x);	// we need the upper-left corner only
 	for (i = 0; i <= buffer->coordinates.y; i++) {
 		for (j = 0; j <= buffer->coordinates.x; j++) {
-			mos_addch (current, y + i, x + j, ' ');
+			mosAddch (current, y + i, x + j, ' ');
 		}
 	}
-	prefresh (current->win, 1, 1, 0, 0, current->img.height, current->img.width);
+	DisplayCurrentImg (current);
 }
 
 
@@ -413,12 +418,12 @@ int Paste (CopyBuffer *buffer, MOSIMG *current, Cursor cursor) {
 				// read the char
 				c = mvwinch (buffer->buff, buffer->coordinates.origin_y + i, buffer->coordinates.origin_x + j);
 				// if outside MOSIMG window, don't try to put 'c' in it, or it'll crash
-				if (mos_addch (current, cursor.y + i, cursor.x + j, c) == ERR)
+				if (mosAddch (current, cursor.y + i, cursor.x + j, c) == ERR)
 					break;
 			}
 		}
 
-		prefresh (current->win, 1, 1, 0, 0, current->img.height, current->img.width);
+		DisplayCurrentImg (current);
 		return 1;
 	}
 	else

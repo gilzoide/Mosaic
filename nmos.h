@@ -5,6 +5,7 @@
 #ifndef NMOS_H
 #define NMOS_H
 
+#define _XOPEN_SOURCE_EXTENDED
 #include <ncurses.h>
 #include <panel.h>
 #include <stdio.h>
@@ -19,13 +20,17 @@
 #define KEY_CTRL_Q 17
 #define KEY_CTRL_R 18
 #define KEY_CTRL_S 19
+#define KEY_CTRL_U 21
 #define KEY_CTRL_V 22
 #define KEY_CTRL_X 24
 
 #define HELP_WIDTH COLS
 #define HELP_HEIGHT (LINES - 1)
-#define INITIAL_WIDTH 40
+#define INITIAL_WIDTH 100
 #define INITIAL_HEIGHT 30
+
+#define BOUNDARY_Y (LINES)
+#define BOUNDARY_X (COLS)
 
 /**
  * Nmos State
@@ -84,6 +89,10 @@ typedef enum {
  */
 #define REVERSE(dir) (3 - dir)
 
+/// Aux function: returns the greatest
+inline int min (int a, int b);
+/// Aux function: returns the smallest
+inline int max (int a, int b);
 
 /// Ncurses initializations routines, including interactive mode and colors
 void CursInit ();

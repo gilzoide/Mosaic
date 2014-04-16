@@ -5,6 +5,7 @@
 #ifndef IMG_H
 #define IMG_H
 
+#define _XOPEN_SOURCE_EXTENDED
 #include <ncurses.h>
 #include <panel.h>
 #include <stdlib.h>
@@ -72,6 +73,8 @@ void InitIMGS (IMGS *everyone);
  * @return __NULL__ if allocation failed
  */
 MOSIMG *NewImg (int new_height, int new_width);
+/** aux for the NewImg: creates the border */
+void dobox (WINDOW *win);
 /**
  * Resize a @ref MOSIMG, reallocating the necessary memory
  * 
