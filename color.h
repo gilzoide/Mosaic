@@ -4,7 +4,10 @@
  * @note Colors are defined in format: _foreground-background_
  */
 
-#include <ncurses.h>
+#ifndef COLOR_H
+#define COLOR_H
+
+#include <curses.h>
 
 /// Initialize all color combinations
 void InitColors ();
@@ -84,3 +87,5 @@ void TestColors ();
 #define WM 62	///< White-Magenta
 #define WC 63	///< White-Cyan
 #define WW 64	///< White-White
+
+#endif

@@ -1,4 +1,3 @@
-#define _XOPEN_SOURCE_EXTENDED
 #include "nmos.h"
 #include <ctype.h>
 
@@ -21,10 +20,10 @@ int main (int argc, char *argv[]) {
 	int c = KEY_ESC;
 	int i;
 	while (c != KEY_CTRL_Q) {
-//		if (c == KEY_ESC)
-//			c = Menu ();
+		if (c == KEY_ESC)
+			c = Menu ();
 		
-		//printw ("%d ", c);
+		//~ printw ("%d ", c);
 		switch (c) {
 			case 0:	// if nothing is returned by the menu, do nothing
 				break;
@@ -46,7 +45,7 @@ int main (int argc, char *argv[]) {
 				break;
 
 			case KEY_CTRL_D:	// next click change direction
-				ChangeDefaultDirection (hud, &default_direction);
+				DefaultDirection (hud, &default_direction);
 				break;
 				
 			case KEY_PPAGE:	// previous mosaic

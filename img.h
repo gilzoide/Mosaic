@@ -5,8 +5,7 @@
 #ifndef IMG_H
 #define IMG_H
 
-#define _XOPEN_SOURCE_EXTENDED
-#include <ncurses.h>
+#include <curses.h>
 #include <panel.h>
 #include <stdlib.h>
 #include <stdio.h>
@@ -136,7 +135,7 @@ int LoadImg (MOSIMG *image, const char *file_name);
  * @return 0 on success
  * @return ERR on error
  */
-int mos_addch (MOSIMG *image, int y, int x, int c);
+int mosAddch (MOSIMG *image, int y, int x, int c);
 
 /**
  * Displays current MOSIMG in the stdscr
