@@ -63,6 +63,17 @@ inline int ImgSize (MOSIMG *img);
 void InitIMGS (IMGS *everyone);
 
 /** 
+ * Create a new @ref Image, allocating the necessary memory
+ * 
+ * @param[in] img The Image to be initialized
+ * @param[in] new_height New Image's height
+ * @param[in] new_width New Image's width
+ * 
+ * @return 1 on success
+ * @return -1 if allocation failed
+ */
+int NewImg (Image *img, int new_height, int new_width);
+/** 
  * Create a new @ref MOSIMG, allocating the necessary memory
  * 
  * @param[in] new_height New Image's height
@@ -71,17 +82,18 @@ void InitIMGS (IMGS *everyone);
  * @return New @ref MOSIMG, clean and unlinked
  * @return __NULL__ if allocation failed
  */
-MOSIMG *NewImg (int new_height, int new_width);
-/** aux for the NewImg: creates the border */
+MOSIMG *NewMOSIMG (int new_height, int new_width);
+/** aux for the NewMOSIMG: creates the right and bottom border */
 void dobox (WINDOW *win);
 /**
  * Resize a @ref MOSIMG, reallocating the necessary memory
  * 
+ * @param[in] target the target Image
  * @param[in] new_height Image's new height
  * @param[in] new_width Image's new width
  * 
- * @return Resized @ref MOSIMG, clean and unlinked
- * @return __NULL__ if allocation failed
+ * @return 0 if successfully resized @ref MOSIMG
+ * @return -1 if allocation failed
  */
 int ResizeImg (MOSIMG *target, int new_height, int new_width);
 
@@ -93,8 +105,8 @@ enum direction {before, after};
  * Link an image to another, before or after it
  * 
  * @param[in] dest image linked to
- * @parem[in] src image to link to dest
- * @param[in] direction link src before or after dest
+ * @param[in] src image to link to dest
+ * @param[in] dir link src before or after dest
  * 
  * @return pointer to the linked MOSIMG, to be stored in the 'current'
  */
@@ -119,10 +131,10 @@ int SaveImg (MOSIMG *image, const char *file_name);
  * 
  * It's the same scheme from the @ref SaveImg function
  * 
- * @param[in] image The image to be loaded onto
+ * @param[out] image The image to be loaded onto
  * @param[in] file_name The new file name
  * 
- * @return 0 on success, -1 on failure
+ * @return 0 on success, -1 on failure, 1 on no dimensions present in the file
  */
 int LoadImg (MOSIMG *image, const char *file_name);
 /**
@@ -145,6 +157,8 @@ int mosAddch (MOSIMG *image, int y, int x, int c);
 void DisplayCurrentImg (MOSIMG *current);
 
 /// Destroy an image, deallocating the used memory
-void FreeImg (MOSIMG *img);
+void FreeImg (Image *img);
+/// Destroy a MOSMIG, deallocating the used memory
+void FreeMOSIMG (MOSIMG *image);
 
 #endif

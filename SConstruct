@@ -1,6 +1,13 @@
-src = Glob ('*.c')
-libs = ['ncurses', 'panel', 'menu']
-libpath = ['/usr/lib', '/usr/local/lib']
-Decider ('MD5-timestamp')
+env = Environment (
+	LIBS = ['ncurses', 'panel', 'menu'],
+	LIBPATH = ['/usr/lib', '/usr/local/lib'],
+	CCFLAGS = "-g -Wall -pipe"
+)
+env.Decider ('MD5-timestamp')
 
-Program ('nmos', src, LIBS = libs, LIBPATH = libpath, CCFLAGS = "-g -Wall -pipe")
+
+src = ['nmos.c', 'img.c', 'color.c', 'main.c', 'positioning.c', 'wins.c'],
+cat_src = ['img.c', 'cat-nmos.c'],
+
+env.Program ('nmos', src)
+env.Program ('cat-nmos', cat_src)

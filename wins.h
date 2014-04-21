@@ -20,6 +20,7 @@ void UpdateHud (WINDOW *hud, Cursor cur, Direction dir);
 /** 
  * Prints a message in the HUD and waits for keystroke
  * 
+ * @param[in] hud the HUD
  * @param[in] message Message to be written in the HUD
  * 
  * @return the key pressed for leaving

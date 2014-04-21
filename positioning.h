@@ -75,7 +75,7 @@ void MoveAll (Cursor *position, MOSIMG *current, Direction dir);
 /**
  * Changes the default direction for the movement
  * 
- * @param[in] hud we need the hud for the message
+ * @param[in] c the key pressed, which we use to know what the desired direction is
  * @param[inout] dir The current direction; might be changed
  */
 void ChangeDefaultDirection (int c, Direction *dir);

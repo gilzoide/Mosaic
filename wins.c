@@ -9,7 +9,7 @@ WINDOW *CreateHud () {
 	wattroff (win, A_BOLD);
 	waddstr (win, "Help ");
 	wattron (win, A_BOLD);
-	waddstr (win, "Esc: ");
+	waddstr (win, "F10: ");
 	wattroff (win, A_BOLD);
 	waddstr (win, "Menu ");
 	wattron (win, A_BOLD);
@@ -77,7 +77,7 @@ void Help () {
 	};
 	// the hotkeys
 	char *hotkeys[] = {
-		"F1", "Esc", "^Q",
+		"F1", "F10", "^Q",
 		"Arrow Keys", "^D", "^B", "Page Up/Page Down", "Home/End",
 		"F2", "^S", "^O", "^R", "^C/^X", "^V", "Tab"
 	};

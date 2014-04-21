@@ -88,7 +88,7 @@ MOSIMG *CreateNewImg (IMGS *everyone, MOSIMG *current) {
 	int new_height = INITIAL_HEIGHT, new_width = INITIAL_WIDTH;
 	everyone->size++;
 	
-	MOSIMG *new_image = NewImg (new_height, new_width);
+	MOSIMG *new_image = NewMOSIMG (new_height, new_width);
 	
 	// first image: no one's after or before
 	if (everyone->list == NULL) {
@@ -102,6 +102,21 @@ MOSIMG *CreateNewImg (IMGS *everyone, MOSIMG *current) {
 	return new_image;
 }
 
+void RefreshMOSIMG (MOSIMG *current) {
+	wmove (current->win, 0, 0);
+	
+	// write in the WINDOW
+	int i, j;
+	for (i = 0; i < current->img.height; i++) {
+		for (j = 0;  j < current->img.width; j++) {
+			mvwaddch (current->win, i, j, current->img.mosaic[i][j]);
+		}
+	}
+	
+	// display it
+	DisplayCurrentImg (current);
+}
+
 
 void DestroyIMGS (IMGS *everyone) {
 	MOSIMG *aux, *next;
@@ -109,6 +124,7 @@ void DestroyIMGS (IMGS *everyone) {
 	
 	for (aux = everyone->list, i = 0; i < everyone->size; i++, aux = next) {
 		next = aux->next;
-		FreeImg (aux);
+		FreeMOSIMG (aux);
+		free (aux);
 	}
 }

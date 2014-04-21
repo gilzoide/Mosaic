@@ -12,34 +12,41 @@ void InitIMGS (IMGS *everyone) {
 }
 
 
-MOSIMG *NewImg (int new_height, int new_width) {
-	// create new image
-	MOSIMG *new_image;
-	if ((new_image = (MOSIMG*) malloc (sizeof (MOSIMG))) == NULL)
-		return NULL;
-		
+int NewImg (Image *img, int new_height, int new_width) {
 	// fill it's dimensions
-	new_image->img.height = new_height;
-	new_image->img.width = new_width;
+	img->height = new_height;
+	img->width = new_width;
 	
 	// alloc the dinamic stuff
 	// mosaic:
-	if ((new_image->img.mosaic = (char**) malloc (new_height * sizeof (char*))) == NULL)
-		return NULL;
+	if ((img->mosaic = (char**) malloc (new_height * sizeof (char*))) == NULL)
+		return -1;
 	// attributes:
-	if ((new_image->img.attr = (unsigned char**) malloc (new_height * sizeof (char*))) == NULL)
-		return NULL;
+	if ((img->attr = (unsigned char**) malloc (new_height * sizeof (char*))) == NULL)
+		return -1;
 
 	int i;
 	for (i = 0; i < new_height; i++) {
-		if ((new_image->img.mosaic[i] = (char*) malloc (new_width * sizeof (char))) == NULL)
-			return NULL;
-		if ((new_image->img.attr[i] = (unsigned char*) malloc (new_width * sizeof (char))) == NULL)
-			return NULL;
+		if ((img->mosaic[i] = (char*) malloc (new_width * sizeof (char))) == NULL)
+			return -1;
+		if ((img->attr[i] = (unsigned char*) malloc (new_width * sizeof (char))) == NULL)
+			return -1;
 	}
+	
+	return 0;
+}
+
+
+MOSIMG *NewMOSIMG (int new_height, int new_width) {
+	// create new MOSIMG
+	MOSIMG *new_image;
+	if ((new_image = (MOSIMG*) malloc (sizeof (MOSIMG))) == NULL)
+		return NULL;
+	
+	NewImg (&new_image->img, new_height, new_width);
 
 	// clear the mosaic with whitespaces
-	int j;
+	int i, j;
 	for (i = 0; i < new_height; i++)
 		for (j = 0; j < new_width; j++)
 			new_image->img.mosaic[i][j] = ' ';
@@ -53,9 +60,6 @@ MOSIMG *NewImg (int new_height, int new_width) {
 	
 	new_image->pan = new_panel (new_image->win);
 	DisplayCurrentImg (new_image);
-	//update_panels ();
-	//doupdate ();
-	//prefresh (new_image->win, 1, 1, new_image->y, new_image->x, new_height, new_width);
 
 	return new_image;
 }
@@ -151,12 +155,11 @@ int LoadImg (MOSIMG *image, const char *file_name) {
 	ResizeImg (image, new_height, new_width);
 
 	char c;
-	// there's supposed to have a '\n' to discard after %dx%d, but if don't, we read what's after
+	// there's supposed to have a '\n' to discard after %dx%d; but if there ain't one, we read what's after
 	if ((c = fgetc (f)) != '\n')
 		ungetc (c, f);
 	
 	int i, j;
-	wmove (image->win, 0, 0);
 	for (i = 0; i < image->img.height; i++) {
 		// read the line until the end or no more width is available
 		for (j = 0; j < image->img.width; j++) {
@@ -166,12 +169,10 @@ int LoadImg (MOSIMG *image, const char *file_name) {
 			else if (c == '\n')
 				break;
 			image->img.mosaic[i][j] = c;
-			wechochar (image->win, c);
 		}
 		// ...complete with whitespaces
 		for ( ;  j < image->img.width; j++) {
 			image->img.mosaic[i][j] = ' ';
-			wechochar (image->win, ' ');
 		}
 		
 		// we read the whole line, but the tailing '\n', we need to discard it
@@ -184,13 +185,12 @@ int LoadImg (MOSIMG *image, const char *file_name) {
 FILL_WITH_BLANK:
 	// well, maybe we reached OEF, so everything else is a blank...
 	for ( ; i < image->img.height; i++) {
-		for ( ;  j < image->img.width; j++) {
+		for (j = 0;  j < image->img.width; j++) {
 			image->img.mosaic[i][j] = ' ';
-			wechochar (image->win, ' ');
 		}
-		
-		j = 0;
 	}
+	
+	fclose (f);
 
 	return 0;
 }
@@ -214,15 +214,19 @@ void DisplayCurrentImg (MOSIMG *current) {
 }
 
 
-void FreeImg (MOSIMG *image) {
+void FreeImg (Image *img) {
 	int i;
-	for (i = 0; i < image->img.height; i++) {
-		free (image->img.attr[i]);
-		free (image->img.mosaic[i]);
+	for (i = 0; i < img->height; i++) {
+		free (img->attr[i]);
+		free (img->mosaic[i]);
 	}
-	free (image->img.attr);
-	free (image->img.mosaic);
+	free (img->attr);
+	free (img->mosaic);
+}
+
+
+void FreeMOSIMG (MOSIMG *image) {
+	FreeImg (&image->img);
 	del_panel (image->pan);
 	delwin (image->win);
-	free (image);
 }

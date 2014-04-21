@@ -1,6 +1,7 @@
 # executable
 a.out
 nmos
+cat-nmos
 # text backups
 *~
 # object files, after compilation

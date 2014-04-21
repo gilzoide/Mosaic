@@ -42,6 +42,15 @@ void CursInit ();
 void DefaultDirection (WINDOW *hud, Direction *dir);
 
 
+
+/**
+ * The copy buffer
+ * 
+ * CopyBuffer is used at the Copy/Cut and Paste functions.
+ * 
+ * @warning CopyBuffers must be destroid before the program exits,
+ * to avoid memory leaks!
+ */
 typedef struct {
 	WINDOW *buff;		///< WINDOW that stores the mosaic
 	Cursor coordinates;	///< copy coordinates: origin_y/x for the upper-left corner, y/x for the size (how many chars in each direction)
@@ -91,6 +100,12 @@ int Paste (CopyBuffer *buffer, MOSIMG *current, Cursor cursor);
  * @return pointer to the created MOSIMG, to be stored in the 'current'
  */
 MOSIMG *CreateNewImg (IMGS *everyone, MOSIMG *current);
+/**
+ * Reprint the Image from scratch, and refreshes it's WINDOW
+ * 
+ * @param current Img to be displayed
+ */
+void RefreshMOSIMG (MOSIMG *current);
 /**
  * Destroy and free memory from the images list
  * 

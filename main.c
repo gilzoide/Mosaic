@@ -17,11 +17,13 @@ int main (int argc, char *argv[]) {
 	current = CreateNewImg (&everyone, current);
 	
 	
-	int c = KEY_ESC;
+	int c = KEY_F(10);
 	int i;
 	while (c != KEY_CTRL_Q) {
-		if (c == KEY_ESC)
+		if (c == KEY_F(10)) {
 			c = Menu ();
+			DisplayCurrentImg (current);
+		}
 		
 		//~ printw ("%d ", c);
 		switch (c) {
@@ -84,7 +86,7 @@ int main (int argc, char *argv[]) {
 				
 			case KEY_CTRL_O:	// load mosaic
 				switch (LoadImg (current, "teste.mosi")) {
-					case 0:	PrintHud (hud, "Loaded successfully!"),	DisplayCurrentImg (current); break;
+					case 0:	RefreshMOSIMG (current), PrintHud (hud, "Loaded successfully!"); break;
 					case 1: PrintHud (hud, "No dimensions in this file, dude! =/");	break;
 					default: PrintHud (hud, "Sorry, no can load this... =/"); break;
 				}

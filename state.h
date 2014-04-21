@@ -23,6 +23,9 @@ State state;	///< the global Nmos State
 #define TOUCHED 	0b00000001	///< Was something changed? To ask if you really want to exit =P
 #define SELECTION 	0b00000010	///< Box/Selection mode! Makes a difference when navigating and editing (copy, paste, attributes)
 #define ERASED		0b00000100	///< A char was erased by Backspace or Delete buttons
+
+#define COLORED		0b10000000	///< CAT - Should we color the output?
+#define DIMMENSIONS	0b01000000	///< CAT - Should we display the dimensions?
 // states operations
 #define IS_(a)		(state & a)		///< Used to check if it's in the 'a' state or not
 #define ENTER_(a)	(state |= a)	///< Used to enter the 'a' state
