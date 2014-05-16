@@ -53,7 +53,7 @@ MOSIMG *NewMOSIMG (int new_height, int new_width) {
 
 	// create the curses window and panel
 	new_image->win = newpad (new_height + 1, new_width + 1);
-	dobox (new_image->win);	// put a border
+	dobox (new_image);	// put a border
 
 	new_image->y = new_image->x = 0;
 	scrollok (new_image->win, TRUE);
@@ -65,42 +65,78 @@ MOSIMG *NewMOSIMG (int new_height, int new_width) {
 }
 
 
-void dobox (WINDOW *win) {
-	int x, y;
-	getmaxyx (win, y, x);
+void dobox (MOSIMG *img) {
 	int i;
+	int y = img->img.height;
+	int x = img->img.width;
 	for (i = 0; i < x; i++) {
-		mvwaddch (win, y - 1, i, ACS_HLINE);
+		mvwaddch (img->win, y, i, ACS_HLINE);
 	}
 	for (i = 0; i < y; i++) {
-		mvwaddch (win, i, x - 1, ACS_VLINE);
+		mvwaddch (img->win, i, x, ACS_VLINE);
 	}
-	mvwaddch (win, y - 1, x - 1, ACS_LRCORNER);
+	mvwaddch (img->win, y, x, ACS_LRCORNER);
 }
 
 
-int ResizeImg (MOSIMG *target, int new_height, int new_width) {
+int ResizeImg (Image *img, int new_height, int new_width) {
+	// old dimensions
+	int old_height = img->height;
+	int old_width = img->width;
 	// new dimensions
-	target->img.height = new_height;
-	target->img.width = new_width;
+	img->height = new_height;
+	img->width = new_width;
+	
+	int i;
+	for (i = old_height; i > new_height; i--) {
+		free (img->mosaic[i]);
+		free (img->attr[i]);
+	}
+	
 	
 	// realloc the dinamic stuff
 	// mosaic:
-	if ((target->img.mosaic = (char**) realloc (target->img.mosaic, new_height * sizeof (char*))) == NULL)
+	if ((img->mosaic = (char**) realloc (img->mosaic, new_height * sizeof (char*))) == NULL)
 		return -1;
 	// attributes:
-	if ((target->img.attr = (unsigned char**) realloc (target->img.attr, new_height * sizeof (char*))) == NULL)
+	if ((img->attr = (unsigned char**) realloc (img->attr, new_height * sizeof (char*))) == NULL)
 		return -1;
 		
-	int i;
 	for (i = 0; i < new_height; i++) {
-		if ((target->img.mosaic[i] = (char*) realloc (target->img.mosaic[i], new_width * sizeof (char))) == NULL)
+		if ((img->mosaic[i] = (char*) realloc (img->mosaic[i], new_width * sizeof (char))) == NULL)
 			return -1;
-		if ((target->img.attr[i] = (unsigned char*) realloc (target->img.attr[i], new_width * sizeof (char))) == NULL)
+		if ((img->attr[i] = (unsigned char*) realloc (img->attr[i], new_width * sizeof (char))) == NULL)
 			return -1;
+	}
+	
+	// maybe it grew, so complete with blanks
+	int j;
+	for (i = old_height; i < new_height; i++) {
+		for (j = 0; j < new_width; j++)
+			img->mosaic[i][j] = ' ';
+	}
+	
+	for (i = old_width; i < new_width; i++) {
+		for (j = 0; j < new_height; j++)
+			img->mosaic[j][i] = ' ';
 	}
 
 	return 0;
+}
+
+
+int ResizeMOSIMG (MOSIMG *target, int new_height, int new_width) {
+	delwin (target->win);
+	target->win = newpad (new_height + 1, new_width + 1);
+	int i = ResizeImg (&target->img, new_height, new_width);
+	dobox (target);
+	
+	if (i == -1) {
+		fprintf (stderr, "Resize failed");
+		exit (-1);
+	}
+	
+	return i;
 }
 
 
@@ -152,7 +188,7 @@ int LoadImg (MOSIMG *image, const char *file_name) {
 	if (!fscanf (f, "%dx%d", &new_height, &new_width))
 		return 1;
 	
-	ResizeImg (image, new_height, new_width);
+	ResizeMOSIMG (image, new_height, new_width);
 
 	char c;
 	// there's supposed to have a '\n' to discard after %dx%d; but if there ain't one, we read what's after

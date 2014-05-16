@@ -94,7 +94,10 @@ int main (int argc, char *argv[]) {
 				break;
 				
 			case KEY_CTRL_R:	// resize mosaic
-				ResizeImg (current, 20, 20);
+				werase (current->win);
+				wrefresh (current->win);
+				ResizeMOSIMG (current, 20, 30);
+				RefreshMOSIMG (current);
 				break;
 				
 			case KEY_CTRL_B:	// box selection mode!

@@ -1,5 +1,5 @@
 /** @file img.h
- * .mos format definitions and operations
+ * .mosi format definitions and operations
  */
  
 #ifndef IMG_H
@@ -84,9 +84,21 @@ int NewImg (Image *img, int new_height, int new_width);
  */
 MOSIMG *NewMOSIMG (int new_height, int new_width);
 /** aux for the NewMOSIMG: creates the right and bottom border */
-void dobox (WINDOW *win);
+void dobox (MOSIMG *img);
 /**
- * Resize a @ref MOSIMG, reallocating the necessary memory
+ * Resize a @ref Image, reallocating the necessary memory
+ * 
+ * @param[in] target The target Image
+ * @param[in] new_height Image's new height
+ * @param[in] new_width Image's new width
+ * 
+ * @return 0 if successfully resized @ref MOSIMG
+ * @return -1 if allocation failed
+ */
+int ResizeImg (Image *img, int new_height, int new_width);
+/**
+ * Resize a @ref MOSIMG, reallocating the necessary memory and resizing it's WINDOW
+ * @note This function just resizes the WINDOW, without caring about erasing or printing it on the screen
  * 
  * @param[in] target the target Image
  * @param[in] new_height Image's new height
@@ -95,7 +107,7 @@ void dobox (WINDOW *win);
  * @return 0 if successfully resized @ref MOSIMG
  * @return -1 if allocation failed
  */
-int ResizeImg (MOSIMG *target, int new_height, int new_width);
+int ResizeMOSIMG (MOSIMG *target, int new_height, int new_width);
 
 /**
  * Only to say if you want to link the img before or after the other in LinkImg

@@ -108,7 +108,7 @@ void RefreshMOSIMG (MOSIMG *current) {
 	// write in the WINDOW
 	int i, j;
 	for (i = 0; i < current->img.height; i++) {
-		for (j = 0;  j < current->img.width; j++) {
+		for (j = 0; j < current->img.width; j++) {
 			mvwaddch (current->win, i, j, current->img.mosaic[i][j]);
 		}
 	}

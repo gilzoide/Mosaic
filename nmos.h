@@ -26,8 +26,8 @@
 #define KEY_CTRL_V 22
 #define KEY_CTRL_X 24
 
-#define INITIAL_WIDTH 100
 #define INITIAL_HEIGHT 30
+#define INITIAL_WIDTH 40
 
 #define BOUNDARY_Y (LINES)
 #define BOUNDARY_X (COLS)
