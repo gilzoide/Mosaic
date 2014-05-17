@@ -1,4 +1,4 @@
-#include "nmos.h"
+#include "mosaic.h"
 #include <ctype.h>
 
 int main (int argc, char *argv[]) {

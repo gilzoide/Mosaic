@@ -54,7 +54,7 @@ void printImg (MOSIMG *img) {
 int main (int argc, char *argv[]) {
 	// we need the input file's name
 	if (argc < 2) {
-		fprintf (stderr, "Usage: cat-nmos [options] <filename>\n");
+		fprintf (stderr, "Usage: cat-nmos [options -dc] <filename>\n");
 		return 0;
 	}
 	

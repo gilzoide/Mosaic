@@ -6,8 +6,8 @@ env = Environment (
 env.Decider ('MD5-timestamp')
 
 
-src = ['nmos.c', 'img.c', 'color.c', 'main.c', 'positioning.c', 'wins.c'],
+src = ['mosaic.c', 'img.c', 'color.c', 'main.c', 'positioning.c', 'wins.c'],
 cat_src = ['img.c', 'moscat.c'],
 
-env.Program ('nmos', src)
+env.Program ('maae', src)
 env.Program ('moscat', cat_src)
