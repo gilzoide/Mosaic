@@ -1,9 +1,9 @@
-/** @file nmos.h
+/** @file mosaic.h
  * Main's function includes, prototypes and definitions
  */
  
-#ifndef NMOS_H
-#define NMOS_H
+#ifndef MOSAIC_H
+#define MOSAIC_H
 
 #include <curses.h>
 #include <panel.h>

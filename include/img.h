@@ -88,7 +88,7 @@ void dobox (MOSIMG *img);
 /**
  * Resize a @ref Image, reallocating the necessary memory
  * 
- * @param[in] target The target Image
+ * @param[in] img The target Image
  * @param[in] new_height Image's new height
  * @param[in] new_width Image's new width
  * 

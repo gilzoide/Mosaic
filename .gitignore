@@ -1,16 +1,13 @@
-# executable
-a.out
-nmos
-cat-nmos
+# executables, object files
+build/
 # text backups
 *~
 # object files, after compilation
 *.o
-# any Nmos images
+# any Mosaic images
 *.mosi
 
 # scons stuff
 .sconsign*
 
-layout
 html
