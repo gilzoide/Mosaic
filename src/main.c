@@ -16,6 +16,7 @@ int main (int argc, char *argv[]) {
 	MOSIMG *current = NULL;
 	current = CreateNewImg (&everyone, current);
 	
+	ENTER_(TRANSPARENT);
 	
 	int c = KEY_F(10);
 	int i;

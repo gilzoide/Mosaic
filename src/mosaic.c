@@ -70,8 +70,10 @@ int Paste (CopyBuffer *buffer, MOSIMG *current, Cursor cursor) {
 			for (j = 0; j <= buffer->coordinates.x; j++) {
 				// read the char
 				c = mvwinch (buffer->buff, buffer->coordinates.origin_y + i, buffer->coordinates.origin_x + j);
+				if (IS_(TRANSPARENT) && c == ' ')
+					continue;
 				// if outside MOSIMG window, don't try to put 'c' in it, or it'll crash
-				if (mosAddch (current, cursor.y + i, cursor.x + j, c) == ERR)
+				else if (mosAddch (current, cursor.y + i, cursor.x + j, c) == ERR)
 					break;
 			}
 		}

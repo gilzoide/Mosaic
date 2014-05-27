@@ -141,20 +141,30 @@ int Menu () {
 	
 	MENU *menu;
 	ITEM **items;
-	const int num_items = 1;
-	const char *choices[] = {
-		"Help"
+	const int num_items = 3;
+	const char *choice_titles[] = {	// 
+		"Help",
+		"New Image",
+		"Quit"
 	};
-
+	const int choices[] = {
+		KEY_F(1),
+		KEY_F(2),
+		0
+	};
 	// create the items
-	items = (ITEM**) calloc (num_items, sizeof (ITEM*));
+	items = (ITEM**) calloc (num_items + 1, sizeof (ITEM*));
 	int i;
-	for (i = 0; i < num_items; i++) {
-		items[i] = new_item (choices[i], choices[i]);
+	for (i = 0; i < 3; i++) {
+		items[i] = new_item (choice_titles[i], choice_titles[i]);
+		set_item_userptr (items[i], (void*) &choices[i]);
 	}
 	
 	// create the menu
 	menu = new_menu (items);
+	// options: cycle and don't show description
+	menu_opts_off (menu, O_SHOWDESC | O_NONCYCLIC);
+	// menu's windows
 	set_menu_win (menu, win);
 	set_menu_sub (menu, derwin (win, MENU_HEIGHT - 2, MENU_WIDTH - 2, 1, 1));
 	
@@ -162,8 +172,10 @@ int Menu () {
 	post_menu (menu);
 	wrefresh (win);
 	
-	getch ();
+	// get the chosen option
+	c = GetChosenOption (menu);
 
+	unpost_menu (menu);
 	free_menu (menu);
 	for (i = 0; i < num_items; i++)
 		free_item (items[i]);
@@ -172,6 +184,44 @@ int Menu () {
 	DeletePanel (panel);
 
 	return c;
+}
+
+
+int GetChosenOption (MENU *menu) {
+	int c;
+	// drives through the menu options
+	while (c != ' ') {
+		c = getch ();
+		switch (c) {
+			case ' ':
+				break;
+
+			case KEY_DOWN:
+				menu_driver (menu, REQ_DOWN_ITEM);
+				break;
+
+			case KEY_UP:
+				menu_driver (menu, REQ_UP_ITEM);
+				break;
+				
+			case KEY_HOME:
+				menu_driver (menu, REQ_FIRST_ITEM);
+				break;
+				
+			case KEY_END:
+				menu_driver (menu, REQ_LAST_ITEM);
+				break;
+
+			default:
+				if (menu_driver (menu, c) == E_NO_MATCH)
+					menu_driver (menu, REQ_LAST_ITEM);
+				c = ' ';
+		}
+		// refreshes the menu window
+		wrefresh (menu_win (menu));
+	}
+	
+	return *(int*) (item_userptr (current_item (menu)));
 }
 
 

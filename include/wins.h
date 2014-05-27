@@ -34,6 +34,9 @@ int PrintHud (WINDOW *hud, const char *message);
 void Help ();
 /// Show the options and actions interactive menu
 int Menu ();
+/// Auxilary function for the Menu: menu driver
+int GetChosenOption (MENU *menu);
+
 /// Show the attributes table
 int AttrTable (MOSIMG *current, Cursor cur);
 /**
