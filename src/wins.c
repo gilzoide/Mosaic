@@ -56,19 +56,11 @@ int PrintHud (WINDOW *hud, const char *message) {
 void Help () {
 	curs_set (0);	// don't display the cursor, pliz
 	
-	WINDOW *help;
-	PANEL *up;
+	PANEL *up = CreateBoxedTitledWindow (HELP_HEIGHT, HELP_WIDTH, 0, 0, "HELP");
+	WINDOW *help = panel_window (up);
 
-	help = newwin (HELP_HEIGHT, HELP_WIDTH, 0, 0);
-	up = new_panel (help);
-	update_panels ();
-	doupdate ();
-
-	box (help, 0, 0);
 	wbkgd (help, COLOR_PAIR (WBl));
-	
-	mvwaddstr (help, 0, HELP_WIDTH/2 - 3, " HELP ");
-	
+
 	// the subtitles
 	char *subtitles[] = {
 		"Nmos commands (basic hotkeys)",
@@ -135,10 +127,7 @@ void Help () {
 	wrefresh (help);
 	getch ();
 
-	werase (help);
-	wrefresh (help);
-	del_panel (up);
-	delwin (help);
+	DeletePanel (up);
 	
 	curs_set (1);	// and back with the cursor
 }
@@ -147,9 +136,10 @@ void Help () {
 int Menu () {
 	int c = 0;
 	
+	PANEL *panel = CreateBoxedTitledWindow (MENU_HEIGHT, MENU_WIDTH, LINES - MENU_HEIGHT - 1, 0, "MENU");		// the panel for the menu's window
+	WINDOW *win = panel_window (panel);	// window for the menu
+	
 	MENU *menu;
-	WINDOW *win;	// window for the menu
-	PANEL *up;		// the panel for the menu's window
 	ITEM **items;
 	const int num_items = 1;
 	const char *choices[] = {
@@ -163,18 +153,10 @@ int Menu () {
 		items[i] = new_item (choices[i], choices[i]);
 	}
 	
-	// create the menu's window and panel
-	win = newwin (HELP_HEIGHT, HELP_WIDTH, 0, 0);
-	up = new_panel (win);
-	update_panels ();
-	doupdate ();
-
-	box (win, 0, 0);
-	wbkgd (win, COLOR_PAIR (WG));
-	
 	// create the menu
 	menu = new_menu (items);
 	set_menu_win (menu, win);
+	set_menu_sub (menu, derwin (win, MENU_HEIGHT - 2, MENU_WIDTH - 2, 1, 1));
 	
 	// display the menu
 	post_menu (menu);
@@ -187,10 +169,7 @@ int Menu () {
 		free_item (items[i]);
 	free (items);
 	
-	werase (win);
-	wrefresh (win);
-	del_panel (up);
-	delwin (win);
+	DeletePanel (panel);
 
 	return c;
 }
@@ -217,4 +196,32 @@ int AttrTable (MOSIMG *current, Cursor cur) {
 	delwin (table);
 	
 	return 0;
+}
+
+
+PANEL *CreateBoxedTitledWindow (int nlines, int ncols, int begin_y, int begin_x, const char *title) {
+	WINDOW *win = newwin (nlines, ncols, begin_y, begin_x);
+	PANEL *panel = new_panel (win);
+	update_panels ();
+	doupdate ();
+
+	box (win, 0, 0);
+	
+	int length = strlen (title);
+	int title_begin = (ncols - length)/2;
+	mvwaddstr (win, 0, title_begin, title);
+	mvwaddch (win, 0, title_begin - 1, ' ');
+	mvwaddch (win, 0, title_begin + length, ' ');
+	
+	return panel;
+}
+
+
+void DeletePanel (PANEL *pan) {
+	WINDOW *win = panel_window (pan);
+	
+	werase (win);
+	wrefresh (win);
+	del_panel (pan);
+	delwin (win);	
 }
