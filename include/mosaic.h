@@ -8,23 +8,13 @@
 #include <curses.h>
 #include <panel.h>
 #include <stdio.h>
+
 #include "color.h"
 #include "img.h"
 #include "wins.h"
 #include "positioning.h"
 #include "state.h"
-
-#define KEY_ESC 27
-#define KEY_CTRL_B 2
-#define KEY_CTRL_C 3
-#define KEY_CTRL_D 4
-#define KEY_CTRL_O 15
-#define KEY_CTRL_Q 17
-#define KEY_CTRL_R 18
-#define KEY_CTRL_S 19
-#define KEY_CTRL_U 21
-#define KEY_CTRL_V 22
-#define KEY_CTRL_X 24
+#include "keys.h"
 
 #define INITIAL_HEIGHT 30
 #define INITIAL_WIDTH 40

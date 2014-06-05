@@ -18,8 +18,9 @@ int main (int argc, char *argv[]) {
 	
 	ENTER_(TRANSPARENT);
 	
-	int c = KEY_F(10);
 	int i;
+	int c = KEY_F(10);		// choice int -> starts with a F10, enter the menu
+	
 	while (c != KEY_CTRL_Q) {
 		if (c == KEY_F(10)) {
 			c = Menu ();
@@ -141,7 +142,7 @@ int main (int argc, char *argv[]) {
 					ungetch (KEY_BACKSPACE);
 				break;
 			
-			// WARNING: don't change BACKSPACE nor DC out of here nor out of order, as they deppend.on 'default' (so I guess you know we shouldn't put any 'break's either)
+			// WARNING: don't change BACKSPACE nor DC out of here nor out of order, as they deppend on 'default' (so I guess you know we shouldn't put any 'break's either)
 			case KEY_BACKSPACE: case 127:	// Backspace: delete the char before (the curses definition says something else, but in general it's 127)
 				Move (&cursor, current, REVERSE (default_direction));
 			case KEY_DC:	// delete: well, just erase the damn char (put a ' ' in it, default takes care of this for us =P)
@@ -162,11 +163,17 @@ int main (int argc, char *argv[]) {
 		}
 		
 		UpdateHud (hud, cursor, default_direction);
+		
+		// Exit the program
+		if (c == KEY_CTRL_Q) {
+			break;
+		}
 		c = getch ();
 	}
 	
 	DestroyCopyBuffer (&buffer);
 	DestroyIMGS (&everyone);
+	DestroyWins ();
 
 	endwin ();
 	return 0;

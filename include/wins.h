@@ -15,7 +15,18 @@
 #include <panel.h>
 #include <menu.h>
 #include <string.h>
+
 #include "positioning.h"
+#include "keys.h"
+
+/**
+ * Initialize all the important windows (and menus, panels, forms...)
+ * 
+ * As these are used frequently, we create them only once, and then just
+ * show on the fly
+ */
+void InitWins ();
+
 
 /// Draw the HUD, with a few shortcuts and the cursor position
 WINDOW *CreateHud ();
@@ -30,6 +41,7 @@ void UpdateHud (WINDOW *hud, Cursor cur, Direction dir);
  * @return the key pressed for leaving
  */
 int PrintHud (WINDOW *hud, const char *message);
+
 /// Draw the non-interactive help screen
 void Help ();
 /// Show the options and actions interactive menu
@@ -59,6 +71,8 @@ PANEL *CreateBoxedTitledWindow (int nlines, int ncols, int begin_y, int begin_x,
  * Deletes a previously created PANEL and the WINDOW inside, erasing it's contents
  */
 void DeletePanel (PANEL *pan);
+
+void DestroyWins ();
 
 
 #endif

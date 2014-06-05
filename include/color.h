@@ -1,7 +1,5 @@
 /** @file color.h
- * Color defines and initialization
- * 
- * @note Colors are defined in format: _foreground-background_
+ * Color definitions and initialization
  */
 
 #ifndef COLOR_H
@@ -9,84 +7,101 @@
 
 #include <curses.h>
 
-/// Initialize all color combinations
+/// Initialize all color combinations in Curses
 void InitColors ();
-/// A simple test of the color definitions
-void TestColors ();
+/// A simple test of the color definitions, with Curses as output
+void TestColors_Curses ();
+/// A simple test of the color definitions, with stdout as output
+void TestColors_Stdout ();
 
-// By Foregrounds:
+/**
+ * Color definitions
+ * 
+ * The colors used in Mosaic (and in terminals, in overall), defined
+ * in an enum. These are already the COLOR_PAIRs at curses.
+ * 
+ * @note Colors are defined in the format: _foreground-background_
+ * @note They're agrouped by foreground color.
+ */
+enum colors {
+	Normal = 0,	///< Terminal's default colors
 // black
-#define BkBk 1	///< Black-Black
-#define BkR 2	///< Black-Red
-#define BkG 3	///< Black-Green
-#define BkY 4	///< Black-Yellow
-#define BkBl 5	///< Black-Blue
-#define BkM 6	///< Black-Magenta
-#define BkC 7	///< Black-Cyan
-#define BkW 8	///< Black-White
+	BkBk, 	///< Black-Black
+	BkR, 	///< Black-Red
+	BkG, 	///< Black-Green
+	BkY, 	///< Black-Yellow
+	BkBl, 	///< Black-Blue
+	BkM, 	///< Black-Magenta
+	BkC, 	///< Black-Cyan
+	BkW, 	///< Black-White
 // red
-#define RBk 9	///< Red-Black
-#define RR 10	///< Red-Red
-#define RG 11	///< Red-Green
-#define RY 12	///< Red-Yellow
-#define RBl 13	///< Red-Blue
-#define RM 14	///< Red-Magenta
-#define RC 15	///< Red-Cyan
-#define RW 16	///< Red-White
+	RBk, 	///< Red-Black
+	RR, 	///< Red-Red
+	RG, 	///< Red-Green
+	RY, 	///< Red-Yellow
+	RBl, 	///< Red-Blue
+	RM, 	///< Red-Magenta
+	RC, 	///< Red-Cyan
+	RW, 	///< Red-White
 // green
-#define GBk 17	///< Green-Black
-#define GR 18	///< Green-Red
-#define GG 19	///< Green-Green
-#define GY 20	///< Green-Yellow
-#define GBl 21	///< Green-Blue
-#define GM 22	///< Green-Magenta
-#define GC 23	///< Green-Cyan
-#define GW 24	///< Green-White
+	GBk, 	///< Green-Black
+	GR, 	///< Green-Red
+	GG, 	///< Green-Green
+	GY, 	///< Green-Yellow
+	GBl, 	///< Green-Blue
+	GM, 	///< Green-Magenta
+	GC, 	///< Green-Cyan
+	GW, 	///< Green-White
 // yellow
-#define YBk 25	///< Yellow-Black
-#define YR 26	///< Yellow-Red
-#define YG 27	///< Yellow-Green
-#define YY 28	///< Yellow-Yellow
-#define YBl 29	///< Yellow-Blue
-#define YM 30	///< Yellow-Magenta
-#define YC 31	///< Yellow-Cyan
-#define YW 32	///< Yellow-White
+	YBk, 	///< Yellow-Black
+	YR, 	///< Yellow-Red
+	YG, 	///< Yellow-Green
+	YY, 	///< Yellow-Yellow
+	YBl, 	///< Yellow-Blue
+	YM, 	///< Yellow-Magenta
+	YC, 	///< Yellow-Cyan
+	YW, 	///< Yellow-White
 // blue
-#define BlBk 33	///< Blue-Black
-#define BlR 34	///< Blue-Red
-#define BlG 35	///< Blue-Green
-#define BlY 36	///< Blue-Yellow
-#define BlBl 37	///< Blue-Blue
-#define BlM 38	///< Blue-Magenta
-#define BlC 39	///< Blue-Cyan
-#define BlW 40	///< Blue-White
+	BlBk, 	///< Blue-Black
+	BlR, 	///< Blue-Red
+	BlG, 	///< Blue-Green
+	BlY, 	///< Blue-Yellow
+	BlBl, 	///< Blue-Blue
+	BlM, 	///< Blue-Magenta
+	BlC, 	///< Blue-Cyan
+	BlW, 	///< Blue-White
 // magenta
-#define MBk 41	///< Magenta-Black
-#define MR 42	///< Magenta-Red
-#define MG 43	///< Magenta-Green
-#define MY 44	///< Magenta-Yellow
-#define MBl 45	///< Magenta-Blue
-#define MM 46	///< Magenta-Magenta
-#define MC 47	///< Magenta-Cyan
-#define MW 48	///< Magenta-White
+	MBk,	///< Magenta-Black
+	MR, 	 ///< Magenta-Red
+	MG,  	///< Magenta-Green
+	MY,  	///< Magenta-Yellow
+	MBl,	///< Magenta-Blue
+	MM, 	 ///< Magenta-Magenta
+	MC, 	///< Magenta-Cyan
+	MW, 	///< Magenta-White
 // cyan
-#define CBk 49	///< Cyan-Black
-#define CR 50	///< Cyan-Red
-#define CG 51	///< Cyan-Green
-#define CY 52	///< Cyan-Yellow
-#define CBl 53	///< Cyan-Blue
-#define CM 54	///< Cyan-Magenta
-#define CC 55	///< Cyan-Cyan
-#define CW 56	///< Cyan-White
+	CBk, 	///< Cyan-Black
+	CR, 	///< Cyan-Red
+	CG, 	///< Cyan-Green
+	CY, 	///< Cyan-Yellow
+	CBl, 	///< Cyan-Blue
+	CM, 	///< Cyan-Magenta
+	CC, 	///< Cyan-Cyan
+	CW, 	///< Cyan-White
 // white
-#define WBk 57	///< White-Black
-#define WR 58	///< White-Red
-#define WG 59	///< White-Green
-#define WY 60	///< White-Yellow
-#define WBl 61	///< White-Blue
-#define WM 62	///< White-Magenta
-#define WC 63	///< White-Cyan
-#define WW 64	///< White-White
+	WBk, 	///< White-Black
+	WR, 	///< White-Red
+	WG, 	///< White-Green
+	WY, 	///< White-Yellow
+	WBl, 	///< White-Blue
+	WM,		///< White-Magenta
+	WC, 	///< White-Cyan
+	WW 	///< White-White
+};
 
+/**
+ * The codes for printing colored output at stdout
+ */
+char *Tcolor (enum colors color);
 
 #endif

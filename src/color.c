@@ -1,6 +1,7 @@
 #include "color.h"
 
 void InitColors () {
+	assume_default_colors (-1, -1);	// there's the default terminal color (Normal, in the colors enum)
 	// black
 	init_pair (BkBk, COLOR_BLACK, COLOR_BLACK);
 	init_pair (BkR, COLOR_BLACK, COLOR_RED);
@@ -75,7 +76,8 @@ void InitColors () {
 	init_pair (WW, COLOR_WHITE, COLOR_WHITE);
 }
 
-void TestColors () {
+
+void TestColors_Curses () {
 	int i;
 	
 	for (i = BkBk; i <= WW; i++) {
@@ -83,4 +85,48 @@ void TestColors () {
 		addch ('U');
 		refresh ();
 	}
+}
+
+
+void TestColors_Stdout () {
+	int i;
+	
+	for (i = BkBk; i <= WW; i++) {
+		printf ("%sU", Tcolor (i));
+	}
+}
+
+#define RED     "\x1b[31m"
+#define GREEN   "\x1b[32m"
+#define YELLOW  "\x1b[33m"
+#define BLUE    "\x1b[34m"
+#define MAGENTA "\x1b[35m"
+#define CYAN    "\x1b[36m"
+#define RESET   "\x1b[0m"
+
+//~ #define RESET   "\033[0m"
+//~ #define BLACK   "\033[30m"      /* Black */
+//~ #define RED     "\033[31m"      /* Red */
+//~ #define GREEN   "\033[32m"      /* Green */
+//~ #define YELLOW  "\033[33m"      /* Yellow */
+//~ #define BLUE    "\033[34m"      /* Blue */
+//~ #define MAGENTA "\033[35m"      /* Magenta */
+//~ #define CYAN    "\033[36m"      /* Cyan */
+//~ #define WHITE   "\033[37m"      /* White */
+#define BOLDBLACK   "\033[1m\033[30m"      /* Bold Black */
+#define BOLDRED     "\033[1m\033[31m"      /* Bold Red */
+#define BOLDGREEN   "\033[1m\033[32m"      /* Bold Green */
+#define BOLDYELLOW  "\033[1m\033[33m"      /* Bold Yellow */
+#define BOLDBLUE    "\033[1m\033[34m"      /* Bold Blue */
+#define BOLDMAGENTA "\033[1m\033[35m"      /* Bold Magenta */
+#define BOLDCYAN    "\033[1m\033[36m"      /* Bold Cyan */
+#define BOLDWHITE   "\033[1m\033[37m"      /* Bold White */
+
+char *Tcolor (enum colors color) {
+	char *color_table[] = {
+		"\033[0m",
+		"\033[31m"
+	};
+	
+	return color_table[color];
 }

@@ -12,8 +12,8 @@ void CursInit () {
 	noecho ();
 	
 	start_color ();	// Colors!
-	assume_default_colors (-1, -1);	// there's the default terminal color
 	InitColors ();	// initialize all the colors -> color.c
+	InitWins ();	// initializa all the windows
 }
 
 
