@@ -1,3 +1,7 @@
+# Mosaic, a curses ascart editor
+# Created by Gil Barbosa Reis
+# SCons script for building the program
+
 env = Environment (
 	LIBS = ['ncurses', 'panel', 'menu'],
 	LIBPATH = ['/usr/lib', '/usr/local/lib'],

@@ -1,7 +1,10 @@
 # executables, object files
 build/
-# text backups
+# text backups (and vim stuff)
 *~
+*.swp
+ses
+tags
 # object files, after compilation
 *.o
 # any Mosaic images

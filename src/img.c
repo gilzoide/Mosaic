@@ -19,7 +19,7 @@ int NewImg (Image *img, int new_height, int new_width) {
 	
 	// alloc the dinamic stuff
 	// mosaic:
-	if ((img->mosaic = (char**) malloc (new_height * sizeof (char*))) == NULL)
+	if ((img->mosaic = (int**) malloc (new_height * sizeof (int*))) == NULL)
 		return -1;
 	// attributes:
 	if ((img->attr = (unsigned char**) malloc (new_height * sizeof (char*))) == NULL)
@@ -27,7 +27,7 @@ int NewImg (Image *img, int new_height, int new_width) {
 
 	int i;
 	for (i = 0; i < new_height; i++) {
-		if ((img->mosaic[i] = (char*) malloc (new_width * sizeof (char))) == NULL)
+		if ((img->mosaic[i] = (int*) malloc (new_width * sizeof (int))) == NULL)
 			return -1;
 		if ((img->attr[i] = (unsigned char*) malloc (new_width * sizeof (char))) == NULL)
 			return -1;
@@ -96,14 +96,14 @@ int ResizeImg (Image *img, int new_height, int new_width) {
 	
 	// realloc the dinamic stuff
 	// mosaic:
-	if ((img->mosaic = (char**) realloc (img->mosaic, new_height * sizeof (char*))) == NULL)
+	if ((img->mosaic = (int**) realloc (img->mosaic, new_height * sizeof (int*))) == NULL)
 		return -1;
 	// attributes:
 	if ((img->attr = (unsigned char**) realloc (img->attr, new_height * sizeof (char*))) == NULL)
 		return -1;
 		
 	for (i = 0; i < new_height; i++) {
-		if ((img->mosaic[i] = (char*) realloc (img->mosaic[i], new_width * sizeof (char))) == NULL)
+		if ((img->mosaic[i] = (int*) realloc (img->mosaic[i], new_width * sizeof (int))) == NULL)
 			return -1;
 		if ((img->attr[i] = (unsigned char*) realloc (img->attr[i], new_width * sizeof (char))) == NULL)
 			return -1;
@@ -200,7 +200,7 @@ int LoadImg (MOSIMG *image, const char *file_name) {
 		// read the line until the end or no more width is available
 		for (j = 0; j < image->img.width; j++) {
 			if ((c = fgetc (f)) == EOF)
-				goto FILL_WITH_BLANK;	// yes, that's right, a f**king goto! blablabla good programming, blablabla; F**K OFF! (actually, used so won't need a flag or more comparisons to break both the fors)
+				goto FILL_WITH_BLANK;	// used so won't need a flag or more comparisons to break both the fors
 			// if it reached newline before width...
 			else if (c == '\n')
 				break;
@@ -236,7 +236,8 @@ int mosAddch (MOSIMG *image, int y, int x, int c) {
 	if (y >= image->img.height || x >= image->img.width)
 		return ERR;
 
-	mvwaddch (image->win, y, x, c);
+	//~ mvwaddch (image->win, y, x, c);
+	mvwaddnstr (image->win, y, x, &c, sizeof (int));
 	image->img.mosaic[y][x] = c;
 	return 0;
 }

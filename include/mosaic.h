@@ -27,11 +27,18 @@
 void CursInit ();
 
 /**
+ * Get a UTF-8 compatible int
+ * 
+ * We really want to use UTF-8, so we can display nice chars
+ */
+int toUTF8 ();
+
+
+
+/**
  * Asks for the user's choice for which direction he wants
  */
-void DefaultDirection (WINDOW *hud, Direction *dir);
-
-
+void DefaultDirection (Direction *dir);
 
 /**
  * The copy buffer

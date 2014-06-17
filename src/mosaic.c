@@ -17,8 +17,45 @@ void CursInit () {
 }
 
 
-void DefaultDirection (WINDOW *hud, Direction *dir) {
-	int c = PrintHud (hud, "new default direction (arrow keys)");
+char getBit (char c, int i) {
+	char out = c & (0b10000000 >> i);
+	return out >> (8 - i);
+}
+
+
+int toUTF8 (int c) {
+	int out = 0, bytes, i, j;
+	
+	// it's a multibyte UTF-8 char
+	if (c > 127) {
+		for (i = 0; i < 8; i++) {
+			// stopping condition; we still need to read the information here
+			if (!(c & (0b10000000 >> i))) {
+				for ( ; i < 8; i++) {
+					out <<= 1;
+					out += getBit (c, i);
+				}
+				break;
+			}
+		}
+		bytes = i;
+		for (i = 0; i < bytes; i++) {
+			for (j = 0; j < 6; j++) {
+				out <<= 1;
+				out += getBit (c, j + 2);
+			}
+		}
+	}
+	else {
+		return c;
+	}
+	
+	return out;
+}
+
+
+void DefaultDirection (Direction *dir) {
+	int c = PrintHud ("new default direction (arrow keys)");
 	ChangeDefaultDirection (c, dir);
 }
 

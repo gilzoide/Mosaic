@@ -27,11 +27,8 @@
  */
 void InitWins ();
 
-
-/// Draw the HUD, with a few shortcuts and the cursor position
-WINDOW *CreateHud ();
 /// Updates the position in the HUD
-void UpdateHud (WINDOW *hud, Cursor cur, Direction dir);
+void UpdateHud (Cursor cur, Direction dir);
 /** 
  * Prints a message in the HUD and waits for keystroke
  * 
@@ -40,7 +37,7 @@ void UpdateHud (WINDOW *hud, Cursor cur, Direction dir);
  * 
  * @return the key pressed for leaving
  */
-int PrintHud (WINDOW *hud, const char *message);
+int PrintHud (const char *message);
 
 /// Draw the non-interactive help screen
 void Help ();
@@ -55,8 +52,7 @@ int AttrTable (MOSIMG *current, Cursor cur);
  * Creates a PANEL with a boxed WINDOW, with a title in the middle of it's top border.
  * 
  * @note Regarding the nlines and ncols parameters, don't forget that the box border takes one line/column.
- * @note To get the WINDOW inside, use the curses function `panel_window ()`.
- * @warning Always remember to free the memory allocated by the WINDOWs and PANELs. If you want, use our @ref DeletePanel function.
+ * @warning Always remember to free the memory allocated by the curses WINDOWs. If you want, use our @ref DeleteWindow function.
  * 
  * @param nlines 	Number of lines
  * @param ncols 	Number of columns
@@ -64,14 +60,24 @@ int AttrTable (MOSIMG *current, Cursor cur);
  * @param begin_x 	The top-left corner X coordinate
  * @param title 	The title to be displayed
  * 
- * @return The PANEL created
+ * @return The WINDOW created
  */
-PANEL *CreateBoxedTitledWindow (int nlines, int ncols, int begin_y, int begin_x, const char *title);
+WINDOW *CreateBoxedTitledWindow (int nlines, int ncols, int begin_y, int begin_x, const char *title);
 /**
- * Deletes a previously created PANEL and the WINDOW inside, erasing it's contents
+ * Deletes a previously created PANEL and the WINDOW inside, erasing it's contents and freeing memory
+ *
+ * @note If the pointer is NULL, this function doesn't do a thing, so it's safer.
  */
 void DeletePanel (PANEL *pan);
-
+/**
+ * Deletes a previously created WINDOW, erasing it's contents and freeing memory.
+ *
+ * @note If the pointer is NULL, this function doesn't do a thing, so it's safer.
+ */
+void DeleteWindow (WINDOW *win);
+/**
+ * Deletes our important windows (menu, help, hud), freeing the memory associated
+ */
 void DestroyWins ();
 
 

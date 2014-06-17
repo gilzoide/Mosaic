@@ -3,7 +3,6 @@
 
 int main (int argc, char *argv[]) {
 	CursInit ();
-	WINDOW *hud = CreateHud ();
 	
 	Cursor cursor;
 	InitCursor (&cursor);
@@ -49,7 +48,7 @@ int main (int argc, char *argv[]) {
 				break;
 
 			case KEY_CTRL_D:	// next click change direction
-				DefaultDirection (hud, &default_direction);
+				DefaultDirection (&default_direction);
 				break;
 				
 			case KEY_PPAGE:	// previous mosaic
@@ -82,15 +81,15 @@ int main (int argc, char *argv[]) {
 				
 			case KEY_CTRL_S:	// save mosaic
 				SaveImg (current, "teste.mosi");
-				PrintHud (hud, "Saved successfully!");
+				PrintHud ("Saved successfully!");
 				UN_(TOUCHED);
 				break;
 				
 			case KEY_CTRL_O:	// load mosaic
 				switch (LoadImg (current, "teste.mosi")) {
-					case 0:	RefreshMOSIMG (current), PrintHud (hud, "Loaded successfully!"); break;
-					case 1: PrintHud (hud, "No dimensions in this file, dude! =/");	break;
-					default: PrintHud (hud, "Sorry, no can load this... =/"); break;
+					case 0:	RefreshMOSIMG (current), PrintHud ("Loaded successfully!"); break;
+					case 1: PrintHud ("No dimensions in this file, dude! =/");	break;
+					default: PrintHud ("Sorry, no can load this... =/"); break;
 				}
 				ENTER_(TOUCHED);
 				break;
@@ -123,7 +122,7 @@ int main (int argc, char *argv[]) {
 				UnprintSelection (current);
 				UN_(SELECTION);
 				if (!Paste (&buffer, current, cursor))
-					PrintHud (hud, "Nothing in the buffer...");
+					PrintHud ("Nothing in the buffer...");
 				else
 					ENTER_(TOUCHED);
 				break;
@@ -162,7 +161,7 @@ int main (int argc, char *argv[]) {
 				break;
 		}
 		
-		UpdateHud (hud, cursor, default_direction);
+		UpdateHud (cursor, default_direction);
 		
 		// Exit the program
 		if (c == KEY_CTRL_Q) {
