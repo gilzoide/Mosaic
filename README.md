@@ -1,4 +1,4 @@
-Nmos
-====
+Mosaic
+======
 
-Ncurses based "mosaic" asc art editor
+Curses based "mosaic" asc art editor
