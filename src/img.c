@@ -19,17 +19,17 @@ int NewImg (Image *img, int new_height, int new_width) {
 	
 	// alloc the dinamic stuff
 	// mosaic:
-	if ((img->mosaic = (int**) malloc (new_height * sizeof (int*))) == NULL)
+	if ((img->mosaic = (unsigned char**) malloc (new_height * sizeof (unsigned char*))) == NULL)
 		return -1;
 	// attributes:
-	if ((img->attr = (unsigned char**) malloc (new_height * sizeof (char*))) == NULL)
+	if ((img->attr = (unsigned char**) malloc (new_height * sizeof (unsigned char*))) == NULL)
 		return -1;
 
 	int i;
 	for (i = 0; i < new_height; i++) {
-		if ((img->mosaic[i] = (int*) malloc (new_width * sizeof (int))) == NULL)
+		if ((img->mosaic[i] = (unsigned char*) malloc (new_width * sizeof (unsigned char))) == NULL)
 			return -1;
-		if ((img->attr[i] = (unsigned char*) malloc (new_width * sizeof (char))) == NULL)
+		if ((img->attr[i] = (unsigned char*) malloc (new_width * sizeof (unsigned char))) == NULL)
 			return -1;
 	}
 	
@@ -96,16 +96,16 @@ int ResizeImg (Image *img, int new_height, int new_width) {
 	
 	// realloc the dinamic stuff
 	// mosaic:
-	if ((img->mosaic = (int**) realloc (img->mosaic, new_height * sizeof (int*))) == NULL)
+	if ((img->mosaic = (unsigned char**) realloc (img->mosaic, new_height * sizeof (unsigned char*))) == NULL)
 		return -1;
 	// attributes:
-	if ((img->attr = (unsigned char**) realloc (img->attr, new_height * sizeof (char*))) == NULL)
+	if ((img->attr = (unsigned char**) realloc (img->attr, new_height * sizeof (unsigned char*))) == NULL)
 		return -1;
 		
 	for (i = 0; i < new_height; i++) {
-		if ((img->mosaic[i] = (int*) realloc (img->mosaic[i], new_width * sizeof (int))) == NULL)
+		if ((img->mosaic[i] = (unsigned char*) realloc (img->mosaic[i], new_width * sizeof (unsigned char))) == NULL)
 			return -1;
-		if ((img->attr[i] = (unsigned char*) realloc (img->attr[i], new_width * sizeof (char))) == NULL)
+		if ((img->attr[i] = (unsigned char*) realloc (img->attr[i], new_width * sizeof (unsigned char))) == NULL)
 			return -1;
 	}
 	
@@ -236,8 +236,7 @@ int mosAddch (MOSIMG *image, int y, int x, int c) {
 	if (y >= image->img.height || x >= image->img.width)
 		return ERR;
 
-	//~ mvwaddch (image->win, y, x, c);
-	mvwaddnstr (image->win, y, x, &c, sizeof (int));
+	mvwaddch (image->win, y, x, c);
 	image->img.mosaic[y][x] = c;
 	return 0;
 }

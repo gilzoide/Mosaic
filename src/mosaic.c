@@ -10,6 +10,8 @@ void CursInit () {
 	keypad (stdscr, TRUE);	// we can now use the arrow keys and Fn keys
 	raw ();	// no need to wait for the RETURN key [for interactive means]
 	noecho ();
+
+	set_escdelay (0);	// no need to wait for the Esc key (we don't use the meta modifier)
 	
 	start_color ();	// Colors!
 	InitColors ();	// initialize all the colors -> color.c
@@ -67,7 +69,8 @@ void InitCopyBuffer (CopyBuffer *buffer) {
 
 
 inline void DestroyCopyBuffer (CopyBuffer *buffer) {
-	delwin (buffer->buff);
+	if (buffer != NULL)
+		delwin (buffer->buff);
 }
 
 

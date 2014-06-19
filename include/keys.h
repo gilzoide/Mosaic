@@ -1,5 +1,4 @@
 /** @file keys.h
- * 
  * Key definitions and Macros
  */
 

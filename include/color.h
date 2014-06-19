@@ -25,7 +25,17 @@ void TestColors_Stdout ();
  */
 enum colors {
 	Normal = 0,	///< Terminal's default colors
+// Normal
+	NBk,	///< Normal-Black
+	NR,		///< Normal-Red
+	NG,		///< Normal-Green
+	NY,		///< Normal-Yellow
+	NBl,	///< Normal-Blue
+	NM,		///< Normal-Magenta
+	NC,		///< Normal-Cyan
+	NW,		///< Normal-White
 // black
+	BkN,	///< Black-Normal
 	BkBk, 	///< Black-Black
 	BkR, 	///< Black-Red
 	BkG, 	///< Black-Green
@@ -35,6 +45,7 @@ enum colors {
 	BkC, 	///< Black-Cyan
 	BkW, 	///< Black-White
 // red
+	RN,		///< Red-Normal
 	RBk, 	///< Red-Black
 	RR, 	///< Red-Red
 	RG, 	///< Red-Green
@@ -44,6 +55,7 @@ enum colors {
 	RC, 	///< Red-Cyan
 	RW, 	///< Red-White
 // green
+	GN,		///< Green-Normal
 	GBk, 	///< Green-Black
 	GR, 	///< Green-Red
 	GG, 	///< Green-Green
@@ -53,6 +65,7 @@ enum colors {
 	GC, 	///< Green-Cyan
 	GW, 	///< Green-White
 // yellow
+	YN,		///< Yellow-Normal
 	YBk, 	///< Yellow-Black
 	YR, 	///< Yellow-Red
 	YG, 	///< Yellow-Green
@@ -62,6 +75,7 @@ enum colors {
 	YC, 	///< Yellow-Cyan
 	YW, 	///< Yellow-White
 // blue
+	BlN,	///< Blue-Normal
 	BlBk, 	///< Blue-Black
 	BlR, 	///< Blue-Red
 	BlG, 	///< Blue-Green
@@ -71,15 +85,17 @@ enum colors {
 	BlC, 	///< Blue-Cyan
 	BlW, 	///< Blue-White
 // magenta
+	MN,		///< Magenta-Normal
 	MBk,	///< Magenta-Black
-	MR, 	 ///< Magenta-Red
+	MR, 	///< Magenta-Red
 	MG,  	///< Magenta-Green
 	MY,  	///< Magenta-Yellow
 	MBl,	///< Magenta-Blue
-	MM, 	 ///< Magenta-Magenta
+	MM, 	///< Magenta-Magenta
 	MC, 	///< Magenta-Cyan
 	MW, 	///< Magenta-White
 // cyan
+	CN,		///< Cyan-Normal
 	CBk, 	///< Cyan-Black
 	CR, 	///< Cyan-Red
 	CG, 	///< Cyan-Green
@@ -89,6 +105,7 @@ enum colors {
 	CC, 	///< Cyan-Cyan
 	CW, 	///< Cyan-White
 // white
+	WN,		///< White-Normal
 	WBk, 	///< White-Black
 	WR, 	///< White-Red
 	WG, 	///< White-Green
@@ -96,7 +113,7 @@ enum colors {
 	WBl, 	///< White-Blue
 	WM,		///< White-Magenta
 	WC, 	///< White-Cyan
-	WW 	///< White-White
+	WW 		///< White-White
 };
 
 /**

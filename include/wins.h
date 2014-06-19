@@ -8,8 +8,9 @@
 #define HELP_WIDTH COLS
 #define HELP_HEIGHT (LINES - 1)
 
-#define MENU_WIDTH 27
-#define MENU_HEIGHT 30
+#define MENU_HEIGHT 7
+#define MENU_WIDTH 19
+#define MENU_X_SEPARATOR 9
 
 #include <curses.h>
 #include <panel.h>

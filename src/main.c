@@ -15,10 +15,10 @@ int main (int argc, char *argv[]) {
 	MOSIMG *current = NULL;
 	current = CreateNewImg (&everyone, current);
 	
-	ENTER_(TRANSPARENT);
+	ENTER_(TRANSPARENT);	// it's a test: it does work xD
 	
 	int i;
-	int c = KEY_F(10);		// choice int -> starts with a F10, enter the menu
+	int c = KEY_F(10);		// choice int -> starts with a F10: enter the menu
 	
 	while (c != KEY_CTRL_Q) {
 		if (c == KEY_F(10)) {

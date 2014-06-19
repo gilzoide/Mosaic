@@ -17,8 +17,7 @@
 typedef struct {
 	int height;	///< img height
 	int	width;	///< img width
-	int **mosaic;			/**< a height * width sized string: the drawing itself 
-							 * @note It uses int for storing utf-8 chars */
+	unsigned char **mosaic;			/**< a height * width sized string: the drawing itself */
 	unsigned char **attr;	/**< a height * width sized array with the attributes for each char.
 							 * It's bits are masked, from most to less significative as the color 
 							 * (6 bits), bold (1 bit on/off) and underline (1 bit on/off).

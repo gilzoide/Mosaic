@@ -2,7 +2,17 @@
 
 void InitColors () {
 	assume_default_colors (-1, -1);	// there's the default terminal color (Normal, in the colors enum)
+	// normal
+	init_pair (NBk, -1, COLOR_BLACK);
+	init_pair (NR, -1, COLOR_RED);
+	init_pair (NG, -1, COLOR_GREEN);
+	init_pair (NY, -1, COLOR_YELLOW);
+	init_pair (NBl, -1, COLOR_BLUE);
+	init_pair (NM, -1, COLOR_MAGENTA);
+	init_pair (NC, -1, COLOR_CYAN);
+	init_pair (NW, -1, COLOR_WHITE);
 	// black
+	init_pair (BkN, COLOR_BLACK, -1);
 	init_pair (BkBk, COLOR_BLACK, COLOR_BLACK);
 	init_pair (BkR, COLOR_BLACK, COLOR_RED);
 	init_pair (BkG, COLOR_BLACK, COLOR_GREEN);
@@ -12,6 +22,7 @@ void InitColors () {
 	init_pair (BkC, COLOR_BLACK, COLOR_CYAN);
 	init_pair (BkW, COLOR_BLACK, COLOR_WHITE);
 	// red
+	init_pair (RN, COLOR_RED, -1);
 	init_pair (RBk, COLOR_RED, COLOR_BLACK);
 	init_pair (RR, COLOR_RED, COLOR_RED);
 	init_pair (RG, COLOR_RED, COLOR_GREEN);
@@ -21,6 +32,7 @@ void InitColors () {
 	init_pair (RC, COLOR_RED, COLOR_CYAN);
 	init_pair (RW, COLOR_RED, COLOR_WHITE);
 	// green
+	init_pair (GN, COLOR_GREEN, -1);
 	init_pair (GBk, COLOR_GREEN, COLOR_BLACK);
 	init_pair (GR, COLOR_GREEN, COLOR_RED);
 	init_pair (GG, COLOR_GREEN, COLOR_GREEN);
@@ -30,6 +42,7 @@ void InitColors () {
 	init_pair (GC, COLOR_GREEN, COLOR_CYAN);
 	init_pair (GW, COLOR_GREEN, COLOR_WHITE);
 	// yellow
+	init_pair (YN, COLOR_YELLOW, -1);
 	init_pair (YBk, COLOR_YELLOW, COLOR_BLACK);
 	init_pair (YR, COLOR_YELLOW, COLOR_RED);
 	init_pair (YG, COLOR_YELLOW, COLOR_GREEN);
@@ -39,6 +52,7 @@ void InitColors () {
 	init_pair (YC, COLOR_YELLOW, COLOR_CYAN);
 	init_pair (YW, COLOR_YELLOW, COLOR_WHITE);
 	// blue
+	init_pair (BlN, COLOR_BLUE, -1);
 	init_pair (BlBk, COLOR_BLUE, COLOR_BLACK);
 	init_pair (BlR, COLOR_BLUE, COLOR_RED);
 	init_pair (BlG, COLOR_BLUE, COLOR_GREEN);
@@ -48,6 +62,7 @@ void InitColors () {
 	init_pair (BlC, COLOR_BLUE, COLOR_CYAN);
 	init_pair (BlW, COLOR_BLUE, COLOR_WHITE);
 	// magenta
+	init_pair (MN, COLOR_MAGENTA, -1);
 	init_pair (MBk, COLOR_MAGENTA, COLOR_BLACK);
 	init_pair (MR, COLOR_MAGENTA, COLOR_RED);
 	init_pair (MG, COLOR_MAGENTA, COLOR_GREEN);
@@ -57,6 +72,7 @@ void InitColors () {
 	init_pair (MC, COLOR_MAGENTA, COLOR_CYAN);
 	init_pair (MW, COLOR_MAGENTA, COLOR_WHITE);
 	// cyan
+	init_pair (CN, COLOR_CYAN, -1);
 	init_pair (CBk, COLOR_CYAN, COLOR_BLACK);
 	init_pair (CR, COLOR_CYAN, COLOR_RED);
 	init_pair (CG, COLOR_CYAN, COLOR_GREEN);
@@ -66,6 +82,7 @@ void InitColors () {
 	init_pair (CC, COLOR_CYAN, COLOR_CYAN);
 	init_pair (CW, COLOR_CYAN, COLOR_WHITE);
 	// white
+	init_pair (WN, COLOR_WHITE, -1);
 	init_pair (WBk, COLOR_WHITE, COLOR_BLACK);
 	init_pair (WR, COLOR_WHITE, COLOR_RED);
 	init_pair (WG, COLOR_WHITE, COLOR_GREEN);
