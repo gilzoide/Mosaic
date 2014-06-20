@@ -22,14 +22,14 @@ int NewImg (Image *img, int new_height, int new_width) {
 	if ((img->mosaic = (unsigned char**) malloc (new_height * sizeof (unsigned char*))) == NULL)
 		return -1;
 	// attributes:
-	if ((img->attr = (unsigned char**) malloc (new_height * sizeof (unsigned char*))) == NULL)
+	if ((img->attr = (Attr**) malloc (new_height * sizeof (Attr*))) == NULL)
 		return -1;
 
 	int i;
 	for (i = 0; i < new_height; i++) {
 		if ((img->mosaic[i] = (unsigned char*) malloc (new_width * sizeof (unsigned char))) == NULL)
 			return -1;
-		if ((img->attr[i] = (unsigned char*) malloc (new_width * sizeof (unsigned char))) == NULL)
+		if ((img->attr[i] = (Attr*) malloc (new_width * sizeof (Attr))) == NULL)
 			return -1;
 	}
 	
@@ -99,13 +99,13 @@ int ResizeImg (Image *img, int new_height, int new_width) {
 	if ((img->mosaic = (unsigned char**) realloc (img->mosaic, new_height * sizeof (unsigned char*))) == NULL)
 		return -1;
 	// attributes:
-	if ((img->attr = (unsigned char**) realloc (img->attr, new_height * sizeof (unsigned char*))) == NULL)
+	if ((img->attr = (Attr**) realloc (img->attr, new_height * sizeof (Attr*))) == NULL)
 		return -1;
 		
 	for (i = 0; i < new_height; i++) {
 		if ((img->mosaic[i] = (unsigned char*) realloc (img->mosaic[i], new_width * sizeof (unsigned char))) == NULL)
 			return -1;
-		if ((img->attr[i] = (unsigned char*) realloc (img->attr[i], new_width * sizeof (unsigned char))) == NULL)
+		if ((img->attr[i] = (Attr*) realloc (img->attr[i], new_width * sizeof (Attr))) == NULL)
 			return -1;
 	}
 	

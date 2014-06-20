@@ -1,3 +1,4 @@
+#include <string.h>
 #include "color.h"
 
 void InitColors () {
@@ -97,9 +98,25 @@ void InitColors () {
 void TestColors_Curses () {
 	int i;
 	
-	for (i = BkBk; i <= WW; i++) {
+	for (i = Normal; i <= WW; i++) {
 		attron (COLOR_PAIR (i));
 		addch ('U');
+		if (i % 9 == 8) {
+			attron (COLOR_PAIR (Normal));
+			addch ('\n');
+		}
+		refresh ();
+	}
+	attrset (A_NORMAL);
+	// Bold chars!
+	addstr ("Bold\n");
+	for (i = Normal; i <= WW; i++) {
+		attron (COLOR_PAIR (i) | A_BOLD);
+		addch ('U');
+		if (i % 9 == 8) {
+			attron (COLOR_PAIR (Normal));
+			addch ('\n');
+		}
 		refresh ();
 	}
 }
@@ -108,42 +125,45 @@ void TestColors_Curses () {
 void TestColors_Stdout () {
 	int i;
 	
-	for (i = BkBk; i <= WW; i++) {
-		printf ("%sU", Tcolor (i));
+	for (i = Normal; i <= WW; i++) {
+		Tcolor (i);
+		putchar ('U');
+		if (i % 9 == 8) {
+			Tcolor (Normal);
+			putchar ('\n');
+		}
+	}
+	Tcolor (Normal);
+	// Bold chars!
+	puts ("Bold");
+	for (i = Normal; i <= WW; i++) {
+		Tcolor (i + BOLD);
+		putchar ('U');
+		if (i % 9 == 8) {
+			Tcolor (Normal);
+			putchar ('\n');
+		}
 	}
 }
 
-#define RED     "\x1b[31m"
-#define GREEN   "\x1b[32m"
-#define YELLOW  "\x1b[33m"
-#define BLUE    "\x1b[34m"
-#define MAGENTA "\x1b[35m"
-#define CYAN    "\x1b[36m"
-#define RESET   "\x1b[0m"
+void Tcolor (Attr color) {
+	char *fg_color_table[] = {"39", "30", "31", "32", "33", "34", "35", "36", "37"};
+	char *bg_color_table[] = {"49", "40", "41", "42", "43", "44", "45", "46", "47"};
+	char aux[] = "\e[  m\e[  m";
 
-//~ #define RESET   "\033[0m"
-//~ #define BLACK   "\033[30m"      /* Black */
-//~ #define RED     "\033[31m"      /* Red */
-//~ #define GREEN   "\033[32m"      /* Green */
-//~ #define YELLOW  "\033[33m"      /* Yellow */
-//~ #define BLUE    "\033[34m"      /* Blue */
-//~ #define MAGENTA "\033[35m"      /* Magenta */
-//~ #define CYAN    "\033[36m"      /* Cyan */
-//~ #define WHITE   "\033[37m"      /* White */
-#define BOLDBLACK   "\033[1m\033[30m"      /* Bold Black */
-#define BOLDRED     "\033[1m\033[31m"      /* Bold Red */
-#define BOLDGREEN   "\033[1m\033[32m"      /* Bold Green */
-#define BOLDYELLOW  "\033[1m\033[33m"      /* Bold Yellow */
-#define BOLDBLUE    "\033[1m\033[34m"      /* Bold Blue */
-#define BOLDMAGENTA "\033[1m\033[35m"      /* Bold Magenta */
-#define BOLDCYAN    "\033[1m\033[36m"      /* Bold Cyan */
-#define BOLDWHITE   "\033[1m\033[37m"      /* Bold White */
+	// they told me it may be bold
+	if (color & BOLD) {
+		// tell the terminal it's bold
+		strcat (aux, "\e[1m");
+		// and leave the rest to the color
+		color ^= BOLD;
+	}
 
-char *Tcolor (enum colors color) {
-	char *color_table[] = {
-		"\033[0m",
-		"\033[31m"
-	};
-	
-	return color_table[color];
+	aux[2] = fg_color_table[color / 9][0];
+	aux[3] = fg_color_table[color / 9][1];
+
+	aux[7] = bg_color_table[color % 9][0];
+	aux[8] = bg_color_table[color % 9][1];
+
+	printf ("%s", aux);
 }

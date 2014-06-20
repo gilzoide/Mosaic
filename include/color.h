@@ -7,6 +7,15 @@
 
 #include <curses.h>
 
+/**
+ * Attribute used by Mosaic.
+ *
+ * It's bits are masked, from most to less significative as the color 
+ * (7 bits), bold (1 bit on/off).
+ */
+typedef unsigned char Attr;
+#define BOLD 0b10000000		///< Bold mask
+
 /// Initialize all color combinations in Curses
 void InitColors ();
 /// A simple test of the color definitions, with Curses as output
@@ -117,8 +126,8 @@ enum colors {
 };
 
 /**
- * The codes for printing colored output at stdout
+ * Change the color printed at stdout
  */
-char *Tcolor (enum colors color);
+void Tcolor (Attr color);
 
 #endif

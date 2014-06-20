@@ -17,10 +17,11 @@ void printImg (MOSIMG *img) {
 	int i, j;
 	for (i = 0; i < img->img.height; i++) {
 		for (j = 0; j < img->img.width; j++) {
-			printf ("%s%c", Tcolor (img->img.attr[i][j]), img->img.mosaic[i][j]);
+			Tcolor (img->img.attr[i][j]);
+			printf ("%c", img->img.mosaic[i][j]);
 		}
 
-		putc ('\n', stdout);
+		putchar ('\n');
 	}
 }
 
