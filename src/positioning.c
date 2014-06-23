@@ -15,7 +15,7 @@ void InitCursor (Cursor *cur) {
 }
 
 
-void PrintSelection (Cursor *position, MOSIMG *current, Direction dir) {
+void PrintSelection (Cursor *position, MOSIMG *current) {
 	int ULy = min (position->origin_y, position->y);
 	int ULx = min (position->origin_x, position->x);
 	int BRy = max (position->origin_y, position->y);
@@ -112,10 +112,27 @@ void Move (Cursor *position, MOSIMG *current, Direction dir) {
 		position->origin_x = position->x;
 	}
 	else
-		PrintSelection (position, current, dir);
+		PrintSelection (position, current);
 
 	// and move!
 	move (position->y, position->x);
+}
+
+
+void MoveTo (Cursor *position, MOSIMG *current, int y, int x) {
+	if (y > 0 && y < current->img.height && x > 0 && x < current->img.width) {
+		position->y = y;
+		position->x = x;
+
+		if (!IS_(SELECTION)) {
+			position->origin_y = y;
+			position->origin_x = x;
+		}
+		else
+			PrintSelection (position, current);
+
+		move (y, x);
+	}
 }
 
 
@@ -145,7 +162,7 @@ void MoveAll (Cursor *position, MOSIMG *current, Direction dir) {
 		position->origin_x = position->x;
 	}
 	else
-		PrintSelection (position, current, dir);
+		PrintSelection (position, current);
 
 	// and move!
 	move (position->y, position->x);

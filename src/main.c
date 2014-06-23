@@ -19,6 +19,9 @@ int main (int argc, char *argv[]) {
 	
 	int i;
 	int c = KEY_F(10);		// choice int -> starts with a F10: enter the menu
+	// Mouse support: bt1 and bt3 click
+	MEVENT event;
+	mousemask (BUTTON1_CLICKED | BUTTON1_DOUBLE_CLICKED | BUTTON3_CLICKED, NULL);
 	
 	while (c != KEY_CTRL_Q) {
 		if (c == KEY_F(10)) {
@@ -29,6 +32,17 @@ int main (int argc, char *argv[]) {
 		//~ printw ("%d ", c);
 		switch (c) {
 			case 0:	// if nothing is returned by the menu, do nothing
+				break;
+
+			// Mouse event: clicked the window, or help/menu/quit
+			case KEY_MOUSE:
+				getmouse (&event);
+				// bt1 click: MoveTo
+				if (event.bstate & BUTTON1_CLICKED)
+					MoveTo (&cursor, current, event.y, event.x);
+				// bt3 (right button) click: Menu (yep, anywhere)
+				else if (event.bstate & BUTTON3_CLICKED)
+					ungetch (KEY_F(10));
 				break;
 				
 			case KEY_UP:	// move up

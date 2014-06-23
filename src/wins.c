@@ -60,7 +60,7 @@ void InitHelp () {
 	};
 	// the hotkeys
 	const char *hotkeys[] = {
-		"F1", "F10", "^Q",
+		"F1", "F10/Mouse Right Button", "^Q",
 		"Arrow Keys", "^D", "^B", "Page Up/Page Down", "Home/End",
 		"F2", "^S", "^O", "^R", "^C/^X", "^V", "Tab"
 	};
@@ -432,7 +432,7 @@ int GetChosenOption (MENU *menu) {
 	
 	// The submenu, vertically shown
 	MENU *submenu;
-
+	
 	// drives through the menu options
 	while (c != ' ') {
 		// update what submenu we're watching, 
@@ -445,6 +445,17 @@ int GetChosenOption (MENU *menu) {
 
 		c = getch ();
 		switch (c) {
+			// Mouse event: if menu, move to the right one;
+			// 		if submenu, where clicked, accept it!
+			case KEY_MOUSE:
+				// chose the 'menu', go back for other drive
+				if (menu_driver (menu, c) == E_OK)  
+					break;
+				// clicked outside 'menu' or 'submenu': exit menu
+				else if (menu_driver (submenu, c) != E_OK)
+					return 0;
+
+				// else (chose the submenu's item), accept it
 			// Return: accepts choice, just as the ' ' does
 			case '\n':
 				c = ' ';

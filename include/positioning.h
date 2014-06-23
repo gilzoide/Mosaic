@@ -51,7 +51,7 @@ void InitCursor (Cursor *cursor);
 /**
  * Prints in the current window the selection box
  */
-void PrintSelection (Cursor *position, MOSIMG *current, Direction dir);
+void PrintSelection (Cursor *position, MOSIMG *current);
 /**
  * Unprints the selection box 
  */
@@ -64,6 +64,15 @@ void UnprintSelection (MOSIMG *current);
  * @param[in] dir Direction of the movement
  */
 void Move (Cursor *position, MOSIMG *current, Direction dir);
+/**
+ * Move the cursor to the desired position (for clicking)
+ *
+ * @param[in] position Actual working position
+ * @param[in] current Current image, for knowing the boundaries
+ * @param[in] y Y coordinate
+ * @param[in] x X coordinate
+ */
+void MoveTo (Cursor *position, MOSIMG *current, int y, int x);
 /**
  * Move the cursor until the boundary
  * 
