@@ -72,6 +72,7 @@ static struct argp argp = { options, parse_opt, args_doc, doc };
  * Prints the image at stdout, using 'puts's
  *
  * @param[in] img The image to be displayed
+ * @param[in] color Flag: display colors?
  */
 void printImg (Image *img, char color) {
 	int i, j;
@@ -95,7 +96,7 @@ int main (int argc, char *argv[]) {
 
 	// image to be loaded
 	Image img;
-	NewImg (&img, 1, 1);
+	NewImg (&img, 0, 0);
 	switch (LoadImg (&img, arguments.input)) {
 		case -1:
 			fprintf (stderr, "Couldn't open the file, i'm sorry...\n");

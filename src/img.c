@@ -7,25 +7,13 @@ inline int ImgSize (Image img) {
 
 
 int NewImg (Image *img, int new_height, int new_width) {
-	// fill it's dimensions
-	img->height = new_height;
-	img->width = new_width;
+	// dimensions still 0
+	img->height = img->width = 0;
+	// NULL pointers, for realloc to work as a malloc
+	img->mosaic = img->attr = NULL;
 	
-	// alloc the dinamic stuff
-	// mosaic:
-	if ((img->mosaic = (unsigned char**) malloc (new_height * sizeof (unsigned char*))) == NULL)
-		return -1;
-	// attributes:
-	if ((img->attr = (Attr**) malloc (new_height * sizeof (Attr*))) == NULL)
-		return -1;
-
-	int i;
-	for (i = 0; i < new_height; i++) {
-		if ((img->mosaic[i] = (unsigned char*) malloc (new_width * sizeof (unsigned char))) == NULL)
-			return -1;
-		if ((img->attr[i] = (Attr*) malloc (new_width * sizeof (Attr))) == NULL)
-			return -1;
-	}
+	// alloc the dinamic stuff and fill it: something ResizeImg already does
+	ResizeImg (img, new_height, new_width);
 	
 	return 0;
 }
@@ -40,7 +28,7 @@ int ResizeImg (Image *img, int new_height, int new_width) {
 	img->width = new_width;
 	
 	int i;
-	// if it's smaller, free the lines we're discarding
+	// when shrinking the , free the lines we're discarding
 	for (i = old_height - 1; i >= new_height; i--) {
 		free (img->mosaic[i]);
 		free (img->attr[i]);
@@ -50,34 +38,53 @@ int ResizeImg (Image *img, int new_height, int new_width) {
 	// realloc the dinamic stuff
 	// Lines
 	// mosaic:
-	if ((img->mosaic = (unsigned char**) realloc (img->mosaic, new_height * sizeof (unsigned char*))) == NULL)
+	if ((img->mosaic = (unsigned char**) realloc (
+		img->mosaic, new_height * sizeof (unsigned char*))) == NULL)
 		return -1;
 	for (i = old_height; i < new_height; i++)
 		img->mosaic[i] = NULL;
 	// attributes:
-	if ((img->attr = (Attr**) realloc (img->attr, new_height * sizeof (Attr*))) == NULL)
+	if ((img->attr = (Attr**) realloc (
+		img->attr, new_height * sizeof (Attr*))) == NULL)
 		return -1;
 	for (i = old_height; i < new_height; i++)
 		img->attr[i] = NULL;
 
 	// Columns
 	for (i = 0; i < new_height; i++) {
-		if ((img->mosaic[i] = (unsigned char*) realloc (img->mosaic[i], new_width * sizeof (unsigned char))) == NULL)
+		if ((img->mosaic[i] = (unsigned char*) realloc (
+			img->mosaic[i], new_width * sizeof (unsigned char))) == NULL)
 			return -1;
-		if ((img->attr[i] = (Attr*) realloc (img->attr[i], new_width * sizeof (Attr))) == NULL)
+		if ((img->attr[i] = (Attr*) realloc (
+			img->attr[i], new_width * sizeof (Attr))) == NULL)
 			return -1;
 	}
 	
 	// maybe it grew, so complete with blanks
 	int j;
-	for (i = old_height; i < new_height; i++) {
-		for (j = 0; j < new_width; j++)
-			img->mosaic[i][j] = ' ';
+	if (old_height > 0 && old_width > 0) {
+		// new lines, until old width
+		for (i = old_height; i < new_height; i++) {
+			for (j = 0; j < old_width; j++) {
+				img->mosaic[i][j] = ' ';
+				img->attr[i][j] = 0;
+			}
+		}
+		// new columns, until old height
+		for (i = old_width; i < new_width; i++) {
+			for (j = 0; j < old_height; j++) {
+				img->mosaic[j][i] = ' ';
+				img->attr[j][i] = 0;
+			}
+		}
 	}
-	
-	for (i = old_width; i < new_width; i++) {
-		for (j = 0; j < new_height; j++)
-			img->mosaic[j][i] = ' ';
+
+	// the other square: from old to new height/width (for growing)
+	for (i = old_height; i < new_height; i++) {
+		for (j = old_width; j < new_width; j++) {
+			img->mosaic[i][j] = ' ';
+			img->attr[i][j] = 0;
+		}
 	}
 
 	return 0;
@@ -114,7 +121,8 @@ int LoadImg (Image *image, const char *file_name) {
 	ResizeImg (image, new_height, new_width);
 
 	char c;
-	// there's supposed to have a '\n' to discard after %dx%d; but if there ain't one, we read what's after
+	// there's supposed to have a '\n' to discard after %dx%d;
+	// but if there ain't one, we read what's after
 	if ((c = fgetc (f)) != '\n')
 		ungetc (c, f);
 	
@@ -123,7 +131,9 @@ int LoadImg (Image *image, const char *file_name) {
 		// read the line until the end or no more width is available
 		for (j = 0; j < image->width; j++) {
 			if ((c = fgetc (f)) == EOF)
-				goto FILL_WITH_BLANK;	// used so won't need a flag or more comparisons to break both the fors
+				// used so won't need a flag or more comparisons
+				// to break both the fors
+				goto FILL_WITH_BLANK;
 			// if it reached newline before width...
 			else if (c == '\n')
 				break;
