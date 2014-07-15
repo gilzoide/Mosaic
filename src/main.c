@@ -94,13 +94,13 @@ int main (int argc, char *argv[]) {
 				break;
 				
 			case KEY_CTRL_S:	// save mosaic
-				SaveImg (current, "teste.mosi");
+				SaveImg (&current->img, "teste.mosi");
 				PrintHud ("Saved successfully!");
 				UN_(TOUCHED);
 				break;
 				
 			case KEY_CTRL_O:	// load mosaic
-				switch (LoadImg (current, "teste.mosi")) {
+				switch (LoadImg (&current->img, "teste.mosi")) {
 					case 0:	RefreshMOSIMG (current), PrintHud ("Loaded successfully!"); break;
 					case 1: PrintHud ("No dimensions in this file, dude! =/");	break;
 					default: PrintHud ("Sorry, no can load this... =/"); break;

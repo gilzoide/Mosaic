@@ -25,8 +25,6 @@ State state;	///< the global Nmos State
 #define TRANSPARENT	0b00000100	///< 'Paste' is transparent? (ignores blanks)
 #define ERASED		0b00001000	///< A char was erased by Backspace or Delete buttons
 
-#define COLORED		0b10000000	///< CAT - Should we color the output?
-#define DIMMENSIONS	0b01000000	///< CAT - Should we display the dimensions?
 // states operations
 #define IS_(a)		(state & a)		///< Used to check if it's in the 'a' state or not
 #define ENTER_(a)	(state |= a)	///< Used to enter the 'a' state

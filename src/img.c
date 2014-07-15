@@ -1,14 +1,8 @@
 #include "img.h"
 
 
-inline int ImgSize (MOSIMG *img) {
-	return img->img.height * img->img.width;
-}
-
-
-void InitIMGS (IMGS *everyone) {
-	everyone->list = NULL;
-	everyone->size = 0;
+inline int ImgSize (Image img) {
+	return img.height * img.width;
 }
 
 
@@ -37,48 +31,6 @@ int NewImg (Image *img, int new_height, int new_width) {
 }
 
 
-MOSIMG *NewMOSIMG (int new_height, int new_width) {
-	// create new MOSIMG
-	MOSIMG *new_image;
-	if ((new_image = (MOSIMG*) malloc (sizeof (MOSIMG))) == NULL)
-		return NULL;
-	
-	NewImg (&new_image->img, new_height, new_width);
-
-	// clear the mosaic with whitespaces
-	int i, j;
-	for (i = 0; i < new_height; i++)
-		for (j = 0; j < new_width; j++)
-			new_image->img.mosaic[i][j] = ' ';
-
-	// create the curses window and panel
-	new_image->win = newpad (new_height + 1, new_width + 1);
-	dobox (new_image);	// put a border
-
-	new_image->y = new_image->x = 0;
-	scrollok (new_image->win, TRUE);
-	
-	new_image->pan = new_panel (new_image->win);
-	DisplayCurrentImg (new_image);
-
-	return new_image;
-}
-
-
-void dobox (MOSIMG *img) {
-	int i;
-	int y = img->img.height;
-	int x = img->img.width;
-	for (i = 0; i < x; i++) {
-		mvwaddch (img->win, y, i, ACS_HLINE);
-	}
-	for (i = 0; i < y; i++) {
-		mvwaddch (img->win, i, x, ACS_VLINE);
-	}
-	mvwaddch (img->win, y, x, ACS_LRCORNER);
-}
-
-
 int ResizeImg (Image *img, int new_height, int new_width) {
 	// old dimensions
 	int old_height = img->height;
@@ -88,20 +40,27 @@ int ResizeImg (Image *img, int new_height, int new_width) {
 	img->width = new_width;
 	
 	int i;
-	for (i = old_height; i > new_height; i--) {
+	// if it's smaller, free the lines we're discarding
+	for (i = old_height - 1; i >= new_height; i--) {
 		free (img->mosaic[i]);
 		free (img->attr[i]);
 	}
 	
 	
 	// realloc the dinamic stuff
+	// Lines
 	// mosaic:
 	if ((img->mosaic = (unsigned char**) realloc (img->mosaic, new_height * sizeof (unsigned char*))) == NULL)
 		return -1;
+	for (i = old_height; i < new_height; i++)
+		img->mosaic[i] = NULL;
 	// attributes:
 	if ((img->attr = (Attr**) realloc (img->attr, new_height * sizeof (Attr*))) == NULL)
 		return -1;
-		
+	for (i = old_height; i < new_height; i++)
+		img->attr[i] = NULL;
+
+	// Columns
 	for (i = 0; i < new_height; i++) {
 		if ((img->mosaic[i] = (unsigned char*) realloc (img->mosaic[i], new_width * sizeof (unsigned char))) == NULL)
 			return -1;
@@ -125,52 +84,16 @@ int ResizeImg (Image *img, int new_height, int new_width) {
 }
 
 
-int ResizeMOSIMG (MOSIMG *target, int new_height, int new_width) {
-	delwin (target->win);
-	target->win = newpad (new_height + 1, new_width + 1);
-	int i = ResizeImg (&target->img, new_height, new_width);
-	dobox (target);
-	
-	if (i == -1) {
-		fprintf (stderr, "Resize failed");
-		exit (-1);
-	}
-	
-	return i;
-}
-
-
-void LinkImg (MOSIMG *dest, MOSIMG *src, enum direction dir) {
-	if (dest != NULL) {
-		MOSIMG *aux;
-		if (dir == before) {
-			aux = dest->prev;
-			dest->prev = aux->next = src;
-			src->next = dest;
-			src->prev = aux;			
-		}
-		else {		// after
-			aux = dest->next;
-			dest->next = aux->prev = src;
-			src->prev = dest;
-			src->next = aux;
-		}
-	}
-	else
-		fprintf (stderr, "Error: trying to link a MOSIMG to a NULL pointer!!");
-}
-
-
-int SaveImg (MOSIMG *image, const char *file_name) {
+int SaveImg (Image *image, const char *file_name) {
 	FILE *f;
 	if ((f = fopen (file_name, "w")) == NULL)
 		return -1;
 
-	fprintf (f, "%dx%d\n", image->img.height, image->img.width);
+	fprintf (f, "%dx%d\n", image->height, image->width);
 	
 	int i;
-	for (i = 0; i < image->img.height; i++) {
-		fprintf (f, "%.*s\n", image->img.width, (image->img.mosaic[i]));
+	for (i = 0; i < image->height; i++) {
+		fprintf (f, "%.*s\n", image->width, (image->mosaic[i]));
 	}
 	
 	fclose (f);
@@ -179,7 +102,7 @@ int SaveImg (MOSIMG *image, const char *file_name) {
 }
 
 
-int LoadImg (MOSIMG *image, const char *file_name) {
+int LoadImg (Image *image, const char *file_name) {
 	FILE *f;
 	if ((f = fopen (file_name, "r")) == NULL)
 		return -1;
@@ -188,7 +111,7 @@ int LoadImg (MOSIMG *image, const char *file_name) {
 	if (!fscanf (f, "%dx%d", &new_height, &new_width))
 		return 1;
 	
-	ResizeMOSIMG (image, new_height, new_width);
+	ResizeImg (image, new_height, new_width);
 
 	char c;
 	// there's supposed to have a '\n' to discard after %dx%d; but if there ain't one, we read what's after
@@ -196,19 +119,19 @@ int LoadImg (MOSIMG *image, const char *file_name) {
 		ungetc (c, f);
 	
 	int i, j;
-	for (i = 0; i < image->img.height; i++) {
+	for (i = 0; i < image->height; i++) {
 		// read the line until the end or no more width is available
-		for (j = 0; j < image->img.width; j++) {
+		for (j = 0; j < image->width; j++) {
 			if ((c = fgetc (f)) == EOF)
 				goto FILL_WITH_BLANK;	// used so won't need a flag or more comparisons to break both the fors
 			// if it reached newline before width...
 			else if (c == '\n')
 				break;
-			image->img.mosaic[i][j] = c;
+			image->mosaic[i][j] = c;
 		}
 		// ...complete with whitespaces
-		for ( ;  j < image->img.width; j++) {
-			image->img.mosaic[i][j] = ' ';
+		for ( ;  j < image->width; j++) {
+			image->mosaic[i][j] = ' ';
 		}
 		
 		// we read the whole line, but the tailing '\n', we need to discard it
@@ -220,33 +143,15 @@ int LoadImg (MOSIMG *image, const char *file_name) {
 	
 FILL_WITH_BLANK:
 	// well, maybe we reached OEF, so everything else is a blank...
-	for ( ; i < image->img.height; i++) {
-		for (j = 0;  j < image->img.width; j++) {
-			image->img.mosaic[i][j] = ' ';
+	for ( ; i < image->height; i++) {
+		for (j = 0;  j < image->width; j++) {
+			image->mosaic[i][j] = ' ';
 		}
 	}
 	
 	fclose (f);
 
 	return 0;
-}
-
-
-int mosAddch (MOSIMG *image, int y, int x, int c) {
-	if (y >= image->img.height || x >= image->img.width)
-		return ERR;
-
-	mvwaddch (image->win, y, x, c);
-	image->img.mosaic[y][x] = c;
-	return 0;
-}
-
-
-void DisplayCurrentImg (MOSIMG *current) {
-	top_panel (current->pan);
-	update_panels ();
-	doupdate ();
-	prefresh (current->win, current->y, current->x, 0, 0, LINES - 2, COLS - 1);
 }
 
 
@@ -258,11 +163,4 @@ void FreeImg (Image *img) {
 	}
 	free (img->attr);
 	free (img->mosaic);
-}
-
-
-void FreeMOSIMG (MOSIMG *image) {
-	FreeImg (&image->img);
-	del_panel (image->pan);
-	delwin (image->win);
 }

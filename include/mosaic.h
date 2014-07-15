@@ -10,7 +10,7 @@
 #include <stdio.h>
 
 #include "color.h"
-#include "img.h"
+#include "mosimg.h"
 #include "wins.h"
 #include "positioning.h"
 #include "state.h"

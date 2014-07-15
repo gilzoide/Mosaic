@@ -5,7 +5,7 @@
 #ifndef POSITIONING_H
 #define POSITIONING_H
 
-#include "img.h"
+#include "mosimg.h"
 #include "state.h"
 
 /// UI current cursor position
