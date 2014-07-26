@@ -1,5 +1,4 @@
 #include "mosaic.h"
-#include <ctype.h>
 
 int main (int argc, char *argv[]) {
 	CursInit ();
@@ -23,7 +22,7 @@ int main (int argc, char *argv[]) {
 	MEVENT event;
 	mousemask (BUTTON1_CLICKED | BUTTON1_DOUBLE_CLICKED | BUTTON3_CLICKED, NULL);
 	
-	while (c != KEY_CTRL_Q) {
+	while (!IS_(QUIT)) {
 		if (c == KEY_F(10)) {
 			c = Menu ();
 			DisplayCurrentImg (current);
@@ -31,10 +30,17 @@ int main (int argc, char *argv[]) {
 		
 		//~ printw ("%d ", c);
 		switch (c) {
-			case 0:	// if nothing is returned by the menu, do nothing
+			/* if nothing is returned by the menu, do nothing */
+			case 0:	
 				break;
 
-			// Mouse event: clicked the window, or help/menu/quit
+			/* ESC: exit selection mode */
+			case KEY_ESC:
+				UN_(SELECTION);
+				UnprintSelection (current);
+				break;
+
+			/* Mouse event: clicked the window, or help/menu/quit */
 			case KEY_MOUSE:
 				getmouse (&event);
 				// bt1 click: MoveTo
@@ -45,94 +51,121 @@ int main (int argc, char *argv[]) {
 					ungetch (KEY_F(10));
 				break;
 				
-			case KEY_UP:	// move up
+			/* move up */
+			case KEY_UP:
 				Move (&cursor, current, UP);
 				break;
 
-			case KEY_DOWN:	// move down
+			/* move down */
+			case KEY_DOWN:
 				Move (&cursor, current, DOWN);
 				break;
-				
-			case KEY_LEFT:	// move left
+
+			/* move left */
+			case KEY_LEFT:
 				Move (&cursor, current, LEFT);
 				break;
-				
-			case KEY_RIGHT:	// move right
+
+			/* move right */
+			case KEY_RIGHT:
 				Move (&cursor, current, RIGHT);
 				break;
 
-			case KEY_CTRL_D:	// next click change direction
+			/* next click change direction */
+			case KEY_CTRL_D:
 				DefaultDirection (&default_direction);
 				break;
 				
-			case KEY_PPAGE:	// previous mosaic
+			/* previous mosaic */
+			case KEY_PPAGE:
 				current = current->prev;
 				DisplayCurrentImg (current);
 				break;
 				
-			case KEY_NPAGE:	// next mosaic
+			/* next mosaic */
+			case KEY_NPAGE:
 				current = current->next;
 				DisplayCurrentImg (current);
 				break;
-				
+
+			/* move to first */
 			case KEY_HOME:
 				MoveAll (&cursor, current, REVERSE (default_direction));
 				break;
 			
+			/* move to last */
 			case KEY_END:
 				MoveAll (&cursor, current, default_direction);
 				break;
 
-			case KEY_F(1):	// show help
+			/* show help */
+			case KEY_F(1):
 				Help ();
 				DisplayCurrentImg (current);
 				break;
 				
-			case KEY_F(2):	// new mosaic
+			/* new mosaic */
+			case KEY_F(2):
 				current = CreateNewImg (&everyone, current);
 				DisplayCurrentImg (current);
 				break;
 				
-			case KEY_CTRL_S:	// save mosaic
+			/* save mosaic */
+			case KEY_CTRL_S:
 				SaveImg (&current->img, "teste.mosi");
 				PrintHud ("Saved successfully!");
 				UN_(TOUCHED);
 				break;
 				
-			case KEY_CTRL_O:	// load mosaic
+			/* load mosaic */
+			case KEY_CTRL_O:
 				switch (LoadImg (&current->img, "teste.mosi")) {
-					case 0:	RefreshMOSIMG (current), PrintHud ("Loaded successfully!"); break;
-					case 1: PrintHud ("No dimensions in this file, dude! =/");	break;
-					default: PrintHud ("Sorry, no can load this... =/"); break;
+					case 0:
+						RefreshMOSIMG (current);
+						PrintHud ("Loaded successfully!");
+						break;
+
+					case 1:
+						PrintHud ("No dimensions in this file, dude! =/");
+						break;
+
+					default:
+						PrintHud ("Sorry, no can load this... =/");
+						break;
 				}
 				ENTER_(TOUCHED);
 				break;
 				
-			case KEY_CTRL_R:	// resize mosaic
+			/* resize mosaic */
+			case KEY_CTRL_R:
 				werase (current->win);
 				wrefresh (current->win);
 				ResizeMOSIMG (current, 20, 30);
 				RefreshMOSIMG (current);
 				break;
 				
-			case KEY_CTRL_B:	// box selection mode!
+			/* box selection mode! */
+			case KEY_CTRL_B:
 				TOGGLE_(SELECTION);
 				UnprintSelection (current);
 				break;
 				
-			case KEY_CTRL_C:	// copy selected area
+			/* copy selected area */
+			case KEY_CTRL_C:	
 				UnprintSelection (current);
 				UN_(SELECTION);
 				Copy (&buffer, current, cursor);
 				break;
 
-			case KEY_CTRL_X:	// cut selected area
+			/* cut selected area */
+			case KEY_CTRL_X:
 				UnprintSelection (current);
 				UN_(SELECTION);
 				Cut (&buffer, current, cursor);
 				break;
 
-			case KEY_CTRL_V:	// paste copy buffer
+			/* paste copy buffer */
+			case KEY_CTRL_V:	
 				UnprintSelection (current);
 				UN_(SELECTION);
 				if (!Paste (&buffer, current, cursor))
@@ -141,33 +174,51 @@ int main (int argc, char *argv[]) {
 					ENTER_(TOUCHED);
 				break;
 
-			case '\t':	// attribute table
+			/* attribute table */
+			case '\t':
 				wattrset (current->win, AttrTable (current, cursor));
 				break;
 				
-			case KEY_CTRL_Q:	// quit; aww =/
-				// asks if you really want to quit this tottally awesome software
+			/* quit; aww =/ */
+			case KEY_CTRL_Q:
+				// asks if you really want to quit this tottally awesome SW
+				if (IS_(TOUCHED) && !AskQuit ())
+					break;
+
+				ENTER_(QUIT);
+				// needed to jump the getch ()
+				ungetch (0);
 				break;
 				
-			case KEY_CTRL_U:	// erase entire line/column before cursor;		it actually calls enough times the backspace button
+			/* erase entire line/column before cursor
+			 * it actually calls enough times the backspace button */
+			case KEY_CTRL_U:
 				i = max (current->img.height, current->img.width);
 				while (i > 0 && i--)
 					ungetch (KEY_BACKSPACE);
 				break;
 			
-			// WARNING: don't change BACKSPACE nor DC out of here nor out of order, as they deppend on 'default' (so I guess you know we shouldn't put any 'break's either)
-			case KEY_BACKSPACE: case 127:	// Backspace: delete the char before (the curses definition says something else, but in general it's 127)
+			// WARNING: don't change BACKSPACE nor DC out of here nor out of
+			// order, as they deppend on 'default' 
+			// (so I guess you know we shouldn't put any 'break's either)
+			/* Backspace: delete the char before (the curses definition 
+			 * says something else, but in general it's 127) */
+			case KEY_BACKSPACE: case 127:	
 				Move (&cursor, current, REVERSE (default_direction));
-			case KEY_DC:	// delete: well, just erase the damn char (put a ' ' in it, default takes care of this for us =P)
+			/* delete: well, just erase the damn char 
+			 * (put a ' ' in it, default takes care of this for us =P) */
+			case KEY_DC:	
 				ENTER_(ERASED);
 				c = ' ';
 
-			default:	// write at the mosaic, and show it to us
+			/* write at the mosaic, and show it to us */
+			default:
 				if (isprint (c)) {
 					mosAddch (current, cursor.y, cursor.x, c);
 					DisplayCurrentImg (current);
 					ENTER_(TOUCHED);
-					if (!IS_(ERASED))	// didn't erase anything, so move to the next
+					// didn't erase anything, so move to the next
+					if (!IS_(ERASED))	
 						Move (&cursor, current, default_direction);
 					else 	// we erased something, so it erased and that's that
 						UN_(ERASED);
@@ -177,10 +228,6 @@ int main (int argc, char *argv[]) {
 		
 		UpdateHud (cursor, default_direction);
 		
-		// Exit the program
-		if (c == KEY_CTRL_Q) {
-			break;
-		}
 		c = getch ();
 	}
 	

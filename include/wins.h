@@ -21,12 +21,9 @@
 #include "keys.h"
 
 /**
- * Initialize all the important windows (and menus, panels, forms...)
- * 
- * As these are used frequently, we create them only once, and then just
- * show on the fly
+ * Initialize the HUD
  */
-void InitWins ();
+void InitHud ();
 
 /// Updates the position in the HUD
 void UpdateHud (Cursor cur, Direction dir);

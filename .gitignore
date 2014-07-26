@@ -5,6 +5,7 @@ build/
 *.swp
 ses
 tags
+cscope.out
 # object files, after compilation
 *.o
 # any Mosaic images

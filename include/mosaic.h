@@ -8,6 +8,7 @@
 #include <curses.h>
 #include <panel.h>
 #include <stdio.h>
+#include <ctype.h>
 
 #include "color.h"
 #include "mosimg.h"
@@ -110,5 +111,12 @@ void RefreshMOSIMG (MOSIMG *current);
  * unless you know what you're doing...
  */
 void DestroyIMGS (IMGS *everyone);
+
+/**
+ * Ask if the user wants to quit
+ *
+ * @return Choice: 1 for YES, 0 for NO
+ */
+char AskQuit ();
 
 #endif

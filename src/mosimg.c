@@ -15,12 +15,6 @@ MOSIMG *NewMOSIMG (int new_height, int new_width) {
 	
 	NewImg (&new_image->img, new_height, new_width);
 
-	// clear the mosaic with whitespaces
-	int i, j;
-	for (i = 0; i < new_height; i++)
-		for (j = 0; j < new_width; j++)
-			new_image->img.mosaic[i][j] = ' ';
-
 	// create the curses window and panel
 	new_image->win = newpad (new_height + 1, new_width + 1);
 	dobox (new_image);	// put a border

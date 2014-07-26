@@ -338,16 +338,6 @@ void InitMenus () {
 }
 
 
-void InitWins () {
-// HUD
-	InitHud ();
-// HELP
-	InitHelp ();
-// MENU
-	InitMenus ();
-}
-
-
 void UpdateHud (Cursor cur, Direction dir) {
 	int arrow;
 	// arrows, to show the direction!
@@ -384,17 +374,30 @@ int PrintHud (const char *message) {
 void Help () {
 	curs_set (0);	// don't display the cursor, pliz
 
-	// displays the help
+	// show in the Hud the help is opened (eye-candy =P)
+	mvwchgat (hud, 0, 0, 3, A_UNDERLINE | A_BOLD, CN, NULL);
+	mvwchgat (hud, 0, 3, 5, A_UNDERLINE, CN, NULL);
+	wrefresh (hud);
+
+	// creates it if not already there
+	if (!helpPanel)
+		InitHelp ();
+	// display the help
 	show_panel (helpPanel);
 	update_panels ();
 	doupdate ();
 	// waits for some key to be pressed
 	getch ();
 	
+	// hud goes back to normal
+	mvwchgat (hud, 0, 0, 3, A_BOLD, 0, NULL);
+	mvwchgat (hud, 0, 3, 5, A_NORMAL, 0, NULL);
+	wrefresh (hud);
+
 	// hide the help
 	hide_panel (helpPanel);
 	doupdate ();
-	
+
 	curs_set (1);	// and back with the cursor
 }
 
@@ -404,6 +407,10 @@ int Menu () {
 	mvwchgat (hud, 0, 9, 4, A_UNDERLINE | A_BOLD, CN, NULL);
 	mvwchgat (hud, 0, 13, 5, A_UNDERLINE, CN, NULL);
 	wrefresh (hud);
+
+	// creates it if not already there
+	if (!menuPanel)
+		InitMenus ();
 	// display the menu
 	show_panel (menuPanel);
 	show_panel (submenuPanel);

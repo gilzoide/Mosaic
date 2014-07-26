@@ -24,6 +24,7 @@ State state;	///< the global Nmos State
 #define SELECTION 	0b00000010	///< Box/Selection mode! Makes a difference when navigating and editing (copy, paste, attributes)
 #define TRANSPARENT	0b00000100	///< 'Paste' is transparent? (ignores blanks)
 #define ERASED		0b00001000	///< A char was erased by Backspace or Delete buttons
+#define QUIT		0b00010000	///< Quit the sw
 
 // states operations
 #define IS_(a)		(state & a)		///< Used to check if it's in the 'a' state or not

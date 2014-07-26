@@ -15,7 +15,7 @@ void CursInit () {
 	
 	start_color ();	// Colors!
 	InitColors ();	// initialize all the colors -> color.c
-	InitWins ();	// initializa all the windows
+	InitHud ();	// initialize the HUD
 }
 
 
@@ -108,8 +108,9 @@ int Paste (CopyBuffer *buffer, MOSIMG *current, Cursor cursor) {
 		int i, j, c;
 		for (i = 0; i <= buffer->coordinates.y; i++) {
 			for (j = 0; j <= buffer->coordinates.x; j++) {
-				// read the char
+				// read the char from the CopyBuffer
 				c = mvwinch (buffer->buff, buffer->coordinates.origin_y + i, buffer->coordinates.origin_x + j);
+				// if transparent pasting, and it's a ' ', leave the old char there
 				if (IS_(TRANSPARENT) && c == ' ')
 					continue;
 				// if outside MOSIMG window, don't try to put 'c' in it, or it'll crash
@@ -169,4 +170,10 @@ void DestroyIMGS (IMGS *everyone) {
 		FreeMOSIMG (aux);
 		free (aux);
 	}
+}
+
+
+char AskQuit () {
+	int choice = PrintHud ("Do you really wanna quit? [y/N]");
+	return tolower (choice) == 'y' ? 1 : 0;
 }
