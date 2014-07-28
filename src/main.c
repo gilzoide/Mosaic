@@ -3,6 +3,7 @@
 int main (int argc, char *argv[]) {
 	CursInit ();
 	
+	// initialize stuff
 	Cursor cursor;
 	InitCursor (&cursor);
 	Direction default_direction = RIGHT;
@@ -11,13 +12,14 @@ int main (int argc, char *argv[]) {
 	IMGS everyone;
 	InitIMGS (&everyone);
 	
+	// the current image in edition
 	MOSIMG *current = NULL;
-	current = CreateNewImg (&everyone, current);
+	// we really need a current image, so ask for it until user creates it!
+	while (!(current = CreateNewImg (&everyone, current)));
 	
 	ENTER_(TRANSPARENT);	// it's a test: it does work xD
 	
-	int i;
-	int c = KEY_F(10);		// choice int -> starts with a F10: enter the menu
+	int c = 0;
 	// Mouse support: bt1 and bt3 click
 	MEVENT event;
 	mousemask (BUTTON1_CLICKED | BUTTON1_DOUBLE_CLICKED | BUTTON3_CLICKED, NULL);
@@ -106,7 +108,9 @@ int main (int argc, char *argv[]) {
 				
 			/* new mosaic */
 			case KEY_F(2):
-				current = CreateNewImg (&everyone, current);
+				; MOSIMG *aux = CreateNewImg (&everyone, current);
+				if (aux)
+					current = aux;
 				DisplayCurrentImg (current);
 				break;
 				
@@ -193,7 +197,7 @@ int main (int argc, char *argv[]) {
 			/* erase entire line/column before cursor
 			 * it actually calls enough times the backspace button */
 			case KEY_CTRL_U:
-				i = max (current->img.height, current->img.width);
+				; int i = max (current->img.height, current->img.width);
 				while (i > 0 && i--)
 					ungetch (KEY_BACKSPACE);
 				break;

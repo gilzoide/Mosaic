@@ -65,7 +65,7 @@ int ResizeMOSIMG (MOSIMG *target, int new_height, int new_width);
 /**
  * Only to say if you want to link the img before or after the other in LinkImg
  */
-enum direction {before, after};
+enum direction {after = 0, before};
 /**
  * Link an image to another, before or after it
  * 

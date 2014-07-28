@@ -3,10 +3,10 @@
 # SCons script for building the program
 
 env = Environment (
-	LIBS = ['ncurses', 'panel', 'menu'],
+	LIBS = ['panel', 'menu', 'form', 'ncurses'],
 	LIBPATH = ['/usr/lib', '/usr/local/lib'],
 	CCFLAGS = '-g -Wall -pipe',
-	CPPPATH = '#include'
+	CPPPATH = '#include',
 )
 env.Decider ('MD5-timestamp')
 

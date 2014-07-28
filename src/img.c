@@ -115,12 +115,14 @@ int LoadImg (Image *image, const char *file_name) {
 		return -1;
 	
 	int new_height, new_width;
-	if (!fscanf (f, "%dx%d", &new_height, &new_width))
+	if (!fscanf (f, "%3dx%3d", &new_height, &new_width)) {
+		fclose (f);
 		return 1;
+	}
 	
 	ResizeImg (image, new_height, new_width);
 
-	char c;
+	int c;
 	// there's supposed to have a '\n' to discard after %dx%d;
 	// but if there ain't one, we read what's after
 	if ((c = fgetc (f)) != '\n')

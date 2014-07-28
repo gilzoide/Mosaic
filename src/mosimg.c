@@ -33,12 +33,15 @@ void dobox (MOSIMG *img) {
 	int i;
 	int y = img->img.height;
 	int x = img->img.width;
+	// bottom
 	for (i = 0; i < x; i++) {
 		mvwaddch (img->win, y, i, ACS_HLINE);
 	}
+	// right
 	for (i = 0; i < y; i++) {
 		mvwaddch (img->win, i, x, ACS_VLINE);
 	}
+	// bottom-right corner
 	mvwaddch (img->win, y, x, ACS_LRCORNER);
 }
 
@@ -46,6 +49,7 @@ void dobox (MOSIMG *img) {
 int ResizeMOSIMG (MOSIMG *target, int new_height, int new_width) {
 	delwin (target->win);
 	target->win = newpad (new_height + 1, new_width + 1);
+
 	int i = ResizeImg (&target->img, new_height, new_width);
 	
 	if (i == -1) {

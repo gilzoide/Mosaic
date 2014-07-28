@@ -1,7 +1,6 @@
 #include "mosaic.h"
 #include <locale.h>
 
-
 void CursInit () {
 	setlocale (LC_ALL, "");	// wide_chars!
 
@@ -26,10 +25,11 @@ char getBit (char c, int i) {
 
 
 int toUTF8 (int c) {
-	int out = 0, bytes, i, j;
+	int out = 0;
 	
 	// it's a multibyte UTF-8 char
 	if (c > 127) {
+		int i, j;
 		for (i = 0; i < 8; i++) {
 			// stopping condition; we still need to read the information here
 			if (!(c & (0b10000000 >> i))) {
@@ -40,7 +40,7 @@ int toUTF8 (int c) {
 				break;
 			}
 		}
-		bytes = i;
+		int bytes = i;
 		for (i = 0; i < bytes; i++) {
 			for (j = 0; j < 6; j++) {
 				out <<= 1;
@@ -57,7 +57,7 @@ int toUTF8 (int c) {
 
 
 void DefaultDirection (Direction *dir) {
-	int c = PrintHud ("new default direction (arrow keys)");
+	int c = PrintHud ("New default direction (arrow keys)");
 	ChangeDefaultDirection (c, dir);
 }
 
@@ -68,7 +68,7 @@ void InitCopyBuffer (CopyBuffer *buffer) {
 }
 
 
-inline void DestroyCopyBuffer (CopyBuffer *buffer) {
+void DestroyCopyBuffer (CopyBuffer *buffer) {
 	if (buffer != NULL)
 		delwin (buffer->buff);
 }
@@ -103,7 +103,7 @@ void Cut (CopyBuffer *buffer, MOSIMG *current, Cursor selection) {
 }
 
 
-int Paste (CopyBuffer *buffer, MOSIMG *current, Cursor cursor) {
+char Paste (CopyBuffer *buffer, MOSIMG *current, Cursor cursor) {
 	if (buffer->buff != NULL) {
 		int i, j, c;
 		for (i = 0; i <= buffer->coordinates.y; i++) {
@@ -128,10 +128,16 @@ int Paste (CopyBuffer *buffer, MOSIMG *current, Cursor cursor) {
 
 
 MOSIMG *CreateNewImg (IMGS *everyone, MOSIMG *current) {
-	int new_height = INITIAL_HEIGHT, new_width = INITIAL_WIDTH;
+	int height = INITIAL_HEIGHT, width = INITIAL_WIDTH;
+	enum direction dir;
+
+	// user canceled the creation: return NULL
+	if (AskCreateNewImg (&height, &width, &dir) == ERR)
+		return NULL;
+	// one more IMG
 	everyone->size++;
 	
-	MOSIMG *new_image = NewMOSIMG (new_height, new_width);
+	MOSIMG *new_image = NewMOSIMG (height, width);
 	
 	// first image: no one's after or before
 	if (everyone->list == NULL) {
@@ -140,7 +146,7 @@ MOSIMG *CreateNewImg (IMGS *everyone, MOSIMG *current) {
 	}
 	// not the first, so link it to someone
 	else
-		LinkImg (current, new_image, before);
+		LinkImg (current, new_image, dir);
 	
 	return new_image;
 }
@@ -173,7 +179,3 @@ void DestroyIMGS (IMGS *everyone) {
 }
 
 
-char AskQuit () {
-	int choice = PrintHud ("Do you really wanna quit? [y/N]");
-	return tolower (choice) == 'y' ? 1 : 0;
-}

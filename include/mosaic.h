@@ -8,7 +8,6 @@
 #include <curses.h>
 #include <panel.h>
 #include <stdio.h>
-#include <ctype.h>
 
 #include "color.h"
 #include "mosimg.h"
@@ -51,7 +50,10 @@ void DefaultDirection (Direction *dir);
  */
 typedef struct {
 	WINDOW *buff;		///< WINDOW that stores the mosaic
-	Cursor coordinates;	///< copy coordinates: origin_y/x for the upper-left corner, y/x for the size (how many chars in each direction)
+	Cursor coordinates;	/**< copy coordinates: origin_y/x for the upper-left
+   						 * corner, y/x for the size (how many chars 
+						 * in each direction) 
+						 */
 } CopyBuffer;
 /**
  * Initializes the copy buffer with default empty falues
@@ -63,7 +65,7 @@ void InitCopyBuffer (CopyBuffer *buffer);
  * @warning This function should be called before exiting the program,
  * unless you know what you're doing...
  */
-inline void DestroyCopyBuffer (CopyBuffer *buffer);
+void DestroyCopyBuffer (CopyBuffer *buffer);
 /**
  * Copies the current selection (may be only one char, whatever) into the buffer
  * 
@@ -73,7 +75,8 @@ inline void DestroyCopyBuffer (CopyBuffer *buffer);
  */
 void Copy (CopyBuffer *buffer, MOSIMG *current, Cursor selection);
 /**
- * Copies the current selection (may be only one char, whatever) into the buffer and erase the selection
+ * Copies the current selection (may be only one char, whatever)
+ * into the buffer and erase the selection
  * 
  * @param[in] current The current mosaic, to be copied from
  * @param[in] selection The selection to be copied
@@ -87,7 +90,7 @@ void Cut (CopyBuffer *buffer, MOSIMG *current, Cursor selection);
  * @param[in] cursor The position to paste from
  * @param[out] buffer The copy buffer, where the data is stored
  */
-int Paste (CopyBuffer *buffer, MOSIMG *current, Cursor cursor);
+char Paste (CopyBuffer *buffer, MOSIMG *current, Cursor cursor);
 
 /**
  * Create a new image and store it in the images list
@@ -95,7 +98,8 @@ int Paste (CopyBuffer *buffer, MOSIMG *current, Cursor cursor);
  * @param[in] everyone the mosaics list
  * @param[in] current the current mosaic, a reference for the new one coming
  * 
- * @return pointer to the created MOSIMG, to be stored in the 'current'
+ * @return pointer to the created MOSIMG, to be stored in the 'current';
+ * NULL if user canceled the creation
  */
 MOSIMG *CreateNewImg (IMGS *everyone, MOSIMG *current);
 /**
@@ -112,11 +116,5 @@ void RefreshMOSIMG (MOSIMG *current);
  */
 void DestroyIMGS (IMGS *everyone);
 
-/**
- * Ask if the user wants to quit
- *
- * @return Choice: 1 for YES, 0 for NO
- */
-char AskQuit ();
 
 #endif

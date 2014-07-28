@@ -8,8 +8,9 @@
 /**
  * Nmos State
  * 
- * It's used to store states along Nmos run. They are boolean values, witch may be on or off.
- * Use the defined macros to handle it, as they are here to simplify the process and make the code more readable.
+ * It's used to store states along Nmos run. They are boolean values,
+ * witch may be on or off. Use the defined macros to handle it, as they 
+ * are here to simplify the process and make the code more readable.
  * 
  * @sa IS_(a)
  * @sa ENTER_(a)
@@ -24,7 +25,7 @@ State state;	///< the global Nmos State
 #define SELECTION 	0b00000010	///< Box/Selection mode! Makes a difference when navigating and editing (copy, paste, attributes)
 #define TRANSPARENT	0b00000100	///< 'Paste' is transparent? (ignores blanks)
 #define ERASED		0b00001000	///< A char was erased by Backspace or Delete buttons
-#define QUIT		0b00010000	///< Quit the sw
+#define QUIT		0b10000000	///< Quit the sw (to break the main loop)
 
 // states operations
 #define IS_(a)		(state & a)		///< Used to check if it's in the 'a' state or not

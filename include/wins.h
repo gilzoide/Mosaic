@@ -15,7 +15,9 @@
 #include <curses.h>
 #include <panel.h>
 #include <menu.h>
+#include <form.h>
 #include <string.h>
+#include <ctype.h>
 
 #include "positioning.h"
 #include "keys.h"
@@ -46,6 +48,27 @@ int GetChosenOption (MENU *menu);
 
 /// Show the attributes table
 int AttrTable (MOSIMG *current, Cursor cur);
+
+/**
+ * Asks the user where to link the new image,
+ * and it's size
+ *
+ * @param[out] new_height The height that the user chose
+ * @param[out] new_width The width that the user chose
+ * @param[out] new_dir The linking direction that the user chose
+ *
+ * @return ERR if user don't want to create the image; OK otherwise
+ */
+char AskCreateNewImg (int *new_height, int *new_width, enum direction *new_dir);
+
+/**
+ * Ask if the user wants to quit
+ *
+ * @return Choice: 1 for YES, 0 for NO
+ */
+char AskQuit ();
+
+
 /**
  * Creates a PANEL with a boxed WINDOW, with a title in the middle of it's top border.
  * 
@@ -62,6 +85,17 @@ int AttrTable (MOSIMG *current, Cursor cur);
  */
 WINDOW *CreateBoxedTitledWindow (int nlines, int ncols, int begin_y, int begin_x, const char *title);
 /**
+ * Like the previous, but the WINDOW is centered in the screen
+ * @sa CreateBoxedTitledWindow
+ *
+ * @param nlines 	Number of lines
+ * @param ncols 	Number of columns
+ * @param title 	The title to be displayed
+ *
+ * @return The WINDOW created
+ */
+WINDOW *CreateCenteredBoxedTitledWindow (int nlines, int ncols, const char *title);
+/**
  * Deletes a previously created PANEL and the WINDOW inside, erasing it's contents and freeing memory
  *
  * @note If the pointer is NULL, this function doesn't do a thing, so it's safer.
@@ -74,7 +108,19 @@ void DeletePanel (PANEL *pan);
  */
 void DeleteWindow (WINDOW *win);
 /**
- * Deletes our important windows (menu, help, hud), freeing the memory associated
+ * Deletes a previously created MENU and it's WINDOWs, freeing memory
+ *
+ * @note If the pointer is NULL, this function doesn't do a thing, so it's safer.
+ */
+void DeleteMenu (MENU *menu);
+/**
+ * Deletes a previously created FORM and it's WINDOWs, freeing memory
+ *
+ * @note If the pointer is NULL, this function doesn't do a thing, so it's safer.
+ */
+void DeleteForm (FORM *form);
+/**
+ * Deletes our important windows (menu, help, hud...), freeing the memory associated
  */
 void DestroyWins ();
 
