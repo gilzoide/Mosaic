@@ -1,7 +1,7 @@
 # Mosaic asc art editor build script
 Import ('env')
 
-src = ['mosaic.c', 'mosimg.c', 'img.c', 'color.c', 'main.c', 'positioning.c', 'wins.c'],
+src = ['mosaic.c', 'mosimg.c', 'img.c', 'color.c', 'main.c', 'argpstuff.c', 'positioning.c', 'wins.c'],
 cat_src = ['color.c', 'img.c', 'moscat.c'],
 
 env.Program ('maae', src)

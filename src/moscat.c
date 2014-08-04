@@ -1,4 +1,4 @@
-/** @file cat-nmos.c
+/** @file moscat.c
  * A 'cat' application for nmos images
  */
 
@@ -9,7 +9,7 @@
 /* ARGP for parsing the arguments */
 #include <argp.h>
 
-const char *argp_program_version = "Moscat 0.1";
+const char *argp_program_version = "Moscat 0.6";
 const char *argp_program_bug_address = "<gilzoide@gmail.com>";
 static char doc[] = "A cat program for mosaic image files *.mosi";
 static char args_doc[] = "FILE";

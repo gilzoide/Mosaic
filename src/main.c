@@ -1,6 +1,8 @@
 #include "mosaic.h"
+#include "argpstuff.h"
 
 int main (int argc, char *argv[]) {
+	const char *file_name = arguments (argc, argv);
 	CursInit ();
 	
 	// initialize stuff
@@ -11,25 +13,31 @@ int main (int argc, char *argv[]) {
 	InitCopyBuffer (&buffer);
 	IMGS everyone;
 	InitIMGS (&everyone);
-	
-	// the current image in edition
-	MOSIMG *current = NULL;
-	// we really need a current image, so ask for it until user creates it!
-	while (!(current = CreateNewImg (&everyone, current)));
-	
+
 	ENTER_(TRANSPARENT);	// it's a test: it does work xD
-	
+
 	int c = 0;
 	// Mouse support: bt1 and bt3 click
 	MEVENT event;
 	mousemask (BUTTON1_CLICKED | BUTTON1_DOUBLE_CLICKED | BUTTON3_CLICKED, NULL);
-	
+
+	// the current image in edition
+	MOSIMG *current = NULL;
+	// we really need a current image, so ask for it until user creates it!
+	// but if asked to open a file directly, create a 1x1 Img and loads it
+	if (file_name) {
+		current = NewMOSIMG (1, 1);
+		c = KEY_CTRL_O;
+	}
+	else
+		while (!(current = CreateNewImg (&everyone, current)));
+
 	while (!IS_(QUIT)) {
 		if (c == KEY_F(10)) {
 			c = Menu ();
 			DisplayCurrentImg (current);
 		}
-		
+
 		//~ printw ("%d ", c);
 		switch (c) {
 			/* if nothing is returned by the menu, do nothing */
@@ -123,7 +131,7 @@ int main (int argc, char *argv[]) {
 				
 			/* load mosaic */
 			case KEY_CTRL_O:
-				switch (LoadImg (&current->img, "teste.mosi")) {
+				switch (LoadImg (&current->img, file_name)) {
 					case 0:
 						RefreshMOSIMG (current);
 						PrintHud ("Loaded successfully!");
