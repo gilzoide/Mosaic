@@ -24,13 +24,12 @@ int main (int argc, char *argv[]) {
 	// the current image in edition
 	MOSIMG *current = NULL;
 	// we really need a current image, so ask for it until user creates it!
-	// but if asked to open a file directly, create a 1x1 Img and loads it
+	// but if asked to open a file directly, create an Img and loads it
 	if (file_name) {
-		current = NewMOSIMG (1, 1);
+		ungetch ('\n');
 		c = KEY_CTRL_O;
 	}
-	else
-		while (!(current = CreateNewImg (&everyone, current)));
+	while (!(current = CreateNewImg (&everyone, current)));
 
 	while (!IS_(QUIT)) {
 		if (c == KEY_F(10)) {
@@ -124,28 +123,45 @@ int main (int argc, char *argv[]) {
 				
 			/* save mosaic */
 			case KEY_CTRL_S:
-				SaveImg (&current->img, "teste.mosi");
-				PrintHud ("Saved successfully!");
+				switch (SaveMOSIMG (current)) {
+					case 0:
+						PrintHud ("Saved successfully!");
+						break;
+
+					case ERR:	// canceled
+						break;
+
+					default:
+						PrintHud ("Sorry, no can save this... =/");
+						break;
+				}
 				UN_(TOUCHED);
 				break;
 				
 			/* load mosaic */
 			case KEY_CTRL_O:
-				switch (LoadImg (&current->img, file_name)) {
+				switch (LoadMOSIMG (current)) {
 					case 0:
 						RefreshMOSIMG (current);
 						PrintHud ("Loaded successfully!");
+						ENTER_(TOUCHED);
 						break;
 
 					case 1:
 						PrintHud ("No dimensions in this file, dude! =/");
 						break;
 
+					case ERR:	// canceled
+						break;
+
+					case ENOENT:
+						PrintHud ("File doesn't exist");
+						break;
+
 					default:
 						PrintHud ("Sorry, no can load this... =/");
 						break;
 				}
-				ENTER_(TOUCHED);
 				break;
 				
 			/* resize mosaic */

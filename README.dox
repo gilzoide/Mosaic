@@ -3,7 +3,9 @@
 
 Ncurses based "mosaic" asc art editor
 
-@todo attr/cores
+@todo attr table/tabela de cores
 @todo talvez mudar a seleção? pq ficar apagando pra reprintar é mei zuado, né =S
-@todo menuzim do nova IMG, load IMG e save IMG
+@todo transparent no menu
+@todo save/load panel dá zoera no free
+@todo UTF-8
 */

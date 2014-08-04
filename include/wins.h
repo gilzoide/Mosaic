@@ -12,6 +12,8 @@
 #define MENU_WIDTH 19
 #define MENU_X_SEPARATOR 9
 
+#define SAVELOAD_WIDTH 18
+
 #include <curses.h>
 #include <panel.h>
 #include <menu.h>
@@ -60,6 +62,15 @@ int AttrTable (MOSIMG *current, Cursor cur);
  * @return ERR if user don't want to create the image; OK otherwise
  */
 char AskCreateNewImg (int *new_height, int *new_width, enum direction *new_dir);
+
+/// Input/output, save/load
+enum io {save, load};
+/**
+ * Asks the user for the file name for loading an Image
+ *
+ * @return File name
+ */
+char *AskSaveLoadImg (enum io io);
 
 /**
  * Ask if the user wants to quit

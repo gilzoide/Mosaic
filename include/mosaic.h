@@ -103,6 +103,18 @@ char Paste (CopyBuffer *buffer, MOSIMG *current, Cursor cursor);
  */
 MOSIMG *CreateNewImg (IMGS *everyone, MOSIMG *current);
 /**
+ * Loads an image in the current
+ *
+ * @return Return value of LoadImg, or ERR if canceled
+ */
+int LoadMOSIMG (MOSIMG *current);
+/**
+ * Saves an image in the current
+ *
+ * @return Return value of LoadImg, or ERR if canceled
+ */
+int SaveMOSIMG (MOSIMG *current);
+/**
  * Reprint the Image from scratch, and refreshes it's WINDOW
  * 
  * @param current Img to be displayed

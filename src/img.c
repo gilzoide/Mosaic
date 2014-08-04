@@ -98,10 +98,12 @@ int SaveImg (Image *image, const char *file_name) {
 
 	fprintf (f, "%dx%d\n", image->height, image->width);
 	
+	// Mosaic
 	int i;
 	for (i = 0; i < image->height; i++) {
 		fprintf (f, "%.*s\n", image->width, (image->mosaic[i]));
 	}
+	// Attr
 	
 	fclose (f);
 
@@ -112,7 +114,7 @@ int SaveImg (Image *image, const char *file_name) {
 int LoadImg (Image *image, const char *file_name) {
 	FILE *f;
 	if ((f = fopen (file_name, "r")) == NULL)
-		return -1;
+		return errno;
 	
 	int new_height, new_width;
 	if (!fscanf (f, "%3dx%3d", &new_height, &new_width)) {

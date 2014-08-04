@@ -16,7 +16,8 @@ WINDOW *image_menuWindow;
 
 MENU *help_menu;
 WINDOW *help_menuWindow;
-// the PANEL for the submenus (we just change the WINDOW inside to display the different menus)
+// the PANEL for the submenus (we just change the
+// WINDOW inside to display the different menus)
 PANEL *submenuPanel;
 
 WINDOW *helpWindow;
@@ -25,6 +26,11 @@ PANEL *helpPanel;
 FORM *newImage_form;
 WINDOW *newImageWindow;
 PANEL *newImagePanel;
+
+// save and load have the same form, as it does the same (and keeps the buffer)
+FORM *saveloadImage_form;
+WINDOW *saveloadImageWindow;
+PANEL *saveloadImagePanel;
 
 WINDOW *hud;
 
@@ -171,22 +177,19 @@ void InitMenus () {
 	int x_aux = 0;
 	file_menuWindow = CreateBoxedTitledWindow (MENU_HEIGHT, MENU_WIDTH, LINES - MENU_HEIGHT - 2, x_aux, "FILE");
 	
-	int num_items = 4;
+	int num_items = 3;
 	const char *file_titles[] = {
-		"New Image",
-		"Save Image",
-		"Load Image",
+		"Save File",
+		"Load File",
 		"Exit Mosaic"
 	};
 	const char *file_descriptions[] = {
-		"F2",
 		"^S",
 		"^O",
 		"^Q"
 	};
 	// The choices are static so the userptr points to something that exists
 	static const int file_choices[] = {		
-		KEY_F(2),
 		KEY_CTRL_S,
 		KEY_CTRL_O,
 		KEY_CTRL_Q
@@ -265,7 +268,7 @@ void InitMenus () {
 		"Resize Image"
 	};
 	const char *image_descriptions[] = {
-		"^N",
+		"F2",
 		"^S",
 		"^O",
 		"^R"
@@ -664,9 +667,111 @@ char AskCreateNewImg (int *new_height, int *new_width, enum direction *new_dir) 
 	*new_dir = strcmp (field_buffer (form_fields (newImage_form)[2], 0), "after");
 
 	hide_panel (newImagePanel);
+	update_panels ();
 	doupdate ();
 
 	return OK;
+}
+
+
+void InitSaveLoadImage () {
+	saveloadImageWindow = CreateCenteredBoxedTitledWindow (6, 
+			SAVELOAD_WIDTH + 2, "LOAD IMAGE");
+	saveloadImagePanel = new_panel (saveloadImageWindow);
+
+	mvwaddstr (saveloadImageWindow, 2, 5, "File name");
+
+	// subwindow: inside the box
+	WINDOW *subwindow = derwin (saveloadImageWindow, 1, SAVELOAD_WIDTH, 3, 1);
+
+	/* MAKING OF FORM */
+	FIELD **fields = (FIELD**) calloc (2, sizeof (FIELD*));
+	fields[0] = new_field (1, SAVELOAD_WIDTH, 0, 0, 0, 0);
+	set_field_back (fields[0], A_BOLD);
+	field_opts_off (fields[0], O_PASSOK | O_STATIC);
+
+	// the FORM itself, WINDOW and post it!
+	saveloadImage_form = new_form (fields);
+	set_form_sub (saveloadImage_form, subwindow);
+	post_form (saveloadImage_form);
+
+	wrefresh (saveloadImageWindow);
+}
+
+
+char *AskSaveLoadImg (enum io io) {
+	// creates it if not already there
+	if (!saveloadImagePanel)
+		InitSaveLoadImage ();
+
+	// changes the title if saving or loading
+	if (io == save) {
+		mvwaddstr (saveloadImageWindow, 0, 5, "SAVE");
+	}
+	else {
+		mvwaddstr (saveloadImageWindow, 0, 5, "LOAD");
+	}
+
+	// cursor on the form, please!
+	pos_form_cursor (saveloadImage_form);
+
+	// display the panel
+	show_panel (saveloadImagePanel);
+	update_panels ();
+	doupdate ();
+
+	int c;
+
+	do {
+		c = getch ();
+
+		switch (c) {
+			case KEY_RIGHT:
+				form_driver (saveloadImage_form, REQ_RIGHT_CHAR);
+				break;
+
+			case KEY_LEFT:
+				form_driver (saveloadImage_form, REQ_LEFT_CHAR);
+				break;
+
+			// get out, don't load the image
+			case KEY_ESC:
+				hide_panel (saveloadImagePanel);
+				doupdate ();
+				return NULL;
+
+			case KEY_DC:
+				form_driver (saveloadImage_form, REQ_DEL_CHAR);
+				break;
+
+			case KEY_BACKSPACE: case 127:
+				form_driver (saveloadImage_form, REQ_DEL_PREV);
+				break;
+
+			// write the dimensions in the field
+			default:
+				form_driver (saveloadImage_form, c);
+				break;
+		}
+
+		wrefresh (saveloadImageWindow);
+	} while (c != '\n');
+
+	hide_panel (saveloadImagePanel);
+	update_panels ();
+	doupdate ();
+
+	form_driver (saveloadImage_form, REQ_NEXT_FIELD);
+
+	// get the field's data
+	char *aux = field_buffer (form_fields (saveloadImage_form)[0], 0);
+	// and take the trailing spaces off
+	int i;
+	for (i = strlen (aux) - 1; aux[i] == ' '; i--);
+	aux[i + 1] = '\0';
+
+	// if it's a empty string, returns as canceled
+	return aux[0] ? aux : NULL;
 }
 
 
@@ -712,7 +817,7 @@ WINDOW *CreateBoxedTitledWindow (int nlines, int ncols, int begin_y, int begin_x
 void DeletePanel (PANEL *pan) {
 	if (pan != NULL) {
 		DeleteWindow (panel_window (pan));
-		
+
 		del_panel (pan);
 	}
 }
@@ -775,9 +880,12 @@ void DestroyWins () {
 	DeleteMenu (edit_menu);
 	DeleteMenu (image_menu);
 	DeleteMenu (help_menu);
-	del_panel (menuPanel);
-	del_panel (submenuPanel);
+	DeletePanel (menuPanel);
+	DeletePanel (submenuPanel);
 // New Image
 	DeleteForm (newImage_form);
-	del_panel (newImagePanel);
+	DeletePanel (newImagePanel);
+// Load Image
+	DeleteForm (saveloadImage_form);
+	/*DeletePanel (saveloadImagePanel);*/
 }

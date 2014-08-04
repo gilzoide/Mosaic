@@ -151,6 +151,30 @@ MOSIMG *CreateNewImg (IMGS *everyone, MOSIMG *current) {
 	return new_image;
 }
 
+
+int LoadMOSIMG (MOSIMG *current) {
+	char *file_name = AskSaveLoadImg (load);
+
+	if (!file_name)
+		return ERR;
+	else
+		return LoadImg (&current->img, file_name);
+}
+
+
+int SaveMOSIMG (MOSIMG *current) {
+	char *file_name = AskSaveLoadImg (save);
+
+	if (!file_name)
+		return ERR;
+	else {
+		if (!strstr (file_name, ".mosi"))
+			strcat (file_name, ".mosi");
+		return SaveImg (&current->img, file_name);
+	}
+}
+
+
 void RefreshMOSIMG (MOSIMG *current) {
 	wmove (current->win, 0, 0);
 	
