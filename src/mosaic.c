@@ -1,205 +1,180 @@
 #include "mosaic.h"
-#include <locale.h>
 
-void CursInit () {
-	setlocale (LC_ALL, "");	// wide_chars!
 
-	initscr ();	// init curses screen
-	
-	keypad (stdscr, TRUE);	// we can now use the arrow keys and Fn keys
-	raw ();	// no need to wait for the RETURN key [for interactive means]
-	noecho ();
-
-	set_escdelay (0);	// no need to wait for the Esc key (we don't use the meta modifier)
-	
-	start_color ();	// Colors!
-	InitColors ();	// initialize all the colors -> color.c
-	InitHud ();	// initialize the HUD
+inline int MOSAICSize (MOSAIC img) {
+	return img.height * img.width;
 }
 
 
-char getBit (char c, int i) {
-	char out = c & (0b10000000 >> i);
-	return out >> (8 - i);
+int NewMOSAIC (MOSAIC *img, int new_height, int new_width) {
+	// dimensions still 0
+	img->height = img->width = 0;
+	// NULL pointers, for realloc to work as a malloc
+	img->mosaic = img->attr = NULL;
+	
+	// alloc the dinamic stuff and fill it: something ResizeMOSAIC already does
+	ResizeMOSAIC (img, new_height, new_width);
+	
+	return 0;
 }
 
 
-int toUTF8 (int c) {
-	int out = 0;
+int ResizeMOSAIC (MOSAIC *img, int new_height, int new_width) {
+	// old dimensions
+	int old_height = img->height;
+	int old_width = img->width;
+	// new dimensions
+	img->height = new_height;
+	img->width = new_width;
 	
-	// it's a multibyte UTF-8 char
-	if (c > 127) {
-		int i, j;
-		for (i = 0; i < 8; i++) {
-			// stopping condition; we still need to read the information here
-			if (!(c & (0b10000000 >> i))) {
-				for ( ; i < 8; i++) {
-					out <<= 1;
-					out += getBit (c, i);
-				}
-				break;
+	int i;
+	// when shrinking the , free the lines we're discarding
+	for (i = old_height - 1; i >= new_height; i--) {
+		free (img->mosaic[i]);
+		free (img->attr[i]);
+	}
+	
+	
+	// realloc the dinamic stuff
+	// Lines
+	// mosaic:
+	if ((img->mosaic = (unsigned char**) realloc (
+		img->mosaic, new_height * sizeof (unsigned char*))) == NULL)
+		return -1;
+	for (i = old_height; i < new_height; i++)
+		img->mosaic[i] = NULL;
+	// attributes:
+	if ((img->attr = (Attr**) realloc (
+		img->attr, new_height * sizeof (Attr*))) == NULL)
+		return -1;
+	for (i = old_height; i < new_height; i++)
+		img->attr[i] = NULL;
+
+	// Columns
+	for (i = 0; i < new_height; i++) {
+		if ((img->mosaic[i] = (unsigned char*) realloc (
+			img->mosaic[i], new_width * sizeof (unsigned char))) == NULL)
+			return -1;
+		if ((img->attr[i] = (Attr*) realloc (
+			img->attr[i], new_width * sizeof (Attr))) == NULL)
+			return -1;
+	}
+	
+	// maybe it grew, so complete with blanks
+	int j;
+	if (old_height > 0 && old_width > 0) {
+		// new lines, until old width
+		for (i = old_height; i < new_height; i++) {
+			for (j = 0; j < old_width; j++) {
+				img->mosaic[i][j] = ' ';
+				img->attr[i][j] = 0;
 			}
 		}
-		int bytes = i;
-		for (i = 0; i < bytes; i++) {
-			for (j = 0; j < 6; j++) {
-				out <<= 1;
-				out += getBit (c, j + 2);
+		// new columns, until old height
+		for (i = old_width; i < new_width; i++) {
+			for (j = 0; j < old_height; j++) {
+				img->mosaic[j][i] = ' ';
+				img->attr[j][i] = 0;
 			}
 		}
 	}
-	else {
-		return c;
+
+	// the other square: from old to new height/width (for growing)
+	for (i = old_height; i < new_height; i++) {
+		for (j = old_width; j < new_width; j++) {
+			img->mosaic[i][j] = ' ';
+			img->attr[i][j] = 0;
+		}
 	}
+
+	return 0;
+}
+
+
+int SaveMOSAIC (MOSAIC *image, const char *file_name) {
+	FILE *f;
+	if ((f = fopen (file_name, "w")) == NULL)
+		return -1;
+
+	fprintf (f, "%dx%d\n", image->height, image->width);
 	
-	return out;
-}
-
-
-void DefaultDirection (Direction *dir) {
-	int c = PrintHud ("New default direction (arrow keys)");
-	ChangeDefaultDirection (c, dir);
-}
-
-
-void InitCopyBuffer (CopyBuffer *buffer) {
-	buffer->buff = NULL;
-	buffer->coordinates.x = buffer->coordinates.y = buffer->coordinates.origin_y = buffer->coordinates.origin_x = 0;
-}
-
-
-void DestroyCopyBuffer (CopyBuffer *buffer) {
-	if (buffer != NULL)
-		delwin (buffer->buff);
-}
-
-
-void Copy (CopyBuffer *buffer, MOSIMG *current, Cursor selection) {
-	// if there was something stored, bye bye
-	DestroyCopyBuffer (buffer);
-
-	// copy buffer is a copy of the entire window, since the curses implementation certainly is better than I would do =P
-	buffer->buff = dupwin (current->win);
-	// set it's coordinates, so we know what part the user want to copy
-	buffer->coordinates.origin_y = min (selection.y, selection.origin_y);
-	buffer->coordinates.origin_x = min (selection.x, selection.origin_x);
-	buffer->coordinates.y = abs (selection.y - selection.origin_y);
-	buffer->coordinates.x = abs (selection.x - selection.origin_x);
-}
-
-
-void Cut (CopyBuffer *buffer, MOSIMG *current, Cursor selection) {
-	// we copy to the buffer
-	Copy (buffer, current, selection);
-	// and erase what was in there
-	int i, j;
-	int y = min (selection.y, selection.origin_y), x = min (selection.x, selection.origin_x);	// we need the upper-left corner only
-	for (i = 0; i <= buffer->coordinates.y; i++) {
-		for (j = 0; j <= buffer->coordinates.x; j++) {
-			mosAddch (current, y + i, x + j, ' ');
-		}
+	// Mosaic
+	int i;
+	for (i = 0; i < image->height; i++) {
+		fprintf (f, "%.*s\n", image->width, (image->mosaic[i]));
 	}
-	DisplayCurrentImg (current);
+	// Attr
+	
+	fclose (f);
+
+	return 0;
 }
 
 
-char Paste (CopyBuffer *buffer, MOSIMG *current, Cursor cursor) {
-	if (buffer->buff != NULL) {
-		int i, j, c;
-		for (i = 0; i <= buffer->coordinates.y; i++) {
-			for (j = 0; j <= buffer->coordinates.x; j++) {
-				// read the char from the CopyBuffer
-				c = mvwinch (buffer->buff, buffer->coordinates.origin_y + i, buffer->coordinates.origin_x + j);
-				// if transparent pasting, and it's a ' ', leave the old char there
-				if (IS_(TRANSPARENT) && c == ' ')
-					continue;
-				// if outside MOSIMG window, don't try to put 'c' in it, or it'll crash
-				else if (mosAddch (current, cursor.y + i, cursor.x + j, c) == ERR)
-					break;
-			}
-		}
-
-		DisplayCurrentImg (current);
+int LoadMOSAIC (MOSAIC *image, const char *file_name) {
+	FILE *f;
+	if ((f = fopen (file_name, "r")) == NULL)
+		return errno;
+	
+	int new_height, new_width;
+	if (!fscanf (f, "%3dx%3d", &new_height, &new_width)) {
+		fclose (f);
 		return 1;
 	}
-	else
-		return 0;
-}
-
-
-MOSIMG *CreateNewImg (IMGS *everyone, MOSIMG *current) {
-	int height = INITIAL_HEIGHT, width = INITIAL_WIDTH;
-	enum direction dir;
-
-	// user canceled the creation: return NULL
-	if (AskCreateNewImg (&height, &width, &dir) == ERR)
-		return NULL;
-	// one more IMG
-	everyone->size++;
 	
-	MOSIMG *new_image = NewMOSIMG (height, width);
+	ResizeMOSAIC (image, new_height, new_width);
+
+	int c;
+	// there's supposed to have a '\n' to discard after %dx%d;
+	// but if there ain't one, we read what's after
+	if ((c = fgetc (f)) != '\n')
+		ungetc (c, f);
 	
-	// first image: no one's after or before
-	if (everyone->list == NULL) {
-		everyone->list = new_image;
-		new_image->next = new_image->prev = new_image;
-	}
-	// not the first, so link it to someone
-	else
-		LinkImg (current, new_image, dir);
-	
-	return new_image;
-}
-
-
-int LoadMOSIMG (MOSIMG *current) {
-	char *file_name = AskSaveLoadImg (load);
-
-	if (!file_name)
-		return ERR;
-	else
-		return LoadImg (&current->img, file_name);
-}
-
-
-int SaveMOSIMG (MOSIMG *current) {
-	char *file_name = AskSaveLoadImg (save);
-
-	if (!file_name)
-		return ERR;
-	else {
-		if (!strstr (file_name, ".mosi"))
-			strcat (file_name, ".mosi");
-		return SaveImg (&current->img, file_name);
-	}
-}
-
-
-void RefreshMOSIMG (MOSIMG *current) {
-	wmove (current->win, 0, 0);
-	
-	// write in the WINDOW
 	int i, j;
-	for (i = 0; i < current->img.height; i++) {
-		for (j = 0; j < current->img.width; j++) {
-			mvwaddch (current->win, i, j, current->img.mosaic[i][j]);
+	for (i = 0; i < image->height; i++) {
+		// read the line until the end or no more width is available
+		for (j = 0; j < image->width; j++) {
+			if ((c = fgetc (f)) == EOF)
+				// used so won't need a flag or more comparisons
+				// to break both the fors
+				goto FILL_WITH_BLANK;
+			// if it reached newline before width...
+			else if (c == '\n')
+				break;
+			image->mosaic[i][j] = c;
+		}
+		// ...complete with whitespaces
+		for ( ;  j < image->width; j++) {
+			image->mosaic[i][j] = ' ';
+		}
+		
+		// we read the whole line, but the tailing '\n', we need to discard it
+		if (c != '\n')
+			// may happen it's not a newline yet, so let's reread it =P
+			if ((c = fgetc (f)) != '\n')
+				ungetc (c, f);
+	}
+	
+FILL_WITH_BLANK:
+	// well, maybe we reached OEF, so everything else is a blank...
+	for ( ; i < image->height; i++) {
+		for (j = 0;  j < image->width; j++) {
+			image->mosaic[i][j] = ' ';
 		}
 	}
 	
-	// display it
-	DisplayCurrentImg (current);
+	fclose (f);
+
+	return 0;
 }
 
 
-void DestroyIMGS (IMGS *everyone) {
-	MOSIMG *aux, *next;
+void FreeMOSAIC (MOSAIC *img) {
 	int i;
-	
-	for (aux = everyone->list, i = 0; i < everyone->size; i++, aux = next) {
-		next = aux->next;
-		FreeMOSIMG (aux);
-		free (aux);
+	for (i = 0; i < img->height; i++) {
+		free (img->attr[i]);
+		free (img->mosaic[i]);
 	}
+	free (img->attr);
+	free (img->mosaic);
 }
-
-

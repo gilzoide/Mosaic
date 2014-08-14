@@ -3,13 +3,13 @@
  */
 
 #include <stdio.h>
-#include "img.h"
+#include "mosaic.h"
 #include "color.h"
 
 /* ARGP for parsing the arguments */
 #include <argp.h>
 
-const char *argp_program_version = "Moscat 0.6";
+const char *argp_program_version = "Moscat 0.1.0";
 const char *argp_program_bug_address = "<gilzoide@gmail.com>";
 static char doc[] = "A cat program for mosaic image files *.mosi";
 static char args_doc[] = "FILE";
@@ -74,7 +74,7 @@ static struct argp argp = { options, parse_opt, args_doc, doc };
  * @param[in] img The image to be displayed
  * @param[in] color Flag: display colors?
  */
-void printImg (Image *img, char color) {
+void printMOSAIC (MOSAIC *img, char color) {
 	int i, j;
 	for (i = 0; i < img->height; i++) {
 		for (j = 0; j < img->width; j++) {
@@ -95,9 +95,9 @@ int main (int argc, char *argv[]) {
 	argp_parse (&argp, argc, argv, 0, 0, &arguments);
 
 	// image to be loaded
-	Image img;
-	NewImg (&img, 0, 0);
-	switch (LoadImg (&img, arguments.input)) {
+	MOSAIC img;
+	NewMOSAIC (&img, 0, 0);
+	switch (LoadMOSAIC (&img, arguments.input)) {
 		case -1:
 			fprintf (stderr, "Couldn't open the file, i'm sorry...\n");
 			return 0;
@@ -111,9 +111,9 @@ int main (int argc, char *argv[]) {
 		printf ("%dx%d\n", img.height, img.width);
 
 	// print the image at stdout
-	printImg (&img, arguments.color);
+	printMOSAIC (&img, arguments.color);
 
-	FreeImg (&img);
+	FreeMOSAIC (&img);
 
 	return 0;
 }

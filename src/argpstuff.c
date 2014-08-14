@@ -3,7 +3,7 @@
 /* ARGP for parsing the arguments */
 #include <argp.h>
 
-const char *argp_program_version = "Maae 0.6";
+const char *argp_program_version = "Maae 0.1.0";
 const char *argp_program_bug_address = "<gilzoide@gmail.com>";
 static char doc[] = "Maae, a Curses and Mosaic based asc art editor";
 static char args_doc[] = "[FILE]";

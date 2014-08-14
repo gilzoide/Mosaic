@@ -15,7 +15,7 @@ void InitCursor (Cursor *cur) {
 }
 
 
-void PrintSelection (Cursor *position, MOSIMG *current) {
+void PrintSelection (Cursor *position, CURS_MOS *current) {
 	int ULy = min (position->origin_y, position->y);
 	int ULx = min (position->origin_x, position->x);
 	int BRy = max (position->origin_y, position->y);
@@ -69,20 +69,20 @@ void PrintSelection (Cursor *position, MOSIMG *current) {
 	else
 		mvwchgat (current->win, );
 	*/
-	DisplayCurrentImg (current);
+	DisplayCurrentMOSAIC (current);
 }
 
 
-void UnprintSelection (MOSIMG *current) {
+void UnprintSelection (CURS_MOS *current) {
 	int i;
 	for (i = 0; i < current->img.height; i++)
 		mvwchgat (current->win, i, 0, current->img.width, A_NORMAL, 0, NULL);
 	
-	DisplayCurrentImg (current);
+	DisplayCurrentMOSAIC (current);
 }
 
 
-void Move (Cursor *position, MOSIMG *current, Direction dir) {
+void Move (Cursor *position, CURS_MOS *current, Direction dir) {
 	// change the cursor position, deppending on the direction
 	switch (dir) {
 		case UP:
@@ -119,7 +119,7 @@ void Move (Cursor *position, MOSIMG *current, Direction dir) {
 }
 
 
-void MoveTo (Cursor *position, MOSIMG *current, int y, int x) {
+void MoveTo (Cursor *position, CURS_MOS *current, int y, int x) {
 	if (y > 0 && y < current->img.height && x > 0 && x < current->img.width) {
 		position->y = y;
 		position->x = x;
@@ -136,7 +136,7 @@ void MoveTo (Cursor *position, MOSIMG *current, int y, int x) {
 }
 
 
-void MoveAll (Cursor *position, MOSIMG *current, Direction dir) {
+void MoveAll (Cursor *position, CURS_MOS *current, Direction dir) {
 	// change the cursor position, deppending on the direction
 	switch (dir) {
 		case UP:

@@ -49,7 +49,7 @@ int Menu ();
 int GetChosenOption (MENU *menu);
 
 /// Show the attributes table
-int AttrTable (MOSIMG *current, Cursor cur);
+int AttrTable (CURS_MOS *current, Cursor cur);
 
 /**
  * Asks the user where to link the new image,
@@ -61,16 +61,16 @@ int AttrTable (MOSIMG *current, Cursor cur);
  *
  * @return ERR if user don't want to create the image; OK otherwise
  */
-char AskCreateNewImg (int *new_height, int *new_width, enum direction *new_dir);
+char AskCreateNewMOSAIC (int *new_height, int *new_width, enum direction *new_dir);
 
 /// Input/output, save/load
 enum io {save, load};
 /**
- * Asks the user for the file name for loading an Image
+ * Asks the user for the file name for loading an MOSAIC
  *
  * @return File name
  */
-char *AskSaveLoadImg (enum io io);
+char *AskSaveLoadMOSAIC (enum io io);
 
 /**
  * Ask if the user wants to quit

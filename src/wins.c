@@ -23,14 +23,14 @@ PANEL *submenuPanel;
 WINDOW *helpWindow;
 PANEL *helpPanel;
 
-FORM *newImage_form;
-WINDOW *newImageWindow;
-PANEL *newImagePanel;
+FORM *newMOSAIC_form;
+WINDOW *newMOSAICWindow;
+PANEL *newMOSAICPanel;
 
 // save and load have the same form, as it does the same (and keeps the buffer)
-FORM *saveloadImage_form;
-WINDOW *saveloadImageWindow;
-PANEL *saveloadImagePanel;
+FORM *saveloadMOSAIC_form;
+WINDOW *saveloadMOSAICWindow;
+PANEL *saveloadMOSAICPanel;
 
 WINDOW *hud;
 
@@ -151,7 +151,7 @@ void InitMenus () {
 	const char *menu_descriptions[] = {
 		"File",
 		"Edit",
-		"Image",
+		"MOSAIC",
 		"Help"
 	};
 	
@@ -262,10 +262,10 @@ void InitMenus () {
 	
 	num_items = 4;
 	const char *image_titles[] = {
-		"New Image",
-		"Save Image",
-		"Load Image",
-		"Resize Image"
+		"New MOSAIC",
+		"Save MOSAIC",
+		"Load MOSAIC",
+		"Resize MOSAIC"
 	};
 	const char *image_descriptions[] = {
 		"F2",
@@ -533,7 +533,7 @@ int GetChosenOption (MENU *menu) {
 }
 
 
-int AttrTable (MOSIMG *current, Cursor cur) {
+int AttrTable (CURS_MOS *current, Cursor cur) {
 	WINDOW *table;
 	PANEL *up;
 
@@ -557,15 +557,15 @@ int AttrTable (MOSIMG *current, Cursor cur) {
 }
 
 
-void InitNewImage (int initial_height, int initial_width) {
-	newImageWindow = CreateCenteredBoxedTitledWindow (6, 20, "NEW IMAGE");
-	newImagePanel = new_panel (newImageWindow);
+void InitNewMOSAIC (int initial_height, int initial_width) {
+	newMOSAICWindow = CreateCenteredBoxedTitledWindow (6, 20, "NEW IMAGE");
+	newMOSAICPanel = new_panel (newMOSAICWindow);
 
 	// subwindow: inside the box
-	WINDOW *subwindow = derwin (newImageWindow, 4, 6, 1, 12);
-	mvwaddstr (newImageWindow, 1, 1, "Height");
-	mvwaddstr (newImageWindow, 2, 1, "Width");
-	mvwaddstr (newImageWindow, 4, 1, "Link image");
+	WINDOW *subwindow = derwin (newMOSAICWindow, 4, 6, 1, 12);
+	mvwaddstr (newMOSAICWindow, 1, 1, "Height");
+	mvwaddstr (newMOSAICWindow, 2, 1, "Width");
+	mvwaddstr (newMOSAICWindow, 4, 1, "Link image");
 
 	/* MAKING OF FORM */
 	FIELD **fields = (FIELD**) calloc (4, sizeof (FIELD*));
@@ -601,20 +601,20 @@ void InitNewImage (int initial_height, int initial_width) {
 	set_field_buffer (fields[2], 0, directions[0]);
 
 	// the FORM itself, WINDOW and post it!
-	newImage_form = new_form (fields);
-	set_form_sub (newImage_form, subwindow);
-	post_form (newImage_form);
+	newMOSAIC_form = new_form (fields);
+	set_form_sub (newMOSAIC_form, subwindow);
+	post_form (newMOSAIC_form);
 
-	touchwin (newImageWindow);
+	touchwin (newMOSAICWindow);
 }
 
-char AskCreateNewImg (int *new_height, int *new_width, enum direction *new_dir) {
+char AskCreateNewMOSAIC (int *new_height, int *new_width, enum direction *new_dir) {
 	// creates it if not already there
-	if (!newImagePanel)
-		InitNewImage (*new_height, *new_width);
+	if (!newMOSAICPanel)
+		InitNewMOSAIC (*new_height, *new_width);
 
 	// display the panel
-	show_panel (newImagePanel);
+	show_panel (newMOSAICPanel);
 	update_panels ();
 	doupdate ();
 
@@ -626,47 +626,47 @@ char AskCreateNewImg (int *new_height, int *new_width, enum direction *new_dir) 
 		switch (c) {
 			// previous
 			case KEY_UP:
-				form_driver (newImage_form, REQ_PREV_FIELD);
+				form_driver (newMOSAIC_form, REQ_PREV_FIELD);
 				break;
 
 			// neeeext
 			case KEY_DOWN:
-				form_driver (newImage_form, REQ_NEXT_FIELD);
+				form_driver (newMOSAIC_form, REQ_NEXT_FIELD);
 				break;
 
 			// there are only 2 possibilities, so require next
 			case KEY_RIGHT: case KEY_LEFT: case ' ':
-				form_driver (newImage_form, REQ_NEXT_CHOICE);
+				form_driver (newMOSAIC_form, REQ_NEXT_CHOICE);
 				break;
 
 			// get out, don't create the new image
 			case KEY_ESC:
-				hide_panel (newImagePanel);
+				hide_panel (newMOSAICPanel);
 				doupdate ();
 				return ERR;
 
 			// backspace: start over
 			case KEY_BACKSPACE: case 127:
-				form_driver (newImage_form, REQ_PREV_FIELD);
-				form_driver (newImage_form, REQ_NEXT_FIELD);
+				form_driver (newMOSAIC_form, REQ_PREV_FIELD);
+				form_driver (newMOSAIC_form, REQ_NEXT_FIELD);
 				break;
 
 			// write the dimensions in the field
 			default:
 				if (isdigit (c))	// only allow digits (for the dimensions)
-					form_driver (newImage_form, c);
+					form_driver (newMOSAIC_form, c);
 				break;
 		}
 
-		wrefresh (newImageWindow);
+		wrefresh (newMOSAICWindow);
 	} while (c != '\n');
 
 	// get the fields' data
-	*new_height = atoi (field_buffer (form_fields (newImage_form)[0], 0));
-	*new_width = atoi (field_buffer (form_fields (newImage_form)[1], 0));
-	*new_dir = strcmp (field_buffer (form_fields (newImage_form)[2], 0), "after");
+	*new_height = atoi (field_buffer (form_fields (newMOSAIC_form)[0], 0));
+	*new_width = atoi (field_buffer (form_fields (newMOSAIC_form)[1], 0));
+	*new_dir = strcmp (field_buffer (form_fields (newMOSAIC_form)[2], 0), "after");
 
-	hide_panel (newImagePanel);
+	hide_panel (newMOSAICPanel);
 	update_panels ();
 	doupdate ();
 
@@ -674,15 +674,15 @@ char AskCreateNewImg (int *new_height, int *new_width, enum direction *new_dir) 
 }
 
 
-void InitSaveLoadImage () {
-	saveloadImageWindow = CreateCenteredBoxedTitledWindow (6, 
+void InitSaveLoadMOSAIC () {
+	saveloadMOSAICWindow = CreateCenteredBoxedTitledWindow (6, 
 			SAVELOAD_WIDTH + 2, "LOAD IMAGE");
-	saveloadImagePanel = new_panel (saveloadImageWindow);
+	saveloadMOSAICPanel = new_panel (saveloadMOSAICWindow);
 
-	mvwaddstr (saveloadImageWindow, 2, 5, "File name");
+	mvwaddstr (saveloadMOSAICWindow, 2, 5, "File name");
 
 	// subwindow: inside the box
-	WINDOW *subwindow = derwin (saveloadImageWindow, 1, SAVELOAD_WIDTH, 3, 1);
+	WINDOW *subwindow = derwin (saveloadMOSAICWindow, 1, SAVELOAD_WIDTH, 3, 1);
 
 	/* MAKING OF FORM */
 	FIELD **fields = (FIELD**) calloc (2, sizeof (FIELD*));
@@ -691,32 +691,32 @@ void InitSaveLoadImage () {
 	field_opts_off (fields[0], O_PASSOK | O_STATIC);
 
 	// the FORM itself, WINDOW and post it!
-	saveloadImage_form = new_form (fields);
-	set_form_sub (saveloadImage_form, subwindow);
-	post_form (saveloadImage_form);
+	saveloadMOSAIC_form = new_form (fields);
+	set_form_sub (saveloadMOSAIC_form, subwindow);
+	post_form (saveloadMOSAIC_form);
 
-	wrefresh (saveloadImageWindow);
+	wrefresh (saveloadMOSAICWindow);
 }
 
 
-char *AskSaveLoadImg (enum io io) {
+char *AskSaveLoadMOSAIC (enum io io) {
 	// creates it if not already there
-	if (!saveloadImagePanel)
-		InitSaveLoadImage ();
+	if (!saveloadMOSAICPanel)
+		InitSaveLoadMOSAIC ();
 
 	// changes the title if saving or loading
 	if (io == save) {
-		mvwaddstr (saveloadImageWindow, 0, 5, "SAVE");
+		mvwaddstr (saveloadMOSAICWindow, 0, 5, "SAVE");
 	}
 	else {
-		mvwaddstr (saveloadImageWindow, 0, 5, "LOAD");
+		mvwaddstr (saveloadMOSAICWindow, 0, 5, "LOAD");
 	}
 
 	// cursor on the form, please!
-	pos_form_cursor (saveloadImage_form);
+	pos_form_cursor (saveloadMOSAIC_form);
 
 	// display the panel
-	show_panel (saveloadImagePanel);
+	show_panel (saveloadMOSAICPanel);
 	update_panels ();
 	doupdate ();
 
@@ -727,44 +727,44 @@ char *AskSaveLoadImg (enum io io) {
 
 		switch (c) {
 			case KEY_RIGHT:
-				form_driver (saveloadImage_form, REQ_RIGHT_CHAR);
+				form_driver (saveloadMOSAIC_form, REQ_RIGHT_CHAR);
 				break;
 
 			case KEY_LEFT:
-				form_driver (saveloadImage_form, REQ_LEFT_CHAR);
+				form_driver (saveloadMOSAIC_form, REQ_LEFT_CHAR);
 				break;
 
 			// get out, don't load the image
 			case KEY_ESC:
-				hide_panel (saveloadImagePanel);
+				hide_panel (saveloadMOSAICPanel);
 				doupdate ();
 				return NULL;
 
 			case KEY_DC:
-				form_driver (saveloadImage_form, REQ_DEL_CHAR);
+				form_driver (saveloadMOSAIC_form, REQ_DEL_CHAR);
 				break;
 
 			case KEY_BACKSPACE: case 127:
-				form_driver (saveloadImage_form, REQ_DEL_PREV);
+				form_driver (saveloadMOSAIC_form, REQ_DEL_PREV);
 				break;
 
 			// write the dimensions in the field
 			default:
-				form_driver (saveloadImage_form, c);
+				form_driver (saveloadMOSAIC_form, c);
 				break;
 		}
 
-		wrefresh (saveloadImageWindow);
+		wrefresh (saveloadMOSAICWindow);
 	} while (c != '\n');
 
-	hide_panel (saveloadImagePanel);
+	hide_panel (saveloadMOSAICPanel);
 	update_panels ();
 	doupdate ();
 
-	form_driver (saveloadImage_form, REQ_NEXT_FIELD);
+	form_driver (saveloadMOSAIC_form, REQ_NEXT_FIELD);
 
 	// get the field's data
-	char *aux = field_buffer (form_fields (saveloadImage_form)[0], 0);
+	char *aux = field_buffer (form_fields (saveloadMOSAIC_form)[0], 0);
 	// and take the trailing spaces off
 	int i;
 	for (i = strlen (aux) - 1; aux[i] == ' '; i--);
@@ -882,10 +882,10 @@ void DestroyWins () {
 	DeleteMenu (help_menu);
 	DeletePanel (menuPanel);
 	DeletePanel (submenuPanel);
-// New Image
-	DeleteForm (newImage_form);
-	DeletePanel (newImagePanel);
-// Load Image
-	DeleteForm (saveloadImage_form);
-	/*DeletePanel (saveloadImagePanel);*/
+// New MOSAIC
+	DeleteForm (newMOSAIC_form);
+	DeletePanel (newMOSAICPanel);
+// Load MOSAIC
+	DeleteForm (saveloadMOSAIC_form);
+	/*DeletePanel (saveloadMOSAICPanel);*/
 }

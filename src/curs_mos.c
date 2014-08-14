@@ -1,4 +1,4 @@
-#include "mosimg.h"
+#include "curs_mos.h"
 
 
 void InitIMGS (IMGS *everyone) {
@@ -7,13 +7,13 @@ void InitIMGS (IMGS *everyone) {
 }
 
 
-MOSIMG *NewMOSIMG (int new_height, int new_width) {
-	// create new MOSIMG
-	MOSIMG *new_image;
-	if ((new_image = (MOSIMG*) malloc (sizeof (MOSIMG))) == NULL)
+CURS_MOS *NewCURS_MOS (int new_height, int new_width) {
+	// create new CURS_MOS
+	CURS_MOS *new_image;
+	if ((new_image = (CURS_MOS*) malloc (sizeof (CURS_MOS))) == NULL)
 		return NULL;
 	
-	NewImg (&new_image->img, new_height, new_width);
+	NewMOSAIC (&new_image->img, new_height, new_width);
 
 	// create the curses window and panel
 	new_image->win = newpad (new_height + 1, new_width + 1);
@@ -23,13 +23,13 @@ MOSIMG *NewMOSIMG (int new_height, int new_width) {
 	scrollok (new_image->win, TRUE);
 	
 	new_image->pan = new_panel (new_image->win);
-	DisplayCurrentImg (new_image);
+	DisplayCurrentMOSAIC (new_image);
 
 	return new_image;
 }
 
 
-void dobox (MOSIMG *img) {
+void dobox (CURS_MOS *img) {
 	int i;
 	int y = img->img.height;
 	int x = img->img.width;
@@ -46,11 +46,11 @@ void dobox (MOSIMG *img) {
 }
 
 
-int ResizeMOSIMG (MOSIMG *target, int new_height, int new_width) {
+int ResizeCURS_MOS (CURS_MOS *target, int new_height, int new_width) {
 	delwin (target->win);
 	target->win = newpad (new_height + 1, new_width + 1);
 
-	int i = ResizeImg (&target->img, new_height, new_width);
+	int i = ResizeMOSAIC (&target->img, new_height, new_width);
 	
 	if (i == -1) {
 		fprintf (stderr, "Resize failed");
@@ -63,9 +63,9 @@ int ResizeMOSIMG (MOSIMG *target, int new_height, int new_width) {
 }
 
 
-void LinkImg (MOSIMG *dest, MOSIMG *src, enum direction dir) {
+void LinkMOSAIC (CURS_MOS *dest, CURS_MOS *src, enum direction dir) {
 	if (dest != NULL) {
-		MOSIMG *aux;
+		CURS_MOS *aux;
 		if (dir == before) {
 			aux = dest->prev;
 			dest->prev = aux->next = src;
@@ -80,11 +80,11 @@ void LinkImg (MOSIMG *dest, MOSIMG *src, enum direction dir) {
 		}
 	}
 	else
-		fprintf (stderr, "Error: trying to link a MOSIMG to a NULL pointer!!");
+		fprintf (stderr, "Error: trying to link a CURS_MOS to a NULL pointer!!");
 }
 
 
-int mosAddch (MOSIMG *image, int y, int x, int c) {
+int mosAddch (CURS_MOS *image, int y, int x, int c) {
 	if (y >= image->img.height || x >= image->img.width)
 		return ERR;
 
@@ -94,7 +94,7 @@ int mosAddch (MOSIMG *image, int y, int x, int c) {
 }
 
 
-void DisplayCurrentImg (MOSIMG *current) {
+void DisplayCurrentMOSAIC (CURS_MOS *current) {
 	top_panel (current->pan);
 	update_panels ();
 	doupdate ();
@@ -102,8 +102,8 @@ void DisplayCurrentImg (MOSIMG *current) {
 }
 
 
-void FreeMOSIMG (MOSIMG *image) {
-	FreeImg (&image->img);
+void FreeCURS_MOS (CURS_MOS *image) {
+	FreeMOSAIC (&image->img);
 	del_panel (image->pan);
 	delwin (image->win);
 }

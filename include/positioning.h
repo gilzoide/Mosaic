@@ -5,7 +5,7 @@
 #ifndef POSITIONING_H
 #define POSITIONING_H
 
-#include "mosimg.h"
+#include "curs_mos.h"
 #include "state.h"
 
 /// UI current cursor position
@@ -51,11 +51,11 @@ void InitCursor (Cursor *cursor);
 /**
  * Prints in the current window the selection box
  */
-void PrintSelection (Cursor *position, MOSIMG *current);
+void PrintSelection (Cursor *position, CURS_MOS *current);
 /**
  * Unprints the selection box 
  */
-void UnprintSelection (MOSIMG *current);
+void UnprintSelection (CURS_MOS *current);
 /**
  * Move the cursor one position
  * 
@@ -63,7 +63,7 @@ void UnprintSelection (MOSIMG *current);
  * @param[in] current Current image, for knowing the boundaries
  * @param[in] dir Direction of the movement
  */
-void Move (Cursor *position, MOSIMG *current, Direction dir);
+void Move (Cursor *position, CURS_MOS *current, Direction dir);
 /**
  * Move the cursor to the desired position (for clicking)
  *
@@ -72,7 +72,7 @@ void Move (Cursor *position, MOSIMG *current, Direction dir);
  * @param[in] y Y coordinate
  * @param[in] x X coordinate
  */
-void MoveTo (Cursor *position, MOSIMG *current, int y, int x);
+void MoveTo (Cursor *position, CURS_MOS *current, int y, int x);
 /**
  * Move the cursor until the boundary
  * 
@@ -80,7 +80,7 @@ void MoveTo (Cursor *position, MOSIMG *current, int y, int x);
  * @param[in] current Current image, for knowing the boundaries
  * @param[in] dir Direction of the movement
  */
-void MoveAll (Cursor *position, MOSIMG *current, Direction dir);
+void MoveAll (Cursor *position, CURS_MOS *current, Direction dir);
 /**
  * Changes the default direction for the movement
  * 

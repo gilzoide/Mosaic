@@ -1,9 +1,8 @@
-# Mosaic, a curses ascart editor
+# Mosaic, a curses ASC art editor
 # Created by Gil Barbosa Reis
-# SCons script for building the program
 
 env = Environment (
-	LIBS = ['panel', 'menu', 'form', 'ncurses'],
+	LIBS = ['panel', 'menu', 'form', 'curses'],
 	LIBPATH = ['/usr/lib', '/usr/local/lib'],
 	CCFLAGS = '-g -Wall -pipe',
 	CPPPATH = '#include',

@@ -1,4 +1,4 @@
-#include "mosaic.h"
+#include "maae.h"
 #include "argpstuff.h"
 
 int main (int argc, char *argv[]) {
@@ -22,19 +22,19 @@ int main (int argc, char *argv[]) {
 	mousemask (BUTTON1_CLICKED | BUTTON1_DOUBLE_CLICKED | BUTTON3_CLICKED, NULL);
 
 	// the current image in edition
-	MOSIMG *current = NULL;
+	CURS_MOS *current = NULL;
 	// we really need a current image, so ask for it until user creates it!
-	// but if asked to open a file directly, create an Img and loads it
+	// but if asked to open a file directly, create an MOSAIC and loads it
 	if (file_name) {
 		ungetch ('\n');
 		c = KEY_CTRL_O;
 	}
-	while (!(current = CreateNewImg (&everyone, current)));
+	while (!(current = CreateNewMOSAIC (&everyone, current)));
 
 	while (!IS_(QUIT)) {
 		if (c == KEY_F(10)) {
 			c = Menu ();
-			DisplayCurrentImg (current);
+			DisplayCurrentMOSAIC (current);
 		}
 
 		//~ printw ("%d ", c);
@@ -88,13 +88,13 @@ int main (int argc, char *argv[]) {
 			/* previous mosaic */
 			case KEY_PPAGE:
 				current = current->prev;
-				DisplayCurrentImg (current);
+				DisplayCurrentMOSAIC (current);
 				break;
 				
 			/* next mosaic */
 			case KEY_NPAGE:
 				current = current->next;
-				DisplayCurrentImg (current);
+				DisplayCurrentMOSAIC (current);
 				break;
 
 			/* move to first */
@@ -110,20 +110,20 @@ int main (int argc, char *argv[]) {
 			/* show help */
 			case KEY_F(1):
 				Help ();
-				DisplayCurrentImg (current);
+				DisplayCurrentMOSAIC (current);
 				break;
 				
 			/* new mosaic */
 			case KEY_F(2):
-				; MOSIMG *aux = CreateNewImg (&everyone, current);
+				; CURS_MOS *aux = CreateNewMOSAIC (&everyone, current);
 				if (aux)
 					current = aux;
-				DisplayCurrentImg (current);
+				DisplayCurrentMOSAIC (current);
 				break;
 				
 			/* save mosaic */
 			case KEY_CTRL_S:
-				switch (SaveMOSIMG (current)) {
+				switch (SaveCURS_MOS (current)) {
 					case 0:
 						PrintHud ("Saved successfully!");
 						break;
@@ -140,9 +140,9 @@ int main (int argc, char *argv[]) {
 				
 			/* load mosaic */
 			case KEY_CTRL_O:
-				switch (LoadMOSIMG (current)) {
+				switch (LoadCURS_MOS (current)) {
 					case 0:
-						RefreshMOSIMG (current);
+						RefreshCURS_MOS (current);
 						PrintHud ("Loaded successfully!");
 						ENTER_(TOUCHED);
 						break;
@@ -168,8 +168,8 @@ int main (int argc, char *argv[]) {
 			case KEY_CTRL_R:
 				werase (current->win);
 				wrefresh (current->win);
-				ResizeMOSIMG (current, 20, 30);
-				RefreshMOSIMG (current);
+				ResizeCURS_MOS (current, 20, 30);
+				RefreshCURS_MOS (current);
 				break;
 				
 			/* box selection mode! */
@@ -243,7 +243,7 @@ int main (int argc, char *argv[]) {
 			default:
 				if (isprint (c)) {
 					mosAddch (current, cursor.y, cursor.x, c);
-					DisplayCurrentImg (current);
+					DisplayCurrentMOSAIC (current);
 					ENTER_(TOUCHED);
 					// didn't erase anything, so move to the next
 					if (!IS_(ERASED))	
