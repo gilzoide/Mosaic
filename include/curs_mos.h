@@ -1,5 +1,5 @@
-/** @file CURS_MOS.h
- * @ref img wrapper for curses
+/** @file curs_mos.h
+ * @ref MOSAIC wrapper for curses
  */
 
 #ifndef CURS_MOS_H
@@ -10,10 +10,10 @@
 #include "mosaic.h"
 
 /**
- * Wraps the image, list and curses interface
+ * Curses Mosaic: wraps the MOSAIC; list and curses interface
  * 
  * The MOSAIC structured as a double linked list, for sequencial matters ["video",
- * as we like to call it] and curses interface.
+ * as we like to call it] and Curses interface.
  */
 typedef struct CURS_MOS_t {
 	MOSAIC img;	///< the asc art itself
@@ -75,7 +75,7 @@ enum direction {after = 0, before};
  * 
  * @return pointer to the linked CURS_MOS, to be stored in the 'current'
  */
-void LinkMOSAIC (CURS_MOS *dest, CURS_MOS *src, enum direction dir);
+void LinkCURS_MOS (CURS_MOS *dest, CURS_MOS *src, enum direction dir);
 
 /**
  * Add a char to the CURS_MOS at position y/x and print it in it's WINDOW.

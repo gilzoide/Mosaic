@@ -3,7 +3,6 @@ build/
 # text backups (and vim stuff)
 *~
 *.swp
-ses
 tags
 cscope.out
 # object files, after compilation

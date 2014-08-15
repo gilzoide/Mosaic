@@ -1,5 +1,14 @@
 #include "mosaic.h"
 
+inline int max (int a, int b) {
+	return (a > b ? a : b);
+}
+
+
+inline int min (int a, int b) {
+	return (a < b ? a : b);
+}
+
 
 inline int MOSAICSize (MOSAIC img) {
 	return img.height * img.width;
@@ -13,9 +22,7 @@ int NewMOSAIC (MOSAIC *img, int new_height, int new_width) {
 	img->mosaic = img->attr = NULL;
 	
 	// alloc the dinamic stuff and fill it: something ResizeMOSAIC already does
-	ResizeMOSAIC (img, new_height, new_width);
-	
-	return 0;
+	return ResizeMOSAIC (img, new_height, new_width);
 }
 
 
@@ -88,6 +95,20 @@ int ResizeMOSAIC (MOSAIC *img, int new_height, int new_width) {
 	}
 
 	return 0;
+}
+
+
+void CopyMOSAIC (MOSAIC *dest, MOSAIC *src) {
+	// no NULL pointers
+	if (dest && src) {
+		int i, j;
+		for (i = 0; i < min (dest->height, src->height); i++) {
+			for (j = 0; j < min (dest->width, src->width); j++) {
+				dest->mosaic[i][j] = src->mosaic[i][j];
+				dest->attr[i][j] = src->attr[i][j];
+			}
+		}
+	}
 }
 
 

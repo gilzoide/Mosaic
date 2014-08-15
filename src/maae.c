@@ -130,15 +130,21 @@ char Paste (CopyBuffer *buffer, CURS_MOS *current, Cursor cursor) {
 CURS_MOS *CreateNewMOSAIC (IMGS *everyone, CURS_MOS *current) {
 	int height = INITIAL_HEIGHT, width = INITIAL_WIDTH;
 	enum direction dir;
+	char duplicate;
 
 	// user canceled the creation: return NULL
-	if (AskCreateNewMOSAIC (&height, &width, &dir) == ERR)
+	if (AskCreateNewMOSAIC (&height, &width, &duplicate, &dir) == ERR)
 		return NULL;
-	// one more IMG
-	everyone->size++;
 	
 	CURS_MOS *new_image = NewCURS_MOS (height, width);
+	if (duplicate) {
+		CopyMOSAIC (&new_image->img, &current->img);
+		RefreshCURS_MOS (new_image);
+	}
 	
+	// now there's one more CURS_MOS
+	everyone->size++;
+
 	// first image: no one's after or before
 	if (everyone->list == NULL) {
 		everyone->list = new_image;
@@ -146,7 +152,7 @@ CURS_MOS *CreateNewMOSAIC (IMGS *everyone, CURS_MOS *current) {
 	}
 	// not the first, so link it to someone
 	else
-		LinkMOSAIC (current, new_image, dir);
+		LinkCURS_MOS (current, new_image, dir);
 	
 	return new_image;
 }

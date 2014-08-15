@@ -34,7 +34,6 @@ void UpdateHud (Cursor cur, Direction dir);
 /** 
  * Prints a message in the HUD and waits for keystroke
  * 
- * @param[in] hud the HUD
  * @param[in] message Message to be written in the HUD
  * 
  * @return the key pressed for leaving
@@ -57,11 +56,12 @@ int AttrTable (CURS_MOS *current, Cursor cur);
  *
  * @param[out] new_height The height that the user chose
  * @param[out] new_width The width that the user chose
+ * @param[out] duplicate Whether we duplicate the current MOSAIC or not
  * @param[out] new_dir The linking direction that the user chose
  *
  * @return ERR if user don't want to create the image; OK otherwise
  */
-char AskCreateNewMOSAIC (int *new_height, int *new_width, enum direction *new_dir);
+char AskCreateNewMOSAIC (int *new_height, int *new_width, char *duplicate, enum direction *new_dir);
 
 /// Input/output, save/load
 enum io {save, load};

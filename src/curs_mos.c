@@ -63,7 +63,7 @@ int ResizeCURS_MOS (CURS_MOS *target, int new_height, int new_width) {
 }
 
 
-void LinkMOSAIC (CURS_MOS *dest, CURS_MOS *src, enum direction dir) {
+void LinkCURS_MOS (CURS_MOS *dest, CURS_MOS *src, enum direction dir) {
 	if (dest != NULL) {
 		CURS_MOS *aux;
 		if (dir == before) {
