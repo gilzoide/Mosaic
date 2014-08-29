@@ -14,8 +14,6 @@ int main (int argc, char *argv[]) {
 	IMGS everyone;
 	InitIMGS (&everyone);
 
-	ENTER_(TRANSPARENT);	// it's a test: it does work xD
-
 	int c = 0;
 	// Mouse support: bt1 and bt3 click
 	MEVENT event;
@@ -120,6 +118,11 @@ int main (int argc, char *argv[]) {
 					current = aux;
 				DisplayCurrentMOSAIC (current);
 				break;
+
+			/* show about Window */
+			case KEY_F(12):
+				About ();
+				break;
 				
 			/* save mosaic */
 			case KEY_CTRL_S:
@@ -176,6 +179,11 @@ int main (int argc, char *argv[]) {
 			case KEY_CTRL_B:
 				TOGGLE_(SELECTION);
 				UnprintSelection (current);
+				break;
+
+			/* toggle transparent paste */
+			case KEY_CTRL_T:
+				TOGGLE_(TRANSPARENT);
 				break;
 				
 			/* copy selected area */

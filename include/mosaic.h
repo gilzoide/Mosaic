@@ -68,16 +68,18 @@ void CopyMOSAIC (MOSAIC *dest, MOSAIC *src);
 /**
  * Saves the image in a file
  * 
- * The file has a header with the mosaic dimensions, the asc art itself and it's attributes.
+ * The file has a header with the mosaic dimensions,
+ * the asc art itself and it's attributes.
  * 
  * @note A .mosi file is hybrid.
- * The dimensions and @ref MOSAIC::mosaic are text, so they can be viewed in any text editor. 
- * The @ref MOSAIC::attr part is binary, so expect some weird stuff while oppening it as text.
+ * The dimensions and @ref MOSAIC::mosaic are text, so they can be viewed in 
+ * any text editor. The @ref MOSAIC::attr part is binary, so expect some weird
+ * stuff while oppening it as text.
  * 
  * @param[in] image The image to be saved
  * @param[in] file_name The new file name
  * 
- * @return 0 on success, -1 on failure
+ * @return 0 on success, _errno_ on failure
  */
 int SaveMOSAIC (MOSAIC *image, const char *file_name);
 /**
@@ -86,9 +88,9 @@ int SaveMOSAIC (MOSAIC *image, const char *file_name);
  * It's the same scheme from the @ref SaveMOSAIC function
  * 
  * @param[out] image The image to be loaded onto
- * @param[in] file_name The new file name
+ * @param[in] file_name The file name
  * 
- * @return 0 on success, -1 on failure, 1 on no dimensions present in the file
+ * @return 0 on success, _errno_ on failure, 1 on no dimensions present in the file
  */
 int LoadMOSAIC (MOSAIC *image, const char *file_name);
 

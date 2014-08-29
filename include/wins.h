@@ -9,8 +9,10 @@
 #define HELP_HEIGHT (LINES - 1)
 
 #define MENU_HEIGHT 7
-#define MENU_WIDTH 19
+#define MENU_WIDTH 20
 #define MENU_X_SEPARATOR 9
+#define CHKBX_Y 5
+#define CHKBX_X 17
 
 #define SAVELOAD_WIDTH 18
 
@@ -47,6 +49,8 @@ int Menu ();
 /// Auxilary function for the Menu: menu driver
 int GetChosenOption (MENU *menu);
 
+/// Show the About window
+void About ();
 /// Show the attributes table
 int AttrTable (CURS_MOS *current, Cursor cur);
 

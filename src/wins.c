@@ -32,6 +32,9 @@ FORM *saveloadMOSAIC_form;
 WINDOW *saveloadMOSAICWindow;
 PANEL *saveloadMOSAICPanel;
 
+WINDOW *aboutWindow;
+PANEL *aboutPanel;
+
 WINDOW *hud;
 
 
@@ -151,7 +154,7 @@ void InitMenus () {
 	const char *menu_descriptions[] = {
 		"File",
 		"Edit",
-		"MOSAIC",
+		"Image",
 		"Help"
 	};
 	
@@ -181,7 +184,7 @@ void InitMenus () {
 	const char *file_titles[] = {
 		"Save File",
 		"Load File",
-		"Exit Mosaic"
+		"Exit Maae"
 	};
 	const char *file_descriptions[] = {
 		"^S",
@@ -217,25 +220,28 @@ void InitMenus () {
 	x_aux = MENU_X_SEPARATOR / 2;
 	edit_menuWindow = CreateBoxedTitledWindow (MENU_HEIGHT, MENU_WIDTH, LINES - MENU_HEIGHT - 2, x_aux, "EDIT");
 	
-	num_items = 4;
+	num_items = 5;
 	const char *edit_titles[] = {
 		"Cut",
 		"Copy",
 		"Paste",
-		"Selection mode"
+		"Selection mode",
+		"Transparent"
 	};
 	const char *edit_descriptions[] = {
 		"^X",
 		"^C",
 		"^V",
-		"^B"
+		"^B",
+		"[ ]"
 	};
 	// The choices are static so that the userptr points to something that exists
 	static const int edit_choices[] = {
 		KEY_CTRL_X,
 		KEY_CTRL_C,
 		KEY_CTRL_V,
-		KEY_CTRL_B
+		KEY_CTRL_B,
+		KEY_CTRL_T
 	};
 	// create the items
 	items = (ITEM**) calloc (num_items + 1, sizeof (ITEM*));
@@ -262,10 +268,10 @@ void InitMenus () {
 	
 	num_items = 4;
 	const char *image_titles[] = {
-		"New MOSAIC",
-		"Save MOSAIC",
-		"Load MOSAIC",
-		"Resize MOSAIC"
+		"New Image",
+		"Save Image",
+		"Load Image",
+		"Resize Image"
 	};
 	const char *image_descriptions[] = {
 		"F2",
@@ -310,12 +316,12 @@ void InitMenus () {
 	};
 	const char *help_descriptions[] = {
 		"F1",
-		" ",
+		"F12",
 	};
 	// The choices are static so that the userptr points to something that exists
 	static const int help_choices[] = {
 		KEY_F(1),
-		0
+		KEY_F(12)
 	};
 	// create the items
 	items = (ITEM**) calloc (num_items + 1, sizeof (ITEM*));
@@ -342,6 +348,17 @@ void InitMenus () {
 	set_item_userptr (menu_items (menu)[2], image_menu);
 	set_item_userptr (menu_items (menu)[3], help_menu);
 	submenuPanel = new_panel (file_menuWindow);
+}
+
+
+void InitAbout () {
+	aboutWindow = CreateCenteredBoxedTitledWindow (20, 50, "ABOUT");
+	aboutPanel = new_panel (aboutWindow);
+	hide_panel (aboutPanel);
+
+	mvwaddstr (aboutWindow, 1, 1, "Maae: the curses based Mosaic Asc Art Editor");
+
+	touchwin (aboutWindow);
 }
 
 
@@ -421,6 +438,7 @@ int Menu () {
 	// creates it if not already there
 	if (!menuPanel)
 		InitMenus ();
+
 	// display the menu
 	show_panel (menuPanel);
 	show_panel (submenuPanel);
@@ -456,6 +474,18 @@ int GetChosenOption (MENU *menu) {
 		// switching to the new submenu's WINDOW
 		submenu = (MENU*) item_userptr (current_item (menu));
 		replace_panel (submenuPanel, menu_win (submenu));
+
+		// updates the TRANSPARENT checkbox in EditMenu
+		if (submenu == edit_menu) {
+			char transp = IS_(TRANSPARENT) ? 'X' : ' ';
+			// if 'transparent' is selected, reverse the transp
+			if (item_index (current_item (edit_menu)) == 4)
+				wattron (edit_menuWindow, A_REVERSE);
+			mvwaddch (edit_menuWindow, CHKBX_Y, CHKBX_X, transp);
+			wstandend (edit_menuWindow);
+			pos_menu_cursor (submenu);
+		}
+
 		// refreshes the submenu's window
 		update_panels ();
 		doupdate ();
@@ -530,6 +560,28 @@ int GetChosenOption (MENU *menu) {
 	} while (c != ' '); 
 	
 	return *(int*) item_userptr (current_item (submenu));
+}
+
+
+void About () {
+	curs_set (0);	// hide the cursor
+	
+	// creates it if not already there
+	if (!aboutPanel)
+		InitAbout ();
+
+	// display the About
+	show_panel (aboutPanel);
+	update_panels ();
+	doupdate ();
+	// waits for some key to be pressed
+	getch ();
+	
+	// hide the About
+	hide_panel (aboutPanel);
+	doupdate ();
+
+	curs_set (1);	// and back with the cursor
 }
 
 
@@ -901,4 +953,6 @@ void DestroyWins () {
 // Load MOSAIC
 	DeleteForm (saveloadMOSAIC_form);
 	/*DeletePanel (saveloadMOSAICPanel);*/
+// About
+	DeletePanel (aboutPanel);
 }

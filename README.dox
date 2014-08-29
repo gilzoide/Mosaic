@@ -4,8 +4,8 @@
 Ncurses based "mosaic" asc art editor
 
 @todo attr table/tabela de cores
-@todo talvez mudar a seleção? pq ficar apagando pra reprintar é mei zuado, né =S
+- @todo talvez mudar a seleção? pq ficar apagando pra reprintar é mei zuado, né =S
 @todo transparent no menu
 @todo save/load panel dá zoera no free
-@todo UTF-8
+- @todo UTF-8
 */

@@ -35,7 +35,7 @@ int ResizeMOSAIC (MOSAIC *img, int new_height, int new_width) {
 	img->width = new_width;
 	
 	int i;
-	// when shrinking the , free the lines we're discarding
+	// when shrinking the MOSAIC, free the lines we're discarding
 	for (i = old_height - 1; i >= new_height; i--) {
 		free (img->mosaic[i]);
 		free (img->attr[i]);
@@ -86,7 +86,8 @@ int ResizeMOSAIC (MOSAIC *img, int new_height, int new_width) {
 		}
 	}
 
-	// the other square: from old to new height/width (for growing)
+	// the other rectangle: from old to new height/width
+	// (for growing on both directions)
 	for (i = old_height; i < new_height; i++) {
 		for (j = old_width; j < new_width; j++) {
 			img->mosaic[i][j] = ' ';
@@ -115,7 +116,7 @@ void CopyMOSAIC (MOSAIC *dest, MOSAIC *src) {
 int SaveMOSAIC (MOSAIC *image, const char *file_name) {
 	FILE *f;
 	if ((f = fopen (file_name, "w")) == NULL)
-		return -1;
+		return errno;
 
 	fprintf (f, "%dx%d\n", image->height, image->width);
 	
@@ -177,7 +178,7 @@ int LoadMOSAIC (MOSAIC *image, const char *file_name) {
 	}
 	
 FILL_WITH_BLANK:
-	// well, maybe we reached OEF, so everything else is a blank...
+	// well, maybe we reached EOF, so everything else is a blank...
 	for ( ; i < image->height; i++) {
 		for (j = 0;  j < image->width; j++) {
 			image->mosaic[i][j] = ' ';
