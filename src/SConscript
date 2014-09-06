@@ -1,8 +1,5 @@
 # Mosaic asc art editor build script
 Import ('env')
 
-src = Glob ("???[!c]*.c")	# everybody but 'moscat.c'
-cat_src = ['color.c', 'mosaic.c', 'moscat.c'],
-
-env.Program ('maae', src)
-env.Program ('moscat', cat_src)
+maae_src = ['main.c', 'maae.c', 'argpstuff.c', 'wins.c', 'positioning.c']
+env.Program ('maae', maae_src)

@@ -74,15 +74,15 @@ void InitHelp () {
 	// the hotkeys
 	const char *hotkeys[] = {
 		"F1", "F10/Mouse Right Button", "^Q",
-		"Arrow Keys", "^D", "^B", "Page Up/Page Down", "Home/End",
+		"Arrow Keys", "^D", "^B", "^A", "Page Up/Page Down", "Home/End",
 		"F2", "^S", "^O", "^R", "^C/^X", "^V", "Tab"
 	};
 	// and how many are there for each subtitle
-	int n_hotkeys[] = {3, 5, 7};
+	int n_hotkeys[] = {3, 6, 7};
 	// what the hotkeys do
 	const char *explanations[] = {
 		"show this help", "show the menu", "quit Nmos",
-		"move through the mosaic", "change the moving direction after input (default direction)", "toggle box selection mode", "previous/next mosaic", "move to first/last character (in the default direction)",
+		"move through the mosaic", "change the moving direction after input (default direction)", "toggle box selection mode", "select all", "previous/next mosaic", "move to first/last character (in the default direction)",
 		"new mosaic", "save mosaic", "load mosaic", "resize mosaic", "copy/cut selection", "paste selection", "show the attribute table"
 	};
 	
@@ -479,7 +479,7 @@ int GetChosenOption (MENU *menu) {
 		if (submenu == edit_menu) {
 			char transp = IS_(TRANSPARENT) ? 'X' : ' ';
 			// if 'transparent' is selected, reverse the transp
-			if (item_index (current_item (edit_menu)) == 4)
+			if (item_index (current_item (edit_menu)) == (item_count (edit_menu) - 1))
 				wattron (edit_menuWindow, A_REVERSE);
 			mvwaddch (edit_menuWindow, CHKBX_Y, CHKBX_X, transp);
 			wstandend (edit_menuWindow);

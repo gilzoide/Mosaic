@@ -9,8 +9,8 @@
 #include <panel.h>
 #include <stdio.h>
 
-#include "color.h"
-#include "curs_mos.h"
+#include "libmosaic_color.h"
+#include "libmosaic_curses.h"
 #include "wins.h"
 #include "positioning.h"
 #include "state.h"

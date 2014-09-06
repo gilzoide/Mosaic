@@ -1,4 +1,6 @@
 Mosaic
 ======
 
-Curses based "mosaic" asc art editor
+Curses based Mosaic Asc Art Editor
+
+You need to install libmosaic, get it here: [ https://github.com/gilzoide/libmosaic ]
