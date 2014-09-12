@@ -74,57 +74,49 @@ void UnprintSelection (CURS_MOS *current) {
 }
 
 
-void Move (Cursor *position, CURS_MOS *current, Direction dir) {
-	// change the cursor position, deppending on the direction
-	switch (dir) {
-		case UP:
-			if (position->y > 0)
-				--position->y;
-			break;
-		
-		case DOWN:
-			if (position->y < current->img.height - 1)
-				++position->y;
-			break;
-			
-		case LEFT:
-			if (position->x > 0)
-				--position->x;
-			break;
-			
-		case RIGHT:
-			if (position->x < current->img.width - 1)
-				++position->x;
-			break;
-	}
-	// if not in selection mode
+void MoveTo (Cursor *position, CURS_MOS *current, int y, int x) {
+	// make sure y and x are within 'current'
+	y = max (y, 0);
+	x = max (x, 0);
+	y = min (y, current->img.height - 1);
+	x = min (x, current->img.width - 1);
+
+	// change the position
+	position->y = y;
+	position->x = x;
+
 	if (!IS_(SELECTION)) {
-		// upper-left corner and bottom-right corner are one now
-		position->origin_y = position->y;
-		position->origin_x = position->x;
+		position->origin_y = y;
+		position->origin_x = x;
 	}
 	else
 		PrintSelection (position, current);
 
-	// and move!
-	move (position->y, position->x);
+	move (y, x);
 }
 
 
-void MoveTo (Cursor *position, CURS_MOS *current, int y, int x) {
-	if (y > 0 && y < current->img.height && x > 0 && x < current->img.width) {
-		position->y = y;
-		position->x = x;
+void Move (Cursor *position, CURS_MOS *current, Direction dir) {
+	// change the cursor position, deppending on the direction
+	switch (dir) {
+		case UP:
+			--position->y;
+			break;
 
-		if (!IS_(SELECTION)) {
-			position->origin_y = y;
-			position->origin_x = x;
-		}
-		else
-			PrintSelection (position, current);
+		case DOWN:
+			++position->y;
+			break;
 
-		move (y, x);
+		case LEFT:
+			--position->x;
+			break;
+
+		case RIGHT:
+			++position->x;
+			break;
 	}
+
+	MoveTo (position, current, position->y, position->x);
 }
 
 
@@ -147,17 +139,8 @@ void MoveAll (Cursor *position, CURS_MOS *current, Direction dir) {
 			position->x = current->img.width - 1;
 			break;
 	}
-	// if not in selection mode
-	if (!IS_(SELECTION)) {
-		// upper-left corner and bottom-right corner are one now
-		position->origin_y = position->y;
-		position->origin_x = position->x;
-	}
-	else
-		PrintSelection (position, current);
 
-	// and move!
-	move (position->y, position->x);
+	MoveTo (position, current, position->y, position->x);
 }
 
 

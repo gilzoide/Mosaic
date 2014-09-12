@@ -57,14 +57,6 @@ void PrintSelection (Cursor *position, CURS_MOS *current);
  */
 void UnprintSelection (CURS_MOS *current);
 /**
- * Move the cursor one position
- * 
- * @param[in] position Actual working position
- * @param[in] current Current image, for knowing the boundaries
- * @param[in] dir Direction of the movement
- */
-void Move (Cursor *position, CURS_MOS *current, Direction dir);
-/**
  * Move the cursor to the desired position (for clicking)
  *
  * @param[in] position Actual working position
@@ -73,6 +65,14 @@ void Move (Cursor *position, CURS_MOS *current, Direction dir);
  * @param[in] x X coordinate
  */
 void MoveTo (Cursor *position, CURS_MOS *current, int y, int x);
+/**
+ * Move the cursor one position
+ * 
+ * @param[in] position Actual working position
+ * @param[in] current Current image, for knowing the boundaries
+ * @param[in] dir Direction of the movement
+ */
+void Move (Cursor *position, CURS_MOS *current, Direction dir);
 /**
  * Move the cursor until the boundary
  * 

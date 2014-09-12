@@ -8,6 +8,7 @@
 // Some key macros, according to the ASCII table
 
 #define KEY_ESC 27
+#define KEY_CTRL_A 1
 #define KEY_CTRL_B 2
 #define KEY_CTRL_C 3
 #define KEY_CTRL_D 4

@@ -107,19 +107,13 @@ CURS_MOS *CreateNewMOSAIC (IMGS *everyone, CURS_MOS *current);
  *
  * @return Return value of LoadMOSAIC, or ERR if canceled
  */
-int LoadCURS_MOS (CURS_MOS *current);
+int Load (CURS_MOS *current);
 /**
  * Saves an image in the current
  *
  * @return Return value of LoadMOSAIC, or ERR if canceled
  */
-int SaveCURS_MOS (CURS_MOS *current);
-/**
- * Reprint the MOSAIC from scratch, and refreshes it's WINDOW
- * 
- * @param current MOSAIC to be displayed
- */
-void RefreshCURS_MOS (CURS_MOS *current);
+int Save (CURS_MOS *current);
 /**
  * Destroy and free memory from the images list
  * 

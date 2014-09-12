@@ -151,24 +151,28 @@ CURS_MOS *CreateNewMOSAIC (IMGS *everyone, CURS_MOS *current) {
 		new_image->next = new_image->prev = new_image;
 	}
 	// not the first, so link it to someone
-	else
+	else {
 		LinkCURS_MOS (current, new_image, dir);
+	}
 	
 	return new_image;
 }
 
 
-int LoadCURS_MOS (CURS_MOS *current) {
+int Load (CURS_MOS *current) {
 	char *file_name = AskSaveLoadMOSAIC (load);
 
-	if (!file_name)
+	// if user canceled
+	if (!file_name) {
 		return ERR;
-	else
-		return LoadMOSAIC (&current->img, file_name);
+	}
+	else {
+		return LoadCURS_MOS (current, file_name);
+	}
 }
 
 
-int SaveCURS_MOS (CURS_MOS *current) {
+int Save (CURS_MOS *current) {
 	char *file_name = AskSaveLoadMOSAIC (save);
 
 	if (!file_name)
@@ -178,22 +182,6 @@ int SaveCURS_MOS (CURS_MOS *current) {
 			strcat (file_name, ".mosi");
 		return SaveMOSAIC (&current->img, file_name);
 	}
-}
-
-
-void RefreshCURS_MOS (CURS_MOS *current) {
-	wmove (current->win, 0, 0);
-	
-	// write in the WINDOW
-	int i, j;
-	for (i = 0; i < current->img.height; i++) {
-		for (j = 0; j < current->img.width; j++) {
-			mvwaddch (current->win, i, j, current->img.mosaic[i][j]);
-		}
-	}
-	
-	// display it
-	DisplayCurrentMOSAIC (current);
 }
 
 

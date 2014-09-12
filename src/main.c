@@ -17,17 +17,19 @@ int main (int argc, char *argv[]) {
 	int c = 0;
 	// Mouse support: bt1 and bt3 click
 	MEVENT event;
-	mousemask (BUTTON1_CLICKED | BUTTON1_DOUBLE_CLICKED | BUTTON3_CLICKED, NULL);
+	mousemask (BUTTON1_CLICKED | BUTTON1_DOUBLE_CLICKED | 
+			BUTTON3_CLICKED, NULL);
 
 	// the current image in edition
 	CURS_MOS *current = NULL;
 	// we really need a current image, so ask for it until user creates it!
-	// but if asked to open a file directly, create an MOSAIC and loads it
+	// but if asked to open a file directly, creates a empty MOSAIC and loads it
 	if (file_name) {
-		ungetch ('\n');
-		c = KEY_CTRL_O;
+		current = NewCURS_MOS (0, 0);
+		LoadCURS_MOS (current, file_name);
+		DisplayCurrentMOSAIC (current);
 	}
-	while (!(current = CreateNewMOSAIC (&everyone, current)));
+	else while (!(current = CreateNewMOSAIC (&everyone, current)));
 
 	while (!IS_(QUIT)) {
 		if (c == KEY_F(10)) {
@@ -126,7 +128,7 @@ int main (int argc, char *argv[]) {
 				
 			/* save mosaic */
 			case KEY_CTRL_S:
-				switch (SaveCURS_MOS (current)) {
+				switch (Save (current)) {
 					case 0:
 						PrintHud ("Saved successfully!");
 						break;
@@ -143,9 +145,10 @@ int main (int argc, char *argv[]) {
 				
 			/* load mosaic */
 			case KEY_CTRL_O:
-				switch (LoadCURS_MOS (current)) {
+				switch (Load (current)) {
 					case 0:
 						RefreshCURS_MOS (current);
+						DisplayCurrentMOSAIC (current);
 						PrintHud ("Loaded successfully!");
 						ENTER_(TOUCHED);
 						break;
@@ -179,6 +182,17 @@ int main (int argc, char *argv[]) {
 			case KEY_CTRL_B:
 				TOGGLE_(SELECTION);
 				UnprintSelection (current);
+				break;
+			
+			/* select all */
+			case KEY_CTRL_A:
+				// from the beggining...
+				MoveTo (&cursor, current, 0, 0);
+				// ...select...
+				ENTER_(SELECTION);
+				// ...until the end
+				MoveTo (&cursor, current, 
+						current->img.height - 1, current->img.width - 1);
 				break;
 
 			/* toggle transparent paste */
