@@ -1,4 +1,4 @@
-/** @file mosaic.h
+/** @file maae.h
  * Main's function includes, prototypes and definitions
  */
  
@@ -9,8 +9,8 @@
 #include <panel.h>
 #include <stdio.h>
 
-#include "libmosaic_color.h"
-#include "libmosaic_curses.h"
+#include "mosaic/color.h"
+#include "mosaic/curs_mos.h"
 #include "wins.h"
 #include "positioning.h"
 #include "state.h"

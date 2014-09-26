@@ -1,5 +1,5 @@
-Mosaic
-======
+Maae
+====
 
 Curses based Mosaic Asc Art Editor
 

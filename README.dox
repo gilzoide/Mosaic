@@ -1,7 +1,7 @@
 /**
-@mainpage Nmos
+@mainpage Maae
 
-Ncurses based "mosaic" asc art editor
+curses based Mosaic Asc Art Editor
 
 @todo attr table/tabela de cores
 - @todo talvez mudar a seleção? pq ficar apagando pra reprintar é mei zuado, né =S

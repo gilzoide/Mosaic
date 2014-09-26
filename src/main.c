@@ -130,14 +130,14 @@ int main (int argc, char *argv[]) {
 			case KEY_CTRL_S:
 				switch (Save (current)) {
 					case 0:
-						PrintHud ("Saved successfully!");
+						PrintHud ("Saved successfully!", FALSE);
 						break;
 
 					case ERR:	// canceled
 						break;
 
 					default:
-						PrintHud ("Sorry, no can save this... =/");
+						PrintHud ("Sorry, no can save this... =/", TRUE);
 						break;
 				}
 				UN_(TOUCHED);
@@ -149,23 +149,23 @@ int main (int argc, char *argv[]) {
 					case 0:
 						RefreshCURS_MOS (current);
 						DisplayCurrentMOSAIC (current);
-						PrintHud ("Loaded successfully!");
+						PrintHud ("Loaded successfully!", FALSE);
 						ENTER_(TOUCHED);
 						break;
 
 					case 1:
-						PrintHud ("No dimensions in this file, dude! =/");
+						PrintHud ("No dimensions in this file, dude! =/", TRUE);
 						break;
 
 					case ERR:	// canceled
 						break;
 
 					case ENOENT:
-						PrintHud ("File doesn't exist");
+						PrintHud ("File doesn't exist", TRUE);
 						break;
 
 					default:
-						PrintHud ("Sorry, no can load this... =/");
+						PrintHud ("Sorry, no can load this... =/", TRUE);
 						break;
 				}
 				break;
@@ -219,7 +219,7 @@ int main (int argc, char *argv[]) {
 				UnprintSelection (current);
 				UN_(SELECTION);
 				if (!Paste (&buffer, current, cursor))
-					PrintHud ("Nothing in the buffer...");
+					PrintHud ("Nothing in the buffer...", TRUE);
 				else
 					ENTER_(TOUCHED);
 				break;

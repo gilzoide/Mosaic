@@ -338,7 +338,8 @@ void InitMenus () {
 
 	// menu's windows
 	set_menu_win (help_menu, help_menuWindow);
-	set_menu_sub (help_menu, derwin (help_menuWindow, MENU_HEIGHT - 2, MENU_WIDTH - 2, 1, 1));
+	set_menu_sub (help_menu, derwin (help_menuWindow, 
+			MENU_HEIGHT - 2, MENU_WIDTH - 2, 1, 1));
 	
 	post_menu (help_menu);
 
@@ -352,11 +353,13 @@ void InitMenus () {
 
 
 void InitAbout () {
-	aboutWindow = CreateCenteredBoxedTitledWindow (20, 50, "ABOUT");
+	aboutWindow = CreateCenteredBoxedTitledWindow (ABOUT_HEIGHT, ABOUT_WIDTH,
+			"ABOUT");
 	aboutPanel = new_panel (aboutWindow);
 	hide_panel (aboutPanel);
 
-	mvwaddstr (aboutWindow, 1, 1, "Maae: the curses based Mosaic Asc Art Editor");
+	mvwaddstr (aboutWindow, 1, 1, 
+			"Maae: the curses based Mosaic Asc Art Editor");
 
 	touchwin (aboutWindow);
 }
@@ -372,27 +375,38 @@ void UpdateHud (Cursor cur, Direction dir) {
 		case RIGHT:	arrow = ACS_RARROW; break;
 	}
 
+	// if there ain't no message in the hud for showing, so clear it for update
+	if (!IS_(HUD_MESSAGE)) {
+		wmove (hud, 0, HUD_MSG_X);
+		wclrtoeol (hud);
+	}
+	// maybe there is a message, so next time we'll destroy it, VWAHAHAHAHA!
+	else {
+		UN_(HUD_MESSAGE);
+	}
 	// update coordinates
-	mvwprintw (hud, 0, COLS - 11, "%dx%d", cur.y, cur.x);
-	wclrtoeol (hud);
+	mvwprintw (hud, 0, COLS - HUD_CURSOR_X, "%dx%d", cur.y, cur.x);
 	mvwaddch (hud, 0, COLS - 1, arrow);
 	wrefresh (hud);
 	move (cur.y, cur.x);
 }
 
 
-int PrintHud (const char *message) {
-	mvwaddch (hud, 0, 29, ACS_DIAMOND);
+int PrintHud (const char *message, char wait_for_input) {
+	mvwaddch (hud, 0, HUD_MSG_X, ACS_DIAMOND);
 	waddstr (hud, message);
 	wrefresh (hud);
 
+	int c = 0;
 	// wait for input
-	int c = getch ();
+	if (wait_for_input) {
+		c = getch ();
+	}
+	// if not, let the system know the message is there
+	else {
+		ENTER_(HUD_MESSAGE);
+	}
 
-	wmove (hud, 0, 29);
-	wclrtoeol (hud);
-	wrefresh (hud);
-	
 	return c;
 }
 
@@ -407,8 +421,9 @@ void Help () {
 	wrefresh (hud);
 
 	// creates it if not already there
-	if (!helpPanel)
+	if (!helpPanel) {
 		InitHelp ();
+	}
 	// display the help
 	show_panel (helpPanel);
 	update_panels ();
@@ -436,8 +451,9 @@ int Menu () {
 	wrefresh (hud);
 
 	// creates it if not already there
-	if (!menuPanel)
+	if (!menuPanel) {
 		InitMenus ();
+	}
 
 	// display the menu
 	show_panel (menuPanel);
@@ -496,11 +512,13 @@ int GetChosenOption (MENU *menu) {
 			// if submenu, where clicked, accept it!
 			case KEY_MOUSE:
 				// chose the 'menu', go back for other drive
-				if (menu_driver (menu, c) == E_OK)  
+				if (menu_driver (menu, c) == E_OK) {
 					break;
+				}
 				// clicked outside 'menu' or 'submenu': exit menu
-				else if (menu_driver (submenu, c) != E_OK)
+				else if (menu_driver (submenu, c) != E_OK) {
 					return 0;
+				}
 
 				// else (chose the submenu's item), accept it
 			// Return: accepts choice, just as the ' ' does
@@ -567,8 +585,9 @@ void About () {
 	curs_set (0);	// hide the cursor
 	
 	// creates it if not already there
-	if (!aboutPanel)
+	if (!aboutPanel) {
 		InitAbout ();
+	}
 
 	// display the About
 	show_panel (aboutPanel);
@@ -846,7 +865,7 @@ char AskQuit () {
 	mvwchgat (hud, 0, 22, 5, A_UNDERLINE, CN, NULL);
 	wrefresh (hud);
 
-	int choice = PrintHud ("Do you really wanna quit? [y/N]");
+	int choice = PrintHud ("Do you really wanna quit? [y/N]", TRUE);
 	
 	// hud goes back to normal
 	mvwchgat (hud, 0, 19, 3, A_BOLD, 0, NULL);
@@ -857,14 +876,19 @@ char AskQuit () {
 }
 
 
-WINDOW *CreateCenteredBoxedTitledWindow (int nlines, int ncols, const char *title) {
+WINDOW *CreateCenteredBoxedTitledWindow (
+		int nlines, int ncols, 
+		const char *title) {
 	int y = (LINES - nlines) / 2;
 	int x = (COLS - ncols) / 2;
 	return CreateBoxedTitledWindow (nlines, ncols, y, x, title);
 }
 
 
-WINDOW *CreateBoxedTitledWindow (int nlines, int ncols, int begin_y, int begin_x, const char *title) {
+WINDOW *CreateBoxedTitledWindow (
+		int nlines, int ncols,
+		int begin_y, int begin_x,
+		const char *title) {
 	WINDOW *win = newwin (nlines, ncols, begin_y, begin_x);
 
 	box (win, 0, 0);

@@ -14,6 +14,12 @@
 #define CHKBX_Y 5
 #define CHKBX_X 17
 
+#define ABOUT_HEIGHT 20
+#define ABOUT_WIDTH 50
+
+#define HUD_MSG_X 29
+#define HUD_CURSOR_X 11
+
 #define SAVELOAD_WIDTH 18
 
 #include <curses.h>
@@ -40,7 +46,7 @@ void UpdateHud (Cursor cur, Direction dir);
  * 
  * @return the key pressed for leaving
  */
-int PrintHud (const char *message);
+int PrintHud (const char *message, char wait_for_input);
 
 /// Draw the non-interactive help screen
 void Help ();

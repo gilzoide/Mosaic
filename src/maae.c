@@ -57,7 +57,7 @@ int toUTF8 (int c) {
 
 
 void DefaultDirection (Direction *dir) {
-	int c = PrintHud ("New default direction (arrow keys)");
+	int c = PrintHud ("New default direction (arrow keys)", TRUE);
 	ChangeDefaultDirection (c, dir);
 }
 

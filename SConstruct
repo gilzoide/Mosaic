@@ -3,7 +3,8 @@
 
 if not GetOption ('help'):
 	env = Environment (
-		LIBS = ['panel', 'menu', 'form', 'curses', 'mosaic', 'mosaic_color', 'mosaic_curses'],
+		LIBS = ['panel', 'menu', 'form', 'curses', 
+				'mosaic', 'mosaic_color', 'mosaic_curses'],
 		LIBPATH = ['/usr/lib', '/usr/local/lib'],
 		CCFLAGS = '-g -Wall -pipe',
 		CPPPATH = ['#include', '/usr/include'],
