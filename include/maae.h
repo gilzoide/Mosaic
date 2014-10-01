@@ -95,13 +95,27 @@ char Paste (CopyBuffer *buffer, CURS_MOS *current, Cursor cursor);
 /**
  * Create a new image and store it in the images list
  * 
- * @param[in] everyone the mosaics list
+ * @param[in,out] everyone the mosaics list
  * @param[in] current the current mosaic, a reference for the new one coming
  * 
  * @return pointer to the created CURS_MOS, to be stored in the 'current';
  * NULL if user canceled the creation
  */
 CURS_MOS *CreateNewMOSAIC (IMGS *everyone, CURS_MOS *current);
+/**
+ * Insert a new char in current.
+ *
+ * @note This function knows if in INSERT mode and takes care of it.
+ *
+ * @warning This function doesn't refresh currents' WINDOW. You should do it
+ * when necessary with _DisplayCurrentMOSAIC_.
+ *
+ * @param[in,out] current Target CURS_MOS
+ * @param[in] cur_y Cursor's Y position
+ * @param[in] cur_x Cursor's X position
+ * @param[in] dir Direction in which to insert c
+ */
+void InsertCh (CURS_MOS *current, int cur_y, int cur_x, int c, Direction dir);
 /**
  * Loads an image in the current
  *

@@ -159,6 +159,66 @@ CURS_MOS *CreateNewMOSAIC (IMGS *everyone, CURS_MOS *current) {
 }
 
 
+void InsertCh (CURS_MOS *current, int cur_y, int cur_x, int c, Direction dir) {
+	int y = cur_y;
+	int x = cur_x;
+	// insert mode: need to push everyone one char in dir
+	if (IS_(INSERT)) {
+		// moving coordinate and the stop point (cur_x or cur_y)
+		// 	note that moving is just a reference to the moving variable,
+		// 	so that we don't need to know which one is the moving one at
+		// 	the verification
+		int *moving, end;
+		switch (dir) {
+			case UP:
+				y = 0;
+				moving = &y;
+				end = cur_y;
+				break;
+
+			case DOWN:
+				y = current->img.height;
+				moving = &y;
+				end = cur_y;
+				break;
+
+			case LEFT:	
+				x = 0;
+				moving = &x;
+				end = cur_x;
+				break;
+
+			case RIGHT:
+				x = current->img.width;
+				moving = &x;
+				end = cur_x;
+				break;
+		}
+
+		while (*moving != end) {
+			// go in reverse moving the chars
+			switch (REVERSE (dir)) {
+				case UP:	--y;	break;
+				case DOWN:	++y;	break;
+				case LEFT:	--x;	break;
+				case RIGHT:	++x;	break;
+			}
+			// read next char
+			mos_char aux = current->img.mosaic[y][x];
+			// add it in it's new place
+			mosAddch (&current->img, cur_y, cur_x, aux);
+			// let's move on to the next!
+			cur_y = y;
+			cur_x = x;
+		}
+
+		// redraw WINDOW
+		RefreshCURS_MOS (current);
+	}
+	curs_mosAddch (current, y, x, c);
+}
+
+
 int Load (CURS_MOS *current) {
 	char *file_name = AskSaveLoadMOSAIC (load);
 

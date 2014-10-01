@@ -203,6 +203,8 @@ int main (int argc, char *argv[]) {
 			/* toggle transparent paste */
 			case KEY_CTRL_T:
 				TOGGLE_(TRANSPARENT);
+				IS_(TRANSPARENT) ? 	PrintHud ("Transparent paste ON", FALSE) :
+						PrintHud ("Transparent paste OFF", FALSE);
 				break;
 				
 			/* copy selected area */
@@ -230,6 +232,10 @@ int main (int argc, char *argv[]) {
 				else {
 					ENTER_(TOUCHED);
 				}
+				break;
+
+			case KEY_IC:
+				TOGGLE_(INSERT);
 				break;
 
 			/* attribute table */
@@ -276,7 +282,7 @@ int main (int argc, char *argv[]) {
 			/* write at the mosaic, and show it to us */
 			default:
 				if (isprint (c)) {
-					curs_mosAddch (current, cursor.y, cursor.x, c);
+					InsertCh (current, cursor.y, cursor.x, c, default_direction);
 					DisplayCurrentMOSAIC (current);
 					ENTER_(TOUCHED);
 					// didn't erase anything, so move to the next

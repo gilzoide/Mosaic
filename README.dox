@@ -4,7 +4,7 @@
 curses based Mosaic Asc Art Editor
 
 @todo attr table/tabela de cores
-@todo 'insert' pra inserir com espaços
+@todo 'insert' pra inserir com espaços -> FIX moving != end n pega a última
 @todo delete na box selection
 
 - @todo talvez mudar a seleção? pq ficar apagando pra reprintar é mei zuado, né =S

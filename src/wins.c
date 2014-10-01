@@ -393,6 +393,10 @@ void UpdateHud (Cursor cur, Direction dir) {
 
 
 int PrintHud (const char *message, char wait_for_input) {
+	// clear anything that was there
+	wmove (hud, 0, HUD_MSG_X);
+	wclrtoeol (hud);
+	// add the message
 	mvwaddch (hud, 0, HUD_MSG_X, ACS_DIAMOND);
 	waddstr (hud, message);
 	wrefresh (hud);

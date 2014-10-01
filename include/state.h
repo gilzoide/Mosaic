@@ -33,6 +33,8 @@ State state;	///< the global Nmos State
 /// There's a message in the hud, but ain't waiting for input
 /// @sa UpdateHud
 #define HUD_MESSAGE	0b00010000
+/// Insert mode: insert a new char or write over (IS_(INSERT) -> new char)
+#define INSERT		0b00100000
 /// Quit the sw (to break the main loop)
 #define QUIT		0b10000000
 
