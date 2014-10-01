@@ -96,7 +96,7 @@ void Cut (CopyBuffer *buffer, CURS_MOS *current, Cursor selection) {
 	int y = min (selection.y, selection.origin_y), x = min (selection.x, selection.origin_x);	// we need the upper-left corner only
 	for (i = 0; i <= buffer->coordinates.y; i++) {
 		for (j = 0; j <= buffer->coordinates.x; j++) {
-			mosAddch (current, y + i, x + j, ' ');
+			curs_mosAddch (current, y + i, x + j, ' ');
 		}
 	}
 	DisplayCurrentMOSAIC (current);
@@ -114,7 +114,7 @@ char Paste (CopyBuffer *buffer, CURS_MOS *current, Cursor cursor) {
 				if (IS_(TRANSPARENT) && c == ' ')
 					continue;
 				// if outside CURS_MOS window, don't try to put 'c' in it, or it'll crash
-				else if (mosAddch (current, cursor.y + i, cursor.x + j, c) == ERR)
+				else if (curs_mosAddch (current, cursor.y + i, cursor.x + j, c) == ERR)
 					break;
 			}
 		}
@@ -147,8 +147,7 @@ CURS_MOS *CreateNewMOSAIC (IMGS *everyone, CURS_MOS *current) {
 
 	// first image: no one's after or before
 	if (everyone->list == NULL) {
-		everyone->list = new_image;
-		new_image->next = new_image->prev = new_image;
+		CircularIMGS (everyone, new_image);
 	}
 	// not the first, so link it to someone
 	else {
@@ -185,6 +184,44 @@ int Save (CURS_MOS *current) {
 }
 
 
+void EraseLine (CURS_MOS *current) {
+	// just take the greater, so we don't need to worry about the direction
+	int i = max (current->img.height, current->img.width);
+
+	while (i > 0 && i--) {
+		// let main's erasure work it's magic
+		ungetch (KEY_BACKSPACE);
+	}
+}
+
+
+void EraseWord (Cursor *cursor, CURS_MOS *current, Direction dir) {
+	int y = cursor->y;
+	int x = cursor->x;
+
+	int i = 0, c;
+	// count the chars, until a blank (' ') or end of line (out of bounds)
+	do {
+		// move to get the next char
+		switch (dir) {
+			case UP:	--y;	break;
+			case DOWN:	++y;	break;
+			case LEFT:	--x;	break;
+			case RIGHT:	++x;	break;
+		}
+		// let's check what's in y/x
+		c = mosGetch (&current->img, y, x);
+		// one more char to erase
+		i++;
+	} while (c && c != ' ');
+
+	while (i > 0 && i--) {
+		// let main's erasure work it's magic
+		ungetch (KEY_BACKSPACE);
+	}
+}
+
+
 void DestroyIMGS (IMGS *everyone) {
 	CURS_MOS *aux, *next;
 	int i;
@@ -195,5 +232,4 @@ void DestroyIMGS (IMGS *everyone) {
 		free (aux);
 	}
 }
-
 

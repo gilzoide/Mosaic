@@ -27,6 +27,7 @@ int main (int argc, char *argv[]) {
 	if (file_name) {
 		current = NewCURS_MOS (0, 0);
 		LoadCURS_MOS (current, file_name);
+		CircularIMGS (&everyone, current);
 		DisplayCurrentMOSAIC (current);
 	}
 	else while (!(current = CreateNewMOSAIC (&everyone, current)));
@@ -53,11 +54,13 @@ int main (int argc, char *argv[]) {
 			case KEY_MOUSE:
 				getmouse (&event);
 				// bt1 click: MoveTo
-				if (event.bstate & BUTTON1_CLICKED)
+				if (event.bstate & BUTTON1_CLICKED) {
 					MoveTo (&cursor, current, event.y, event.x);
+				}
 				// bt3 (right button) click: Menu (yep, anywhere)
-				else if (event.bstate & BUTTON3_CLICKED)
+				else if (event.bstate & BUTTON3_CLICKED) {
 					ungetch (KEY_F(10));
+				}
 				break;
 				
 			/* move up */
@@ -116,8 +119,10 @@ int main (int argc, char *argv[]) {
 			/* new mosaic */
 			case KEY_F(2):
 				; CURS_MOS *aux = CreateNewMOSAIC (&everyone, current);
-				if (aux)
+				// aux was really created, so update the current curs_mos
+				if (aux) {
 					current = aux;
+				}
 				DisplayCurrentMOSAIC (current);
 				break;
 
@@ -218,10 +223,13 @@ int main (int argc, char *argv[]) {
 			case KEY_CTRL_V:	
 				UnprintSelection (current);
 				UN_(SELECTION);
-				if (!Paste (&buffer, current, cursor))
+				// if the buffer was never used, sry
+				if (!Paste (&buffer, current, cursor)) {
 					PrintHud ("Nothing in the buffer...", TRUE);
-				else
+				}
+				else {
 					ENTER_(TOUCHED);
+				}
 				break;
 
 			/* attribute table */
@@ -232,8 +240,9 @@ int main (int argc, char *argv[]) {
 			/* quit; aww =/ */
 			case KEY_CTRL_Q:
 				// asks if you really want to quit this tottally awesome SW
-				if (IS_(TOUCHED) && !AskQuit ())
+				if (IS_(TOUCHED) && !AskQuit ()) {
 					break;
+				}
 
 				ENTER_(QUIT);
 				// needed to jump the getch ()
@@ -243,9 +252,12 @@ int main (int argc, char *argv[]) {
 			/* erase entire line/column before cursor
 			 * it actually calls enough times the backspace button */
 			case KEY_CTRL_U:
-				; int i = max (current->img.height, current->img.width);
-				while (i > 0 && i--)
-					ungetch (KEY_BACKSPACE);
+				EraseLine (current);
+				break;
+
+			/* erase word (until space is found) */
+			case KEY_CTRL_W:
+				EraseWord (&cursor, current, REVERSE (default_direction));
 				break;
 			
 			// WARNING: don't change BACKSPACE nor DC out of here nor out of
@@ -264,14 +276,16 @@ int main (int argc, char *argv[]) {
 			/* write at the mosaic, and show it to us */
 			default:
 				if (isprint (c)) {
-					mosAddch (current, cursor.y, cursor.x, c);
+					curs_mosAddch (current, cursor.y, cursor.x, c);
 					DisplayCurrentMOSAIC (current);
 					ENTER_(TOUCHED);
 					// didn't erase anything, so move to the next
-					if (!IS_(ERASED))	
+					if (!IS_(ERASED)) {
 						Move (&cursor, current, default_direction);
-					else 	// we erased something, so it erased and that's that
+					}
+					else { 	// we erased something, so it erased and that's that
 						UN_(ERASED);
+					}
 				}
 				break;
 		}

@@ -115,6 +115,20 @@ int Load (CURS_MOS *current);
  */
 int Save (CURS_MOS *current);
 /**
+ * Erases an entire line from current (MOSAIC and WINDOW).
+ * 
+ * @param[in] current The current CURS_MOS
+ */
+void EraseLine (CURS_MOS *current);
+/**
+ * Erases a word from current (until a blank ' ').
+ * 
+ * @param[in] cursor Current cursor position
+ * @param[in] current The current CURS_MOS
+ * @param[in] dir Direction for the erasure
+ */
+void EraseWord (Cursor *cursor, CURS_MOS *current, Direction dir);
+/**
  * Destroy and free memory from the images list
  * 
  * @warning This function should be called before exiting the program,

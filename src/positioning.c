@@ -67,8 +67,9 @@ void PrintSelection (Cursor *position, CURS_MOS *current) {
 
 void UnprintSelection (CURS_MOS *current) {
 	int i;
-	for (i = 0; i < current->img.height; i++)
+	for (i = 0; i < current->img.height; i++) {
 		mvwchgat (current->win, i, 0, current->img.width, A_NORMAL, 0, NULL);
+	}
 	
 	DisplayCurrentMOSAIC (current);
 }
@@ -121,7 +122,7 @@ void Move (Cursor *position, CURS_MOS *current, Direction dir) {
 
 
 void MoveAll (Cursor *position, CURS_MOS *current, Direction dir) {
-	// change the cursor position, deppending on the direction
+	// change the cursor position, depending on the direction
 	switch (dir) {
 		case UP:
 			position->y = 0;

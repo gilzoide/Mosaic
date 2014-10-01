@@ -1,10 +1,11 @@
 /** @file wins.h
- * Auxilary windows' definitions: help, menu, new/save/load
+ * Auxilary windows' definitions: help, menu, new/save/load, about, attr_table
  */
  
 #ifndef WINS_H
 #define WINS_H
 
+/* Windows' sizes or important points */
 #define HELP_WIDTH COLS
 #define HELP_HEIGHT (LINES - 1)
 
