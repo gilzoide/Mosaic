@@ -75,15 +75,15 @@ void InitHelp () {
 	const char *hotkeys[] = {
 		"F1", "F10/Mouse Right Button", "^Q",
 		"Arrow Keys", "^D", "^B", "^A", "Page Up/Page Down", "Home/End",
-		"F2", "^S", "^O", "^R", "^C/^X", "^V", "Tab"
+		"F2", "^S", "^O", "^R", "^C/^X", "^V", "Tab", "^U", "^W"
 	};
 	// and how many are there for each subtitle
-	int n_hotkeys[] = {3, 6, 7};
+	int n_hotkeys[] = {3, 6, 9};
 	// what the hotkeys do
 	const char *explanations[] = {
 		"show this help", "show the menu", "quit Nmos",
 		"move through the mosaic", "change the moving direction after input (default direction)", "toggle box selection mode", "select all", "previous/next mosaic", "move to first/last character (in the default direction)",
-		"new mosaic", "save mosaic", "load mosaic", "resize mosaic", "copy/cut selection", "paste selection", "show the attribute table"
+		"new mosaic", "save mosaic", "load mosaic", "resize mosaic", "copy/cut selection", "paste selection", "show the attribute table", "erase line", "erase word"
 	};
 	
 	// aux counters; only 'i' gets reseted at 0, as it counts until n_hotkeys ends
@@ -685,6 +685,7 @@ void InitNewMOSAIC (int initial_height, int initial_width) {
 
 	// the FORM itself, WINDOW and post it!
 	newMOSAIC_form = new_form (fields);
+	set_form_win (newMOSAIC_form, subwindow);
 	set_form_sub (newMOSAIC_form, subwindow);
 	post_form (newMOSAIC_form);
 
@@ -693,8 +694,9 @@ void InitNewMOSAIC (int initial_height, int initial_width) {
 
 char AskCreateNewMOSAIC (int *new_height, int *new_width, char *duplicate, enum direction *new_dir) {
 	// creates it if not already there
-	if (!newMOSAICPanel)
+	if (!newMOSAICPanel) {
 		InitNewMOSAIC (*new_height, *new_width);
+	}
 
 	// display the panel
 	show_panel (newMOSAICPanel);
@@ -736,19 +738,27 @@ char AskCreateNewMOSAIC (int *new_height, int *new_width, char *duplicate, enum 
 
 			// write the dimensions in the field
 			default:
-				if (isdigit (c))	// only allow digits (for the dimensions)
+				if (isdigit (c)) {	// only allow digits (for the dimensions)
 					form_driver (newMOSAIC_form, c);
+				}
 				break;
 		}
 
 		wrefresh (newMOSAICWindow);
 	} while (c != '\n');
 
+	// validate the string (current field doesn't validate by itself)
+	form_driver (newMOSAIC_form, REQ_VALIDATION);
+
 	// get the fields' data
 	*new_height = atoi (field_buffer (form_fields (newMOSAIC_form)[0], 0));
 	*new_width = atoi (field_buffer (form_fields (newMOSAIC_form)[1], 0));
-	*duplicate = strcmp (field_buffer (form_fields (newMOSAIC_form)[2], 0), "no");
-	*new_dir = strcmp (field_buffer (form_fields (newMOSAIC_form)[3], 0), "after");
+	// using strncmp because the field's buffer is completed with trailing 
+	// blanks, and strcmp wouldn't give us the desired answer
+	*duplicate = strncmp (field_buffer (form_fields (newMOSAIC_form)[2], 0),
+			"no", 2);
+	*new_dir = strncmp (field_buffer (form_fields (newMOSAIC_form)[3], 0),
+			"after", 5);
 
 	hide_panel (newMOSAICPanel);
 	update_panels ();
@@ -845,7 +855,8 @@ char *AskSaveLoadMOSAIC (enum io io) {
 	update_panels ();
 	doupdate ();
 
-	form_driver (saveloadMOSAIC_form, REQ_NEXT_FIELD);
+	// validate the string (current field doesn't validate by itself)
+	form_driver (saveloadMOSAIC_form, REQ_VALIDATION);
 
 	// get the field's data
 	char *aux = field_buffer (form_fields (saveloadMOSAIC_form)[0], 0);
@@ -854,7 +865,7 @@ char *AskSaveLoadMOSAIC (enum io io) {
 	for (i = strlen (aux) - 1; aux[i] == ' '; i--);
 	aux[i + 1] = '\0';
 
-	// if it's a empty string, returns as canceled
+	// if it's an empty string, returns as canceled
 	return aux[0] ? aux : NULL;
 }
 

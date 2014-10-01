@@ -4,8 +4,8 @@
 curses based Mosaic Asc Art Editor
 
 @todo attr table/tabela de cores
-@todo ^W pra apagar até ' '
 @todo 'insert' pra inserir com espaços
+@todo delete na box selection
 
 - @todo talvez mudar a seleção? pq ficar apagando pra reprintar é mei zuado, né =S
 @todo save/load panel dá zoera no free

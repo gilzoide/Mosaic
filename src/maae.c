@@ -130,11 +130,12 @@ char Paste (CopyBuffer *buffer, CURS_MOS *current, Cursor cursor) {
 CURS_MOS *CreateNewMOSAIC (IMGS *everyone, CURS_MOS *current) {
 	int height = INITIAL_HEIGHT, width = INITIAL_WIDTH;
 	enum direction dir;
-	char duplicate;
+	char duplicate = 0;
 
 	// user canceled the creation: return NULL
-	if (AskCreateNewMOSAIC (&height, &width, &duplicate, &dir) == ERR)
+	if (AskCreateNewMOSAIC (&height, &width, &duplicate, &dir) == ERR) {
 		return NULL;
+	}
 	
 	CURS_MOS *new_image = NewCURS_MOS (height, width);
 	if (duplicate) {
@@ -199,8 +200,8 @@ void EraseWord (Cursor *cursor, CURS_MOS *current, Direction dir) {
 	int y = cursor->y;
 	int x = cursor->x;
 
-	int i = 0, c;
 	// count the chars, until a blank (' ') or end of line (out of bounds)
+	int i = 0, c;
 	do {
 		// move to get the next char
 		switch (dir) {
@@ -216,7 +217,7 @@ void EraseWord (Cursor *cursor, CURS_MOS *current, Direction dir) {
 	} while (c && c != ' ');
 
 	while (i > 0 && i--) {
-		// let main's erasure work it's magic
+		// let main's erasure work it's magic for the counted chars
 		ungetch (KEY_BACKSPACE);
 	}
 }
