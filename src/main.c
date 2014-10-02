@@ -279,21 +279,21 @@ int main (int argc, char *argv[]) {
 			/* delete: well, just erase the damn char 
 			 * (put a ' ' in it, default takes care of this for us =P) */
 			case KEY_DC:	
-				ENTER_(ERASED);
+				ENTER_(NO_MOVING_CURSOR);
 				c = ' ';
 
 			/* write at the mosaic, and show it to us */
 			default:
 				if (isprint (c)) {
-					InsertCh (current, cursor, c, default_direction);
+					InsertCh (current, &cursor, c, default_direction);
 					DisplayCurrentMOSAIC (current);
 					ENTER_(TOUCHED);
 					// didn't erase anything, so move to the next
-					if (!IS_(ERASED)) {
+					if (!IS_(NO_MOVING_CURSOR)) {
 						Move (&cursor, current, default_direction);
 					}
 					else { 	// we erased something, so it erased and that's that
-						UN_(ERASED);
+						UN_(NO_MOVING_CURSOR);
 					}
 				}
 				break;

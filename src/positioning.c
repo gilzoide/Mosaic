@@ -90,8 +90,9 @@ void MoveTo (Cursor *position, CURS_MOS *current, int y, int x) {
 		position->origin_y = y;
 		position->origin_x = x;
 	}
-	else
+	else {
 		PrintSelection (position, current);
+	}
 
 	move (y, x);
 }

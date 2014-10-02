@@ -114,7 +114,7 @@ CURS_MOS *CreateNewMOSAIC (IMGS *everyone, CURS_MOS *current);
  * @param[in] cur Cursor
  * @param[in] dir Direction in which to insert c
  */
-void InsertCh (CURS_MOS *current, Cursor cur, int c, Direction dir);
+void InsertCh (CURS_MOS *current, Cursor *cur, int c, Direction dir);
 /**
  * Loads an image in the current
  *
