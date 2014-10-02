@@ -159,9 +159,9 @@ CURS_MOS *CreateNewMOSAIC (IMGS *everyone, CURS_MOS *current) {
 }
 
 
-void InsertCh (CURS_MOS *current, int cur_y, int cur_x, int c, Direction dir) {
-	int y = cur_y;
-	int x = cur_x;
+void InsertCh (CURS_MOS *current, Cursor cur, int c, Direction dir) {
+	int y = cur.y;
+	int x = cur.x;
 	// insert mode: need to push everyone one char in dir
 	if (IS_(INSERT)) {
 		// moving coordinate and the stop point (cur_x or cur_y)
@@ -173,29 +173,32 @@ void InsertCh (CURS_MOS *current, int cur_y, int cur_x, int c, Direction dir) {
 			case UP:
 				y = 0;
 				moving = &y;
-				end = cur_y;
+				end = cur.y;
 				break;
 
 			case DOWN:
 				y = current->img.height;
 				moving = &y;
-				end = cur_y;
+				end = cur.y;
 				break;
 
 			case LEFT:	
 				x = 0;
 				moving = &x;
-				end = cur_x;
+				end = cur.x;
 				break;
 
 			case RIGHT:
 				x = current->img.width;
 				moving = &x;
-				end = cur_x;
+				end = cur.x;
 				break;
 		}
 
 		while (*moving != end) {
+			// update cur_y/cur_x: where we'll put the copied chars
+			cur.y = y;
+			cur.x = x;
 			// go in reverse moving the chars
 			switch (REVERSE (dir)) {
 				case UP:	--y;	break;
@@ -204,18 +207,33 @@ void InsertCh (CURS_MOS *current, int cur_y, int cur_x, int c, Direction dir) {
 				case RIGHT:	++x;	break;
 			}
 			// read next char
-			mos_char aux = current->img.mosaic[y][x];
+			mos_char aux = mosGetch (&current->img, y, x);
 			// add it in it's new place
-			mosAddch (&current->img, cur_y, cur_x, aux);
-			// let's move on to the next!
-			cur_y = y;
-			cur_x = x;
+			mosAddch (&current->img, cur.y, cur.x, aux);
 		}
 
 		// redraw WINDOW
 		RefreshCURS_MOS (current);
 	}
-	curs_mosAddch (current, y, x, c);
+	// selection mode: fill the selection with the char c
+	else if (IS_(SELECTION)) {
+		int ULy = min (cur.origin_y, cur.y);
+		int ULx = min (cur.origin_x, cur.x);
+		int BRy = max (cur.origin_y, cur.y);
+		int BRx = max (cur.origin_x, cur.x);
+
+		for (y = ULy; y <= BRy; y++) {
+			for (x = ULx; x <= BRx; x++) {
+				curs_mosAddch (current, y, x, c);
+			}
+		}
+
+		UN_(SELECTION);
+	}
+	// normal insertion
+	else {
+		curs_mosAddch (current, y, x, c);
+	}
 }
 
 

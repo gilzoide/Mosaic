@@ -272,7 +272,10 @@ int main (int argc, char *argv[]) {
 			/* Backspace: delete the char before (the curses definition 
 			 * says something else, but in general it's 127) */
 			case KEY_BACKSPACE: case 127:	
-				Move (&cursor, current, REVERSE (default_direction));
+				// in selection mode backspace acts just as delete
+				if (!IS_(SELECTION)) {
+					Move (&cursor, current, REVERSE (default_direction));
+				}
 			/* delete: well, just erase the damn char 
 			 * (put a ' ' in it, default takes care of this for us =P) */
 			case KEY_DC:	
@@ -282,7 +285,7 @@ int main (int argc, char *argv[]) {
 			/* write at the mosaic, and show it to us */
 			default:
 				if (isprint (c)) {
-					InsertCh (current, cursor.y, cursor.x, c, default_direction);
+					InsertCh (current, cursor, c, default_direction);
 					DisplayCurrentMOSAIC (current);
 					ENTER_(TOUCHED);
 					// didn't erase anything, so move to the next
