@@ -1,39 +1,39 @@
 #include "wins.h"
 
 // Global WINDOWS, PANELS, MENUS, etc
-MENU *menu;
-WINDOW *menuWindow;
-PANEL *menuPanel;
+MENU *menu = NULL;
+WINDOW *menuWindow = NULL;
+PANEL *menuPanel = NULL;
 
-MENU *file_menu;
-WINDOW *file_menuWindow;
+MENU *file_menu = NULL;
+WINDOW *file_menuWindow = NULL;
 
-MENU *edit_menu;
-WINDOW *edit_menuWindow;
+MENU *edit_menu = NULL;
+WINDOW *edit_menuWindow = NULL;
 
-MENU *image_menu;
-WINDOW *image_menuWindow;
+MENU *image_menu = NULL;
+WINDOW *image_menuWindow = NULL;
 
-MENU *help_menu;
-WINDOW *help_menuWindow;
+MENU *help_menu = NULL;
+WINDOW *help_menuWindow = NULL;
 // the PANEL for the submenus (we just change the
 // WINDOW inside to display the different menus)
-PANEL *submenuPanel;
+PANEL *submenuPanel = NULL;
 
-WINDOW *helpWindow;
-PANEL *helpPanel;
+WINDOW *helpWindow = NULL;
+PANEL *helpPanel = NULL;
 
-FORM *newMOSAIC_form;
-WINDOW *newMOSAICWindow;
-PANEL *newMOSAICPanel;
+FORM *newMOSAIC_form = NULL;
+WINDOW *newMOSAICWindow = NULL;
+PANEL *newMOSAICPanel = NULL;
 
 // save and load have the same form, as it does the same (and keeps the buffer)
-FORM *saveloadMOSAIC_form;
-WINDOW *saveloadMOSAICWindow;
-PANEL *saveloadMOSAICPanel;
+FORM *saveloadMOSAIC_form = NULL;
+WINDOW *saveloadMOSAICWindow = NULL;
+PANEL *saveloadMOSAICPanel = NULL;
 
-WINDOW *aboutWindow;
-PANEL *aboutPanel;
+WINDOW *aboutWindow = NULL;
+PANEL *aboutPanel = NULL;
 
 WINDOW *hud;
 
@@ -118,13 +118,13 @@ void InitHelp () {
 
 	wclrtoeol (helpWindow);
 	
-	int aux = COLS - 44;
+	int aux = HUD_CURSOR_X - HUD_MSG_X;
 	mvwaddch (helpWindow, HELP_HEIGHT - 1, 29, ACS_ULCORNER);
 	for (i = 0; i < aux; i++) {
 		wechochar (helpWindow, ACS_HLINE);
 	}
 	waddch (helpWindow, ACS_URCORNER);
-	mvwaddstr (helpWindow, HELP_HEIGHT - 1, 22 + (aux / 2), " message area ");
+	mvwaddstr (helpWindow, HELP_HEIGHT - 1, HUD_MSG_X + (aux / 2), " message area ");
 	
 	mvwaddch (helpWindow, HELP_HEIGHT - 1, HELP_WIDTH - 11, ACS_ULCORNER);
 	waddstr (helpWindow, "position");
@@ -384,8 +384,19 @@ void UpdateHud (Cursor cur, Direction dir) {
 	else {
 		UN_(HUD_MESSAGE);
 	}
+	// show insert mode icon
+	if (IS_(INSERT)) {
+		wattron (hud, A_BOLD);
+		mvwaddch (hud, 0, COLS - HUD_CURSOR_X, 'I');
+	}
+	// show transparent mode icon
+	if (IS_(TRANSPARENT)) {
+		wattron (hud, A_BOLD);
+		mvwaddch (hud, 0, COLS - HUD_CURSOR_X + 1, 'T');
+	}
 	// update coordinates
-	mvwprintw (hud, 0, COLS - HUD_CURSOR_X, "%dx%d", cur.y, cur.x);
+	wstandend (hud);
+	mvwprintw (hud, 0, COLS - HUD_CURSOR_X + 3, "%dx%d", cur.y, cur.x);
 	mvwaddch (hud, 0, COLS - 1, arrow);
 	wrefresh (hud);
 	move (cur.y, cur.x);
@@ -918,80 +929,93 @@ WINDOW *CreateBoxedTitledWindow (
 }
 
 
-void DeletePanel (PANEL *pan) {
-	if (pan != NULL) {
-		DeleteWindow (panel_window (pan));
+void DeletePanel (PANEL **pan) {
+	if (pan && *pan) {
+		WINDOW *win = panel_window (*pan);
+		DeleteWindow (&win);
 
-		del_panel (pan);
+		del_panel (*pan);
+
+		*pan = NULL;
 	}
 }
 
 
-void DeleteWindow (WINDOW *win) {
-	if (win != NULL) {
-		werase (win);
-		wrefresh (win);
-		delwin (win);
+void DeleteWindow (WINDOW **win) {
+	if (win && *win) {
+		delwin (*win);
+
+		*win = NULL;
 	}
 }
 
 
-void DeleteMenu (MENU *menu) {
-	if (menu != NULL) {
-		unpost_menu (menu);
-		free_menu (menu);
+void DeleteMenu (MENU **menu) {
+	if (menu && *menu) {
+		unpost_menu (*menu);
+		free_menu (*menu);
 
 		// Destroy all the items!
 		int i;
-		ITEM **items = menu_items (menu);
-		for (i = 0; i < item_count (menu); i++)
+		ITEM **items = menu_items (*menu);
+		for (i = 0; i < item_count (*menu); i++)
 			free_item (items[i]);
 		free (items);
 		
-		DeleteWindow (menu_win (menu));
-		DeleteWindow (menu_sub (menu));
+		WINDOW *win = menu_win (*menu);
+		DeleteWindow (&win);
+		WINDOW *sub = menu_sub (*menu);
+		DeleteWindow (&sub);
+
+		*menu = NULL;
 	}
 }
 
 
-void DeleteForm (FORM *form) {
-	if (form != NULL) {
-		unpost_form (form);
-		free_form (form);
+void DeleteForm (FORM **form) {
+	if (form && *form) {
+		unpost_form (*form);
+		free_form (*form);
 
 		// Destroy all the fields!
 		int i;
-		FIELD **fields = form_fields (form);
-		for (i = 0; i < field_count (form); i++) {
+		FIELD **fields = form_fields (*form);
+		for (i = 0; i < field_count (*form); i++) {
 			free_field (fields[i]);
 		}
 		free (fields);
 
-		DeleteWindow (form_win (form));
-		DeleteWindow (form_sub (form));
+		WINDOW *win = form_win (*form);
+		DeleteWindow (&win);
+		WINDOW *sub = form_sub (*form);
+		DeleteWindow (&sub);
+
+		*form = NULL;
 	}
 }
 
 
 void DestroyWins () {
 // Help
-	DeletePanel (helpPanel);
+	DeletePanel (&helpPanel);
 // Hud
-	DeleteWindow (hud);
+	DeleteWindow (&hud);
 // Menus
-	DeleteMenu (menu);
-	DeleteMenu (file_menu);
-	DeleteMenu (edit_menu);
-	DeleteMenu (image_menu);
-	DeleteMenu (help_menu);
-	DeletePanel (menuPanel);
-	DeletePanel (submenuPanel);
+	DeleteMenu (&menu);
+	DeleteMenu (&file_menu);
+	DeleteMenu (&edit_menu);
+	DeleteMenu (&image_menu);
+	DeleteMenu (&help_menu);
+	DeletePanel (&menuPanel);
+	DeletePanel (&submenuPanel);
 // New MOSAIC
-	DeleteForm (newMOSAIC_form);
-	DeletePanel (newMOSAICPanel);
+	DeleteForm (&newMOSAIC_form);
+	DeletePanel (&newMOSAICPanel);
 // Load MOSAIC
-	DeleteForm (saveloadMOSAIC_form);
-	/*DeletePanel (saveloadMOSAICPanel);*/
+	DeleteForm (&saveloadMOSAIC_form);
+	DeletePanel (&saveloadMOSAICPanel);
 // About
-	DeletePanel (aboutPanel);
+	DeletePanel (&aboutPanel);
+
+	endwin ();
 }

@@ -19,7 +19,7 @@
 #define ABOUT_WIDTH 50
 
 #define HUD_MSG_X 29
-#define HUD_CURSOR_X 11
+#define HUD_CURSOR_X 14
 
 #define SAVELOAD_WIDTH 18
 
@@ -121,28 +121,35 @@ WINDOW *CreateCenteredBoxedTitledWindow (int nlines, int ncols, const char *titl
  * Deletes a previously created PANEL and the WINDOW inside, erasing it's contents and freeing memory
  *
  * @note If the pointer is NULL, this function doesn't do a thing, so it's safer.
+ * @note The pointer is changed to NULL after the operation
  */
-void DeletePanel (PANEL *pan);
+void DeletePanel (PANEL **pan);
 /**
  * Deletes a previously created WINDOW, erasing it's contents and freeing memory.
  *
  * @note If the pointer is NULL, this function doesn't do a thing, so it's safer.
+ * @note The pointer is changed to NULL after the operation
  */
-void DeleteWindow (WINDOW *win);
+void DeleteWindow (WINDOW **win);
 /**
  * Deletes a previously created MENU and it's WINDOWs, freeing memory
  *
  * @note If the pointer is NULL, this function doesn't do a thing, so it's safer.
+ * @note The pointer is changed to NULL after the operation
  */
-void DeleteMenu (MENU *menu);
+void DeleteMenu (MENU **menu);
 /**
  * Deletes a previously created FORM and it's WINDOWs, freeing memory
  *
  * @note If the pointer is NULL, this function doesn't do a thing, so it's safer.
+ * @note The pointer is changed to NULL after the operation
  */
-void DeleteForm (FORM *form);
+void DeleteForm (FORM **form);
 /**
  * Deletes our important windows (menu, help, hud...), freeing the memory associated
+ *
+ * @warning This function calls `endwin`, from curses, so this 
+ * should be the last command in the curses mode!
  */
 void DestroyWins ();
 

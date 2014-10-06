@@ -164,7 +164,7 @@ void InsertCh (CURS_MOS *current, Cursor *cur, int c, Direction dir) {
 	int x = cur->x;
 	// insert mode: need to push everyone one char in dir
 	if (IS_(INSERT)) {
-		// moving coordinate and the stop point (cur.x or cur.y)
+		// moving coordinate and the stop point (cur->x or cur->y)
 		// 	note that moving is just a reference to the moving variable,
 		// 	so that we don't need to know which one is the moving one at
 		// 	the verification
@@ -196,9 +196,9 @@ void InsertCh (CURS_MOS *current, Cursor *cur, int c, Direction dir) {
 		}
 
 		while (*moving != end) {
-			// update aux_y/aux_x: where we'll put the copied chars
-			int aux_y = y;
-			int aux_x = x;
+			// update target_y/target_x: where we'll put the copied chars
+			int target_y = y;
+			int target_x = x;
 			// go in reverse moving the chars
 			switch (REVERSE (dir)) {
 				case UP:	--y;	break;
@@ -209,7 +209,7 @@ void InsertCh (CURS_MOS *current, Cursor *cur, int c, Direction dir) {
 			// read next char
 			mos_char aux = mosGetch (&current->img, y, x);
 			// add it in it's new place
-			mosAddch (&current->img, aux_y, aux_x, aux);
+			mosAddch (&current->img, target_y, target_x, aux);
 		}
 
 		// redraw WINDOW

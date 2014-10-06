@@ -308,6 +308,5 @@ int main (int argc, char *argv[]) {
 	DestroyIMGS (&everyone);
 	DestroyWins ();
 
-	endwin ();
 	return 0;
 }
