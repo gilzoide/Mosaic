@@ -2,4 +2,8 @@
 Import ('env')
 
 maae_src = ['main.c', 'maae.c', 'argpstuff.c', 'wins.c', 'positioning.c']
-env.Program ('maae', maae_src)
+maae = env.Program ('maae', maae_src)
+
+## INSTALL ##
+env.Install ('/usr/bin', maae)
+env.Alias ('install', '/usr/bin')

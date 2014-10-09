@@ -510,8 +510,9 @@ int GetChosenOption (MENU *menu) {
 		if (submenu == edit_menu) {
 			char transp = IS_(TRANSPARENT) ? 'X' : ' ';
 			// if 'transparent' is selected, reverse the transp
-			if (item_index (current_item (edit_menu)) == (item_count (edit_menu) - 1))
+			if (item_index (current_item (edit_menu)) == (item_count (edit_menu) - 1)) {
 				wattron (edit_menuWindow, A_REVERSE);
+			}
 			mvwaddch (edit_menuWindow, CHKBX_Y, CHKBX_X, transp);
 			wstandend (edit_menuWindow);
 			pos_menu_cursor (submenu);
@@ -873,9 +874,9 @@ char *AskSaveLoadMOSAIC (enum io io) {
 	// validate the string (current field doesn't validate by itself)
 	form_driver (saveloadMOSAIC_form, REQ_VALIDATION);
 
-	// get the field's data
+	// get the field's data...
 	char *aux = field_buffer (form_fields (saveloadMOSAIC_form)[0], 0);
-	// and take the trailing spaces off
+	// ...and take the trailing spaces off
 	int i;
 	for (i = strlen (aux) - 1; aux[i] == ' '; i--);
 	aux[i + 1] = '\0';

@@ -1,6 +1,16 @@
 # Maae, a curses Mosaic ASC Art Editor
 # Created by Gil Barbosa Reis
 
+Help ("""
+Welcome to the maae's build script
+
+This package provides Maae: the Mosaic ASC Art Editor.
+The default build output is the build/ directory.
+
+You can `scons install` everything in the /usr/bin/ directory,
+and it can be uninstalled running `scons uninstall`.
+""")
+
 if not GetOption ('help'):
     env = Environment (
         LIBS = ['panel', 'menu', 'form', 'curses', 
@@ -19,3 +29,6 @@ if not GetOption ('help'):
     # build the editor in the 'build' directory, without duplicating
     VariantDir ('build', 'src', duplicate = 0)
     SConscript ('build/SConscript', exports = 'env')
+
+    ## UNINSTALL ##
+    env.Command ("uninstall", None, Delete (FindInstalledFiles()))

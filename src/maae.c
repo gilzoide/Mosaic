@@ -5,13 +5,13 @@ void CursInit () {
 	setlocale (LC_ALL, "");	// wide_chars!
 
 	initscr ();	// init curses screen
-	
+
 	keypad (stdscr, TRUE);	// we can now use the arrow keys and Fn keys
 	raw ();	// no need to wait for the RETURN key [for interactive means]
 	noecho ();
 
 	set_escdelay (0);	// no need to wait for the Esc key (we don't use the meta modifier)
-	
+
 	start_color ();	// Colors!
 	InitColors ();	// initialize all the colors -> color.c
 	InitHud ();	// initialize the HUD
@@ -26,7 +26,7 @@ char getBit (char c, int i) {
 
 int toUTF8 (int c) {
 	int out = 0;
-	
+
 	// it's a multibyte UTF-8 char
 	if (c > 127) {
 		int i, j;
@@ -51,7 +51,7 @@ int toUTF8 (int c) {
 	else {
 		return c;
 	}
-	
+
 	return out;
 }
 
@@ -78,7 +78,8 @@ void Copy (CopyBuffer *buffer, CURS_MOS *current, Cursor selection) {
 	// if there was something stored, bye bye
 	DestroyCopyBuffer (buffer);
 
-	// copy buffer is a copy of the entire window, since the curses implementation certainly is better than I would do =P
+	// copy buffer is a copy of the entire window, since the
+	// curses implementation certainly is better than I would do =P
 	buffer->buff = dupwin (current->win);
 	// set it's coordinates, so we know what part the user want to copy
 	buffer->coordinates.origin_y = min (selection.y, selection.origin_y);
@@ -93,7 +94,8 @@ void Cut (CopyBuffer *buffer, CURS_MOS *current, Cursor selection) {
 	Copy (buffer, current, selection);
 	// and erase what was in there
 	int i, j;
-	int y = min (selection.y, selection.origin_y), x = min (selection.x, selection.origin_x);	// we need the upper-left corner only
+	int y = min (selection.y, selection.origin_y);	// we need the upper-left
+	int x = min (selection.x, selection.origin_x);	// corner only
 	for (i = 0; i <= buffer->coordinates.y; i++) {
 		for (j = 0; j <= buffer->coordinates.x; j++) {
 			curs_mosAddch (current, y + i, x + j, ' ');
@@ -109,8 +111,11 @@ char Paste (CopyBuffer *buffer, CURS_MOS *current, Cursor cursor) {
 		for (i = 0; i <= buffer->coordinates.y; i++) {
 			for (j = 0; j <= buffer->coordinates.x; j++) {
 				// read the char from the CopyBuffer
-				c = mvwinch (buffer->buff, buffer->coordinates.origin_y + i, buffer->coordinates.origin_x + j);
-				// if transparent pasting, and it's a ' ', leave the old char there
+				c = mvwinch (buffer->buff,
+						buffer->coordinates.origin_y + i,
+						buffer->coordinates.origin_x + j);
+				// if transparent pasting, and it's a ' ',
+				// leave the old char there
 				if (IS_(TRANSPARENT) && c == ' ')
 					continue;
 				// if outside CURS_MOS window, don't try to put 'c' in it, or it'll crash
@@ -136,13 +141,13 @@ CURS_MOS *CreateNewMOSAIC (IMGS *everyone, CURS_MOS *current) {
 	if (AskCreateNewMOSAIC (&height, &width, &duplicate, &dir) == ERR) {
 		return NULL;
 	}
-	
+
 	CURS_MOS *new_image = NewCURS_MOS (height, width);
 	if (duplicate) {
 		CopyMOSAIC (&new_image->img, &current->img);
 		RefreshCURS_MOS (new_image);
 	}
-	
+
 	// now there's one more CURS_MOS
 	everyone->size++;
 
@@ -154,7 +159,7 @@ CURS_MOS *CreateNewMOSAIC (IMGS *everyone, CURS_MOS *current) {
 	else {
 		LinkCURS_MOS (current, new_image, dir);
 	}
-	
+
 	return new_image;
 }
 
@@ -182,7 +187,7 @@ void InsertCh (CURS_MOS *current, Cursor *cur, int c, Direction dir) {
 				end = cur->y;
 				break;
 
-			case LEFT:	
+			case LEFT:
 				x = 0;
 				moving = &x;
 				end = cur->x;
@@ -309,11 +314,10 @@ void EraseWord (Cursor *cursor, CURS_MOS *current, Direction dir) {
 void DestroyIMGS (IMGS *everyone) {
 	CURS_MOS *aux, *next;
 	int i;
-	
+
 	for (aux = everyone->list, i = 0; i < everyone->size; i++, aux = next) {
 		next = aux->next;
 		FreeCURS_MOS (aux);
 		free (aux);
 	}
 }
-
