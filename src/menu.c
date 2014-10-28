@@ -239,40 +239,7 @@ void InitMenus () {
 }
 
 
-int Menu () {
-	// show in the Hud the menu is opened (eye-candy =P)
-	mvwchgat (hud, 0, 9, 4, A_UNDERLINE | A_BOLD, CN, NULL);
-	mvwchgat (hud, 0, 13, 5, A_UNDERLINE, CN, NULL);
-	wrefresh (hud);
-
-	// creates it if not already there
-	if (!menuPanel) {
-		InitMenus ();
-	}
-
-	// display the menu
-	show_panel (menuPanel);
-	show_panel (submenuPanel);
-	update_panels ();
-	doupdate ();
-	
-	// get the chosen option
-	int c = GetChosenOption (menu);
-
-	// hide the menu
-	hide_panel (menuPanel);
-	hide_panel (submenuPanel);
-	doupdate ();
-	
-	// hud goes back to normal
-	mvwchgat (hud, 0, 9, 4, A_BOLD, 0, NULL);
-	mvwchgat (hud, 0, 13, 5, A_NORMAL, 0, NULL);
-	wrefresh (hud);
-
-	return c;
-}
-
-
+/// Auxilary function for menu
 int GetChosenOption (MENU *menu) {
 	int c;
 	
@@ -374,4 +341,38 @@ int GetChosenOption (MENU *menu) {
 	} while (c != ' '); 
 	
 	return *(int*) item_userptr (current_item (submenu));
+}
+
+
+int Menu () {
+	// show in the Hud the menu is opened (eye-candy =P)
+	mvwchgat (hud, 0, 9, 4, A_UNDERLINE | A_BOLD, CN, NULL);
+	mvwchgat (hud, 0, 13, 5, A_UNDERLINE, CN, NULL);
+	wrefresh (hud);
+
+	// creates it if not already there
+	if (!menuPanel) {
+		InitMenus ();
+	}
+
+	// display the menu
+	show_panel (menuPanel);
+	show_panel (submenuPanel);
+	update_panels ();
+	doupdate ();
+	
+	// get the chosen option
+	int c = GetChosenOption (menu);
+
+	// hide the menu
+	hide_panel (menuPanel);
+	hide_panel (submenuPanel);
+	doupdate ();
+	
+	// hud goes back to normal
+	mvwchgat (hud, 0, 9, 4, A_BOLD, 0, NULL);
+	mvwchgat (hud, 0, 13, 5, A_NORMAL, 0, NULL);
+	wrefresh (hud);
+
+	return c;
 }

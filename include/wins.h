@@ -53,13 +53,11 @@ int PrintHud (const char *message, char wait_for_input);
 void Help ();
 /// Show the options and actions interactive menu
 int Menu ();
-/// Auxilary function for the Menu: menu driver
-int GetChosenOption (MENU *menu);
 
 /// Show the About window
 void About ();
 /// Show the attributes table
-int AttrTable (CURS_MOS *current, Cursor cur);
+Attr AttrTable (CURS_MOS *current, Cursor cur);
 
 /**
  * Asks the user where to link the new image,

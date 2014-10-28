@@ -1,8 +1,8 @@
 // The save and load stuff
 // save and load have the same form, as it does the same (and keeps the buffer)
-FORM *saveloadMOSAIC_form = NULL;
-WINDOW *saveloadMOSAICWindow = NULL;
-PANEL *saveloadMOSAICPanel = NULL;
+FORM *saveloadMOSAIC_form;
+WINDOW *saveloadMOSAICWindow;
+PANEL *saveloadMOSAICPanel;
 
 
 void InitSaveLoadMOSAIC () {

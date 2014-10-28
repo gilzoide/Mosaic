@@ -247,7 +247,7 @@ int main (int argc, char *argv[]) {
 
 			/* attribute table */
 			case '\t':
-				wattrset (current->win, AttrTable (current, cursor));
+				ChAttrs (current, &cursor, AttrTable (current, cursor));
 				break;
 				
 			/* quit; aww =/ */

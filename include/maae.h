@@ -112,9 +112,21 @@ CURS_MOS *CreateNewMOSAIC (IMGS *everyone, CURS_MOS *current);
  *
  * @param[in,out] current Target CURS_MOS
  * @param[in] cur Cursor
+ * @param[in] c Char to be inserted
  * @param[in] dir Direction in which to insert c
  */
 void InsertCh (CURS_MOS *current, Cursor *cur, int c, Direction dir);
+/**
+ * Change chars' attrs in current.
+ *
+ * @warning This function doesn't refresh currents' WINDOW. You should do it
+ * when necessary with _DisplayCurrentMOSAIC_.
+ *
+ * @param[in,out] current Target CURS_MOS
+ * @param[in] cur Cursor
+ * @param[in] attr Attribute to be setted
+ */
+void ChAttrs (CURS_MOS *current, Cursor *cur, Attr attr);
 /**
  * Loads an image in the current
  *

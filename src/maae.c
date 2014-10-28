@@ -167,6 +167,35 @@ CURS_MOS *CreateNewMOSAIC (IMGS *everyone, CURS_MOS *current) {
 }
 
 
+void ChAttrs (CURS_MOS *current, Cursor *cur, Attr attr) {
+	int y = cur->y;
+	int x = cur->x;
+	if (IS_(SELECTION)) {
+		int ULy = min (cur->origin_y, cur->y);
+		int ULx = min (cur->origin_x, cur->x);
+		int BRy = max (cur->origin_y, cur->y);
+		int BRx = max (cur->origin_x, cur->x);
+
+		for (y = ULy; y <= BRy; y++) {
+			for (x = ULx; x <= BRx; x++) {
+				curs_mosSetAttr (current, y, x, attr);
+			}
+		}
+
+		// Retract selection
+		UN_(SELECTION);
+		cur->origin_y = cur->y;
+		cur->origin_x = cur->x;
+		// don't move after input, please
+		ENTER_(NO_MOVING_CURSOR);
+		// don't insert c at next position
+		return;
+	}
+	// normal insertion
+	curs_mosSetAttr (current, y, x, attr);
+}
+
+
 void InsertCh (CURS_MOS *current, Cursor *cur, int c, Direction dir) {
 	int y = cur->y;
 	int x = cur->x;

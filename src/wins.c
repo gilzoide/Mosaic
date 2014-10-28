@@ -8,6 +8,7 @@ WINDOW *hud;
 #include "help.c"
 #include "save_load.c"
 #include "new_img.c"
+#include "attr_table.c"
 
 void InitHud () {
 	hud = subwin (stdscr, 1, COLS, LINES - 1, 0);
@@ -87,30 +88,6 @@ int PrintHud (const char *message, char wait_for_input) {
 	}
 
 	return c;
-}
-
-
-int AttrTable (CURS_MOS *current, Cursor cur) {
-	WINDOW *table;
-	PANEL *up;
-
-	table = newwin (12, HELP_WIDTH, 0, 0);
-	up = new_panel (table);
-	update_panels ();
-	doupdate ();
-	
-	//box (table, 0, 0);
-	wbkgd (table, COLOR_PAIR (BkW));
-	wrefresh (table);
-	
-	getch ();
-
-	werase (table);
-	wrefresh (table);
-	del_panel (up);
-	delwin (table);
-	
-	return 0;
 }
 
 
@@ -245,6 +222,8 @@ void DestroyWins () {
 	DeletePanel (&saveloadMOSAICPanel);
 // About
 	DeletePanel (&aboutPanel);
+// AttrTable
+	DeletePanel (&attrPanel);
 
 	endwin ();
 }

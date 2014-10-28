@@ -1,10 +1,14 @@
 // The New Img stuff
-FORM *newMOSAIC_form = NULL;
-WINDOW *newMOSAICWindow = NULL;
-PANEL *newMOSAICPanel = NULL;
+FORM *newMOSAIC_form;
+WINDOW *newMOSAICWindow;
+PANEL *newMOSAICPanel;
+
+#define newMOSAIC_height 6
+#define newMOSAIC_width 20
 
 void InitNewMOSAIC (int initial_height, int initial_width) {
-	newMOSAICWindow = CreateCenteredBoxedTitledWindow (6, 20, "NEW IMAGE");
+	newMOSAICWindow = CreateCenteredBoxedTitledWindow (newMOSAIC_height,
+			newMOSAIC_width, "NEW IMAGE");
 	newMOSAICPanel = new_panel (newMOSAICWindow);
 
 	// subwindow: inside the box

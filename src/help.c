@@ -1,9 +1,9 @@
 // needed WINDOWs and PANELs
-WINDOW *helpWindow = NULL;
-PANEL *helpPanel = NULL;
+WINDOW *helpWindow;
+PANEL *helpPanel;
 
-WINDOW *aboutWindow = NULL;
-PANEL *aboutPanel = NULL;
+WINDOW *aboutWindow;
+PANEL *aboutPanel;
 
 
 void InitHelp () {
