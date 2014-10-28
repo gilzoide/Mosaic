@@ -68,21 +68,25 @@ int chooseAttr (Attr current_color) {
 
 			// switch values
 			case KEY_UP:
-				// erase } moving, before moving it
-				mvwaddstr (attrWindow, 1 + attrs[moving],
-						ATTR_COLOR_X, "           ");
-				attrs[moving]--;
-				if (attrs[moving] > COLORS_STEP) {
-					attrs[moving] = COLORS_STEP - 1;
+				if (moving < 2) {
+					// erase } moving, before moving it
+					mvwaddstr (attrWindow, 1 + attrs[moving],
+							ATTR_COLOR_X, "           ");
+					attrs[moving]--;
+					if (attrs[moving] > COLORS_STEP) {
+						attrs[moving] = COLORS_STEP - 1;
+					}
 				}
 				break;
 
 			case KEY_DOWN:
-				// erase } moving, before moving it
-				mvwaddstr (attrWindow, 1 + attrs[moving],
-						ATTR_COLOR_X, "           ");
-				attrs[moving]++;
-				attrs[moving] %= COLORS_STEP;
+				if (moving < 2) {
+					// erase } moving, before moving it
+					mvwaddstr (attrWindow, 1 + attrs[moving],
+							ATTR_COLOR_X, "           ");
+					attrs[moving]++;
+					attrs[moving] %= COLORS_STEP;
+				}
 				break;
 
 			case ' ':
@@ -96,7 +100,7 @@ int chooseAttr (Attr current_color) {
 						ATTR_COLOR_X, "           ");
 				mvwaddstr (attrWindow, 1 + attrs[1],
 						ATTR_COLOR_X, "           ");
-				return current_color & attrs[2];
+				return (current_color | attrs[2]);
 		}
 
 		// we write back before fore, so when they're both

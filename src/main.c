@@ -248,6 +248,7 @@ int main (int argc, char *argv[]) {
 			/* attribute table */
 			case '\t':
 				ChAttrs (current, &cursor, AttrTable (current, cursor));
+				DisplayCurrentMOSAIC (current);
 				break;
 				
 			/* quit; aww =/ */
