@@ -7,7 +7,7 @@ Welcome to the maae's build script
 This package provides Maae: the Mosaic ASC Art Editor.
 The default build output is the build/ directory.
 
-You can `scons install` everything in the /usr/bin/ directory,
+You can `scons install` it in the /usr/bin/ directory,
 and it can be uninstalled running `scons uninstall`.
 """)
 

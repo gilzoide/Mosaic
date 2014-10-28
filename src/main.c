@@ -197,7 +197,14 @@ int main (int argc, char *argv[]) {
 				ENTER_(SELECTION);
 				// ...until the end
 				MoveTo (&cursor, current, 
-						current->img.height - 1, current->img.width - 1);
+						current->img->height - 1, current->img->width - 1);
+				break;
+
+			/* Trim MOSAIC */
+			case KEY_CTRL_P:
+				TrimMOSAIC (current->img, FALSE);
+				PrintHud ("trim", FALSE);
+				RefreshCURS_MOS (current);
 				break;
 
 			/* toggle transparent paste */

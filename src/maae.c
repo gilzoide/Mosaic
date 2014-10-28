@@ -127,8 +127,9 @@ char Paste (CopyBuffer *buffer, CURS_MOS *current, Cursor cursor) {
 		DisplayCurrentMOSAIC (current);
 		return 1;
 	}
-	else
+	else {
 		return 0;
+	}
 }
 
 
@@ -143,8 +144,10 @@ CURS_MOS *CreateNewMOSAIC (IMGS *everyone, CURS_MOS *current) {
 	}
 
 	CURS_MOS *new_image = NewCURS_MOS (height, width);
+
+	// copy if asked for a duplicate
 	if (duplicate) {
-		CopyMOSAIC (&new_image->img, &current->img);
+		CopyMOSAIC (new_image->img, current->img);
 		RefreshCURS_MOS (new_image);
 	}
 
@@ -182,7 +185,7 @@ void InsertCh (CURS_MOS *current, Cursor *cur, int c, Direction dir) {
 				break;
 
 			case DOWN:
-				y = current->img.height;
+				y = current->img->height;
 				moving = &y;
 				end = cur->y;
 				break;
@@ -194,7 +197,7 @@ void InsertCh (CURS_MOS *current, Cursor *cur, int c, Direction dir) {
 				break;
 
 			case RIGHT:
-				x = current->img.width;
+				x = current->img->width;
 				moving = &x;
 				end = cur->x;
 				break;
@@ -212,9 +215,9 @@ void InsertCh (CURS_MOS *current, Cursor *cur, int c, Direction dir) {
 				case RIGHT:	++x;	break;
 			}
 			// read next char
-			mos_char aux = mosGetch (&current->img, y, x);
+			mos_char aux = mosGetch (current->img, y, x);
 			// add it in it's new place
-			mosAddch (&current->img, target_y, target_x, aux);
+			curs_mosAddch (current, target_y, target_x, aux);
 		}
 
 		// redraw WINDOW
@@ -263,19 +266,22 @@ int Load (CURS_MOS *current) {
 int Save (CURS_MOS *current) {
 	char *file_name = AskSaveLoadMOSAIC (save);
 
-	if (!file_name)
+	if (!file_name) {
 		return ERR;
+	}
 	else {
-		if (!strstr (file_name, ".mosi"))
+		if (!strstr (file_name, ".mosi")) {
 			strcat (file_name, ".mosi");
-		return SaveMOSAIC (&current->img, file_name);
+		}
+
+		return SaveMOSAIC (current->img, file_name);
 	}
 }
 
 
 void EraseLine (CURS_MOS *current) {
 	// just take the greater, so we don't need to worry about the direction
-	int i = max (current->img.height, current->img.width);
+	int i = max (current->img->height, current->img->width);
 
 	while (i > 0 && i--) {
 		// let main's erasure work it's magic
@@ -299,7 +305,7 @@ void EraseWord (Cursor *cursor, CURS_MOS *current, Direction dir) {
 			case RIGHT:	++x;	break;
 		}
 		// let's check what's in y/x
-		c = mosGetch (&current->img, y, x);
+		c = mosGetch (current->img, y, x);
 		// one more char to erase
 		i++;
 	} while (c && c != ' ');
@@ -318,6 +324,5 @@ void DestroyIMGS (IMGS *everyone) {
 	for (aux = everyone->list, i = 0; i < everyone->size; i++, aux = next) {
 		next = aux->next;
 		FreeCURS_MOS (aux);
-		free (aux);
 	}
 }
