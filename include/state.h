@@ -38,8 +38,10 @@ State state;	///< the global Nmos State
  * @sa UpdateHud
  */
 #define HUD_MESSAGE			0b00010000
-/** Insert mode: insert a new char or write over (IS_(INSERT) -> new char) */
+/** Insert mode: insert a new char or write over (IS_(INSERT) => new char) */
 #define INSERT				0b00100000
+/** Paint mode: every move you make, paint is applied */
+#define PAINT				0b01000000
 /** Quit the sw (to break the main loop) */
 #define QUIT				0b10000000
 

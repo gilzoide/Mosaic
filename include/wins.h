@@ -18,8 +18,10 @@
 #define ABOUT_HEIGHT 20
 #define ABOUT_WIDTH 50
 
-#define HUD_MSG_X 29
-#define HUD_CURSOR_X 14
+#define HUD_MSG_X 28
+#define HUD_CURSOR_X 15
+
+#define MODES 3
 
 #define SAVELOAD_WIDTH 18
 

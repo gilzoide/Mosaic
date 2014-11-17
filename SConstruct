@@ -16,7 +16,7 @@ if not GetOption ('help'):
         LIBS = ['panel', 'menu', 'form', 'curses', 
                 'mosaic', 'mosaic_color', 'mosaic_curses'],
         LIBPATH = ['/usr/lib', '/usr/local/lib'],
-        CCFLAGS = '-Wall -pipe',
+        CCFLAGS = '-Wall -pipe -O2',
         CPPPATH = ['#include', '/usr/include'],
     )
     env.Decider ('MD5-timestamp')

@@ -49,19 +49,25 @@ void UpdateHud (Cursor cur, Direction dir) {
 	else {
 		UN_(HUD_MESSAGE);
 	}
+	
+	// show paint mode icon
+	if (IS_(PAINT)) {
+		wattron (hud, A_BOLD);
+		mvwaddch (hud, 0, COLS - HUD_CURSOR_X, 'P');
+	}
 	// show insert mode icon
 	if (IS_(INSERT)) {
 		wattron (hud, A_BOLD);
-		mvwaddch (hud, 0, COLS - HUD_CURSOR_X, 'I');
+		mvwaddch (hud, 0, COLS - HUD_CURSOR_X + 1, 'I');
 	}
 	// show transparent mode icon
 	if (IS_(TRANSPARENT)) {
 		wattron (hud, A_BOLD);
-		mvwaddch (hud, 0, COLS - HUD_CURSOR_X + 1, 'T');
+		mvwaddch (hud, 0, COLS - HUD_CURSOR_X + 2, 'T');
 	}
 	// update coordinates
 	wstandend (hud);
-	mvwprintw (hud, 0, COLS - HUD_CURSOR_X + 3, "%dx%d", cur.y, cur.x);
+	mvwprintw (hud, 0, COLS - HUD_CURSOR_X + 4, "%dx%d", cur.y, cur.x);
 	mvwaddch (hud, 0, COLS - 1, arrow);
 	wrefresh (hud);
 	move (cur.y, cur.x);

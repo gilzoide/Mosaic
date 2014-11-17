@@ -6,18 +6,23 @@ int main (int argc, char *argv[]) {
 	CursInit ();
 	
 	// initialize stuff
+	//  cursor
 	Cursor cursor;
 	InitCursor (&cursor);
+	//  defaults
 	Direction default_direction = RIGHT;
+	Attr default_attr = Normal;
+	//  copy buffer
 	CopyBuffer buffer;
 	InitCopyBuffer (&buffer);
+	//  images
 	IMGS everyone;
 	InitIMGS (&everyone);
 
 	int c = 0;
 	// Mouse support: bt1 and bt3 click
 	MEVENT event;
-	mousemask (BUTTON1_CLICKED | BUTTON1_DOUBLE_CLICKED | 
+	mousemask (BUTTON1_CLICKED | BUTTON1_DOUBLE_CLICKED |
 			BUTTON3_CLICKED, NULL);
 
 	// the current image in edition
@@ -38,7 +43,6 @@ int main (int argc, char *argv[]) {
 			DisplayCurrentMOSAIC (current);
 		}
 
-		//~ printw ("%d ", c);
 		switch (c) {
 			/* if nothing is returned by the menu, do nothing */
 			case 0:	
@@ -201,17 +205,21 @@ int main (int argc, char *argv[]) {
 				break;
 
 			/* Trim MOSAIC */
-			case KEY_CTRL_P:
+			case KEY_CTRL_M:
 				TrimMOSAIC (current->img, FALSE);
 				PrintHud ("trim", FALSE);
 				RefreshCURS_MOS (current);
 				break;
 
+			/* toggle paint mode! */
+			case KEY_CTRL_P:
+				InformToggleState (PAINT, "Paint mode ON", "Paint mode OFF");
+				break;
+
 			/* toggle transparent paste */
 			case KEY_CTRL_T:
-				TOGGLE_(TRANSPARENT);
-				IS_(TRANSPARENT) ? 	PrintHud ("Transparent paste ON", FALSE) :
-						PrintHud ("Transparent paste OFF", FALSE);
+				InformToggleState (TRANSPARENT, "Transparent paste ON",
+						"Transparent paste OFF");
 				break;
 				
 			/* copy selected area */
@@ -241,13 +249,15 @@ int main (int argc, char *argv[]) {
 				}
 				break;
 
+			/* toggle insert mode */
 			case KEY_IC:
-				TOGGLE_(INSERT);
+				InformToggleState (INSERT, "Insert mode ON", "Insert mode OFF");
 				break;
 
 			/* attribute table */
 			case '\t':
-				ChAttrs (current, &cursor, AttrTable (current, cursor));
+				default_attr = AttrTable (current, cursor);
+				ChAttrs (current, &cursor, default_attr);
 				DisplayCurrentMOSAIC (current);
 				break;
 				
@@ -275,12 +285,12 @@ int main (int argc, char *argv[]) {
 				break;
 			
 			// WARNING: don't change BACKSPACE nor DC out of here nor out of
-			// order, as they deppend on 'default' 
-			// (so I guess you know we shouldn't put any 'break's either)
+			//  order, as they deppend on 'default' 
+			//  (so I guess you know we shouldn't put any 'break's either)
 			/* Backspace: delete the char before (the curses definition 
 			 * says something else, but in general it's 127) */
-			case KEY_BACKSPACE: case 127:	
-				// in selection mode backspace acts just as delete
+			case KEY_BACKSPACE: case 127:
+				// in selection mode backspace acts just as delete, so no moving
 				if (!IS_(SELECTION)) {
 					Move (&cursor, current, REVERSE (default_direction));
 				}
@@ -303,10 +313,17 @@ int main (int argc, char *argv[]) {
 					else { 	// we erased something, so it erased and that's that
 						UN_(NO_MOVING_CURSOR);
 					}
+					// refresh current
 				}
 				break;
 		}
 		
+		// paint mode: paint it right away!
+		if (IS_(PAINT)) {
+			ChAttrs (current, &cursor, default_attr);
+			DisplayCurrentMOSAIC (current);
+			ENTER_(TOUCHED);
+		}
 		UpdateHud (cursor, default_direction);
 		
 		c = getch ();

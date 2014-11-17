@@ -15,29 +15,32 @@ void InitHelp () {
 
 	// the subtitles
 	const char *subtitles[] = {
-		"Nmos commands (basic hotkeys)",
+		"Maae commands (basic hotkeys)",
 		"Navigation",
+		"Modes",
 		"Mosaic editing"
 	};
 	// the hotkeys
 	const char *hotkeys[] = {
 		"F1", "F10/Mouse Right Button", "^Q",
-		"Arrow Keys", "^D", "^B", "^A", "Page Up/Page Down", "Home/End",
+		"Arrow Keys", "^D", "^A", "Page Up/Page Down", "Home/End",
+		"^B", "^T", "^P", "Insert",
 		"F2", "^S", "^O", "^R", "^C/^X", "^V", "Tab", "^U", "^W"
 	};
 	// and how many are there for each subtitle
-	int n_hotkeys[] = {3, 6, 9};
+	int n_hotkeys[] = {3, 5, 4, 9};
 	// what the hotkeys do
 	const char *explanations[] = {
 		"show this help", "show the menu", "quit Nmos",
-		"move through the mosaic", "change the moving direction after input (default direction)", "toggle box selection mode", "select all", "previous/next mosaic", "move to first/last character (in the default direction)",
+		"move through the mosaic", "change the moving direction after input (default direction)", "select all", "previous/next mosaic", "move to first/last character (in the default direction)",
+		"toggle box selection mode", "toggle transparent pasting mode", "toggle paint mode", "toggle insert mode",
 		"new mosaic", "save mosaic", "load mosaic", "resize mosaic", "copy/cut selection", "paste selection", "show the attribute table", "erase line", "erase word"
 	};
 	
 	// aux counters; only 'i' gets reseted at 0, as it counts until n_hotkeys ends
 	int sub, hot, i, line = 1;
 	// for each subtitle
-	for (sub = hot = 0; sub < 3; sub++, line++) {
+	for (sub = hot = 0; sub < 4; sub++, line++) {
 		// write subtitle
 		wattron (helpWindow, A_BOLD | A_UNDERLINE);
 		mvwaddstr (helpWindow, line, 1, subtitles[sub]);
@@ -58,7 +61,7 @@ void InitHelp () {
 	mvwaddch (helpWindow, HELP_HEIGHT - 1, 0, ACS_ULCORNER);
 	waddch (helpWindow, ACS_HLINE);
 	waddch (helpWindow, ACS_HLINE);
-	waddstr (helpWindow, " Nmos basic hotkeys ");
+	waddstr (helpWindow, " Maae basic hotkeys ");
 	waddch (helpWindow, ACS_HLINE);
 	waddch (helpWindow, ACS_HLINE);
 	waddch (helpWindow, ACS_HLINE);
@@ -66,18 +69,35 @@ void InitHelp () {
 
 	wclrtoeol (helpWindow);
 	
-	int aux = HUD_CURSOR_X - HUD_MSG_X;
-	mvwaddch (helpWindow, HELP_HEIGHT - 1, 29, ACS_ULCORNER);
-	for (i = 0; i < aux; i++) {
+	// print the HLines and corners for the message area
+	int message_area_size = HELP_WIDTH - HUD_CURSOR_X - HUD_MSG_X - MODES;
+	mvwaddch (helpWindow, HELP_HEIGHT - 1, HUD_MSG_X, ACS_ULCORNER);
+	for (i = 0; i < message_area_size; i++) {
 		wechochar (helpWindow, ACS_HLINE);
 	}
 	waddch (helpWindow, ACS_URCORNER);
-	mvwaddstr (helpWindow, HELP_HEIGHT - 1, HUD_MSG_X + (aux / 2), " message area ");
-	
-	mvwaddch (helpWindow, HELP_HEIGHT - 1, HELP_WIDTH - 11, ACS_ULCORNER);
+	mvwaddstr (helpWindow, HELP_HEIGHT - 1,
+			HUD_MSG_X + (message_area_size / 2), " message area ");
+
+	// modes (1 line above)
+	mvwaddstr (helpWindow,
+			HELP_HEIGHT - 2, HELP_WIDTH - HUD_CURSOR_X - 4, "modes");
+	waddch (helpWindow, ACS_URCORNER);
+	mvwaddch (helpWindow,
+			HELP_HEIGHT - 1, HELP_WIDTH - HUD_CURSOR_X, ACS_ULCORNER);
+	waddch (helpWindow, ACS_PLUS);
+	waddch (helpWindow, ACS_URCORNER);
+
+	// position (last in the line, that's what that VLine is for)
+	mvwaddch (helpWindow, HELP_HEIGHT - 1,
+			HELP_WIDTH - HUD_CURSOR_X + MODES + 1, ACS_ULCORNER);
 	waddstr (helpWindow, "position");
-	waddch (helpWindow, ACS_URCORNER); waddch (helpWindow, ACS_VLINE);
-	mvwaddstr (helpWindow, HELP_HEIGHT - 2, HELP_WIDTH - 18, "default direction");
+	waddch (helpWindow, ACS_URCORNER);
+	waddch (helpWindow, ACS_VLINE);
+
+	// default direction (2 lines above)
+	mvwaddstr (helpWindow,
+			HELP_HEIGHT - 3, HELP_WIDTH - 18, "default direction");
 	waddch (helpWindow, ACS_URCORNER);
 
 	touchwin (helpWindow);

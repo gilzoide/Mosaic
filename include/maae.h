@@ -154,6 +154,14 @@ void EraseLine (CURS_MOS *current);
  */
 void EraseWord (Cursor *cursor, CURS_MOS *current, Direction dir);
 /**
+ * Toggles a state and informs the user, not preemptively.
+ *
+ * @param[in] S State to be toggled
+ * @param[in] if_s String to be printed if S is toggled ON
+ * @param[in] if_not_s String to be printed if S is toggled OFF
+ */
+void InformToggleState (State S, const char *if_s, const char *if_not_s);
+/**
  * Destroy and free memory from the images list
  * 
  * @warning This function should be called before exiting the program,

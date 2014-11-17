@@ -66,12 +66,7 @@ void PrintSelection (Cursor *position, CURS_MOS *current) {
 
 
 void UnprintSelection (CURS_MOS *current) {
-	int i;
-	for (i = 0; i < current->img->height; i++) {
-		mvwchgat (current->win, i, 0, current->img->width, A_NORMAL, 0, NULL);
-	}
-	
-	DisplayCurrentMOSAIC (current);
+	RefreshCURS_MOS (current);
 }
 
 

@@ -168,8 +168,8 @@ CURS_MOS *CreateNewMOSAIC (IMGS *everyone, CURS_MOS *current) {
 
 
 void ChAttrs (CURS_MOS *current, Cursor *cur, Attr attr) {
-	int y = cur->y;
-	int x = cur->x;
+	int y;
+	int x;
 	if (IS_(SELECTION)) {
 		int ULy = min (cur->origin_y, cur->y);
 		int ULx = min (cur->origin_x, cur->x);
@@ -192,6 +192,8 @@ void ChAttrs (CURS_MOS *current, Cursor *cur, Attr attr) {
 		return;
 	}
 	// normal insertion
+	y = cur->y;
+	x = cur->x;
 	curs_mosSetAttr (current, y, x, attr);
 }
 
@@ -230,6 +232,10 @@ void InsertCh (CURS_MOS *current, Cursor *cur, int c, Direction dir) {
 				moving = &x;
 				end = cur->x;
 				break;
+
+			default:
+				moving = &y;
+				end = cur->y;
 		}
 
 		while (*moving != end) {
@@ -343,6 +349,12 @@ void EraseWord (Cursor *cursor, CURS_MOS *current, Direction dir) {
 		// let main's erasure work it's magic for the counted chars
 		ungetch (KEY_BACKSPACE);
 	}
+}
+
+
+void InformToggleState (State S, const char *if_s, const char *if_not_s) {
+	TOGGLE_(S);
+	IS_(S) ? PrintHud (if_s, FALSE) : PrintHud (if_not_s, FALSE);
 }
 
 
