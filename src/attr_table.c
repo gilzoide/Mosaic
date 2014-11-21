@@ -40,12 +40,12 @@ void InitAttrTable () {
 }
 
 
-int chooseAttr (Attr current_color) {
+int chooseAttr (mos_attr current_color) {
 	// input from user
 	int c = 0;
 	// is it bold yet?
 	// current chosen foreground, current chosen background, bold
-	Attr attrs[] = {
+	mos_attr attrs[] = {
 		current_color / COLORS_STEP,
 		current_color % COLORS_STEP,
 		extractBold (&current_color)
@@ -143,7 +143,7 @@ int chooseAttr (Attr current_color) {
 }
 
 
-Attr AttrTable (CURS_MOS *current, Cursor cur) {
+mos_attr AttrTable (CURS_MOS *current, Cursor cur) {
 	if (!attrPanel) {
 		InitAttrTable ();
 	}
@@ -152,7 +152,7 @@ Attr AttrTable (CURS_MOS *current, Cursor cur) {
 	update_panels ();
 	doupdate ();
 
-	Attr value = chooseAttr (mosGetAttr (current->img, cur.y, cur.x));
+	mos_attr value = chooseAttr (mosGetAttr (current->img, cur.y, cur.x));
 
 	hide_panel (attrPanel);
 	update_panels ();

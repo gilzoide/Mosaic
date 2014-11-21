@@ -9,11 +9,11 @@
 #define HELP_WIDTH COLS
 #define HELP_HEIGHT (LINES - 1)
 
-#define MENU_HEIGHT 7
-#define MENU_WIDTH 20
+#define MENU_HEIGHT 9
+#define MENU_WIDTH 21
 #define MENU_X_SEPARATOR 9
 #define CHKBX_Y 5
-#define CHKBX_X 17
+#define CHKBX_X 14
 
 #define ABOUT_HEIGHT 20
 #define ABOUT_WIDTH 50
@@ -59,7 +59,7 @@ int Menu ();
 /// Show the About window
 void About ();
 /// Show the attributes table
-Attr AttrTable (CURS_MOS *current, Cursor cur);
+mos_attr AttrTable (CURS_MOS *current, Cursor cur);
 
 /**
  * Asks the user where to link the new image,
@@ -75,7 +75,10 @@ Attr AttrTable (CURS_MOS *current, Cursor cur);
 char AskCreateNewMOSAIC (int *new_height, int *new_width, char *duplicate, enum direction *new_dir);
 
 /// Input/output, save/load
-enum io {save, load};
+enum io {
+	save,
+	load
+};
 /**
  * Asks the user for the file name for loading an MOSAIC
  *

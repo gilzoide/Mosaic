@@ -101,23 +101,27 @@ void InitMenus () {
 	post_menu (file_menu);
 
 // EDIT MENU
-	x_aux = MENU_X_SEPARATOR / 2;
+	x_aux = MENU_X_SEPARATOR / 2 - 1;
 	edit_menuWindow = CreateBoxedTitledWindow (MENU_HEIGHT, MENU_WIDTH, LINES - MENU_HEIGHT - 2, x_aux, "EDIT");
 	
-	num_items = 5;
+	num_items = 7;
 	const char *edit_titles[] = {
 		"Cut",
 		"Copy",
 		"Paste",
 		"Selection mode",
-		"Transparent"
+		"Transparent [ ]",
+		"Insert mode [ ]",
+		"Paint mode  [ ]"
 	};
 	const char *edit_descriptions[] = {
 		"^X",
 		"^C",
 		"^V",
 		"^B",
-		"[ ]"
+		"^T",
+		"Ins",
+		"^P"
 	};
 	// The choices are static so that the userptr points to something that exists
 	static const int edit_choices[] = {
@@ -125,7 +129,9 @@ void InitMenus () {
 		KEY_CTRL_C,
 		KEY_CTRL_V,
 		KEY_CTRL_B,
-		KEY_CTRL_T
+		KEY_CTRL_T,
+		KEY_IC,
+		KEY_CTRL_P
 	};
 	// create the items
 	items = (ITEM**) calloc (num_items + 1, sizeof (ITEM*));
@@ -253,14 +259,22 @@ int GetChosenOption (MENU *menu) {
 		submenu = (MENU*) item_userptr (current_item (menu));
 		replace_panel (submenuPanel, menu_win (submenu));
 
-		// updates the TRANSPARENT checkbox in EditMenu
+		// updates the MODES checkbox in EditMenu
 		if (submenu == edit_menu) {
 			char transp = IS_(TRANSPARENT) ? 'X' : ' ';
-			// if 'transparent' is selected, reverse the transp
-			if (item_index (current_item (edit_menu)) == (item_count (edit_menu) - 1)) {
-				wattron (edit_menuWindow, A_REVERSE);
+			char insert = IS_(INSERT) ? 'X' : ' ';
+			char paint = IS_(PAINT) ? 'X' : ' ';
+			// mark (or not) the modes
+			mvwaddch (edit_menuWindow, CHKBX_Y    , CHKBX_X, transp);
+			mvwaddch (edit_menuWindow, CHKBX_Y + 1, CHKBX_X, insert);
+			mvwaddch (edit_menuWindow, CHKBX_Y + 2, CHKBX_X, paint);
+			// if any mode is selected, reverse it's checkbox
+			//  discover the mode position
+			int aux = item_index (current_item (edit_menu)) - (item_count (edit_menu) - MODES);
+			if (aux >= 0) {
+				mvwchgat (edit_menuWindow, CHKBX_Y + aux, CHKBX_X,
+						1, A_REVERSE, COLOR_PAIR (Normal), NULL);
 			}
-			mvwaddch (edit_menuWindow, CHKBX_Y, CHKBX_X, transp);
 			wstandend (edit_menuWindow);
 			pos_menu_cursor (submenu);
 		}

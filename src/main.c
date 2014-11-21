@@ -11,7 +11,7 @@ int main (int argc, char *argv[]) {
 	InitCursor (&cursor);
 	//  defaults
 	Direction default_direction = RIGHT;
-	Attr default_attr = Normal;
+	mos_attr default_attr = Normal;
 	//  copy buffer
 	CopyBuffer buffer;
 	InitCopyBuffer (&buffer);

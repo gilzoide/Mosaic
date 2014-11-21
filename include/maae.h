@@ -126,7 +126,7 @@ void InsertCh (CURS_MOS *current, Cursor *cur, int c, Direction dir);
  * @param[in] cur Cursor
  * @param[in] attr Attribute to be setted
  */
-void ChAttrs (CURS_MOS *current, Cursor *cur, Attr attr);
+void ChAttrs (CURS_MOS *current, Cursor *cur, mos_attr attr);
 /**
  * Loads an image in the current
  *
