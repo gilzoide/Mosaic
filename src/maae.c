@@ -251,8 +251,10 @@ void InsertCh (CURS_MOS *current, Cursor *cur, int c, Direction dir) {
 			}
 			// read next char
 			mos_char aux = mosGetch (current->img, y, x);
+			Attr aux_attr = mosGetAttr (current->img, y, x);
 			// add it in it's new place
 			curs_mosAddch (current, target_y, target_x, aux);
+			curs_mosSetAttr (current, target_y, target_x, aux_attr);
 		}
 
 		// redraw WINDOW

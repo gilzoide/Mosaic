@@ -10,7 +10,7 @@ PANEL *attrPanel;
 
 void InitAttrTable () {
 	attrWindow = CreateCenteredBoxedTitledWindow (ATTR_HEIGHT, ATTR_WIDTH,
-			"PALLETE");
+			"PALETTE");
 	attrPanel = new_panel (attrWindow);
 
 	const char *colors[] = {
