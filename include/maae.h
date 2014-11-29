@@ -9,8 +9,8 @@
 #include <panel.h>
 #include <stdio.h>
 
-#include "mosaic/color.h"
-#include "mosaic/curs_mos.h"
+#include <mosaic/color.h>
+#include <mosaic/curs_mos.h>
 #include "wins.h"
 #include "positioning.h"
 #include "state.h"
@@ -95,13 +95,19 @@ char Paste (CopyBuffer *buffer, CURS_MOS *current, Cursor cursor);
 /**
  * Create a new image and store it in the images list
  * 
- * @param[in,out] everyone the mosaics list
- * @param[in] current the current mosaic, a reference for the new one coming
+ * @param[in,out] everyone The mosaics list
+ * @param[in] current The current mosaic, a reference for the new one coming
  * 
  * @return pointer to the created CURS_MOS, to be stored in the 'current';
  * NULL if user canceled the creation
  */
 CURS_MOS *CreateNewMOSAIC (IMGS *everyone, CURS_MOS *current);
+/**
+ * Clears current's WINDOW and refreshes the screen
+ *
+ * @param[in] current The current mosaic
+ */
+void ClearWin (CURS_MOS *current);
 /**
  * Insert a new char in current.
  *

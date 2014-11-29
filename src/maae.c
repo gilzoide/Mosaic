@@ -167,6 +167,12 @@ CURS_MOS *CreateNewMOSAIC (IMGS *everyone, CURS_MOS *current) {
 }
 
 
+void ClearWin (CURS_MOS *current) {
+	werase (current->win);
+	prefresh (current->win, current->y, current->x, 0, 0, LINES - 2, COLS - 1);
+}
+
+
 void ChAttrs (CURS_MOS *current, Cursor *cur, mos_attr attr) {
 	int y;
 	int x;

@@ -156,25 +156,28 @@ void InitMenus () {
 	x_aux += MENU_X_SEPARATOR;
 	image_menuWindow = CreateBoxedTitledWindow (MENU_HEIGHT, MENU_WIDTH, LINES - MENU_HEIGHT - 2, x_aux, "IMAGE");
 	
-	num_items = 4;
+	num_items = 5;
 	const char *image_titles[] = {
 		"New Image",
 		"Save Image",
 		"Load Image",
-		"Resize Image"
+		"Resize Image",
+		"Trim Image"
 	};
 	const char *image_descriptions[] = {
 		"F2",
 		"^S",
 		"^O",
-		"^R"
+		"^R",
+		"^K"
 	};
 	// The choices are static so that the userptr points to something that exists
 	static const int image_choices[] = {
 		KEY_F(2),
 		KEY_CTRL_S,
 		KEY_CTRL_O,
-		KEY_CTRL_R
+		KEY_CTRL_R,
+		KEY_CTRL_K
 	};
 	// create the items
 	items = (ITEM**) calloc (num_items + 1, sizeof (ITEM*));

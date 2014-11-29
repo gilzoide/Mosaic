@@ -16,14 +16,26 @@ char AskQuit () {
 	mvwchgat (hud, 0, 22, 5, A_UNDERLINE, CN, NULL);
 	wrefresh (hud);
 
-	int choice = PrintHud ("Do you really wanna quit? [y/N]", TRUE);
+	int choice = AskMessage ("Do you really want to quit?");
 	
 	// hud goes back to normal
 	mvwchgat (hud, 0, 19, 3, A_BOLD, 0, NULL);
 	mvwchgat (hud, 0, 22, 5, A_NORMAL, 0, NULL);
 	wrefresh (hud);
 
-	return tolower (choice) == 'y' ? 1 : 0;
+	return choice;
+}
+
+
+char AskMessage (const char *msg) {
+	// msg's size, vastly used
+	int size = strlen (msg);
+	// the auxiliary for sending msg with the asking part for PrintHud
+	char aux[size + 7];
+	strcpy (aux, msg);
+	strcpy (aux + size, " [y/N]");
+
+	return 'y' == tolower (PrintHud (aux, TRUE));
 }
 
 

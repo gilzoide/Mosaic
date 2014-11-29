@@ -93,6 +93,16 @@ char *AskSaveLoadMOSAIC (enum io io);
  */
 char AskQuit ();
 
+/**
+ * Ask something and wait for input: [Y]es or [N]o.
+ * @note The default choice is always No.
+ *
+ * @param[in] msg The message to be shown, along with asking for the 
+ * choice ("[y/N]")
+ *
+ * @return Choice: 1 for YES, 0 for NO
+ */
+char AskMessage (const char *msg);
 
 /**
  * Creates a PANEL with a boxed WINDOW, with a title in the middle of it's top border.

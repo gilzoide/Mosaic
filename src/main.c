@@ -181,8 +181,7 @@ int main (int argc, char *argv[]) {
 				
 			/* resize mosaic */
 			case KEY_CTRL_R:
-				werase (current->win);
-				wrefresh (current->win);
+				ClearWin (current);
 				ResizeCURS_MOS (current, 20, 30);
 				RefreshCURS_MOS (current);
 				break;
@@ -205,10 +204,16 @@ int main (int argc, char *argv[]) {
 				break;
 
 			/* Trim MOSAIC */
-			case KEY_CTRL_M:
-				TrimMOSAIC (current->img, FALSE);
-				PrintHud ("trim", FALSE);
-				RefreshCURS_MOS (current);
+			case KEY_CTRL_K:
+				if (AskMessage ("Trim the mosaic?")) {
+					int resize = AskMessage ("Resize it?");
+					// clear screen, as it may resize
+					ClearWin (current);
+					// Trim and ask if want to resize it
+					TrimCURS_MOS (current, resize);
+					PrintHud ("Trimmed", FALSE);
+					RefreshCURS_MOS (current);
+				}
 				break;
 
 			/* toggle paint mode! */
