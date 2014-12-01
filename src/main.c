@@ -53,7 +53,7 @@ int main (int argc, char *argv[]) {
 
 		switch (c) {
 			/* if nothing is returned by the menu, do nothing */
-			case 0:	
+			case 0:
 				break;
 
 			/* ESC: exit selection mode */
@@ -67,12 +67,18 @@ int main (int argc, char *argv[]) {
 				getmouse (&event);
 				// bt1 click: MoveTo
 				if (event.bstate & BUTTON1_CLICKED) {
-					MoveTo (&cursor, current, event.y, event.x);
+					UN_(SELECTION);
+					UnprintSelection (current);
+				}
+				else if (event.bstate & BUTTON1_DOUBLE_CLICKED) {
+					ENTER_(SELECTION);
 				}
 				// bt3 (right button) click: Menu (yep, anywhere)
 				else if (event.bstate & BUTTON3_CLICKED) {
 					ungetch (KEY_F(10));
+					break;
 				}
+				MoveTo (&cursor, current, event.y, event.x);
 				break;
 				
 			/* move up */

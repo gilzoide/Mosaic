@@ -69,8 +69,9 @@ void InitCopyBuffer (CopyBuffer *buffer) {
 
 
 void DestroyCopyBuffer (CopyBuffer *buffer) {
-	if (buffer != NULL)
+	if (buffer != NULL) {
 		delwin (buffer->buff);
+	}
 }
 
 
@@ -94,8 +95,8 @@ void Cut (CopyBuffer *buffer, CURS_MOS *current, Cursor selection) {
 	Copy (buffer, current, selection);
 	// and erase what was in there
 	int i, j;
-	int y = min (selection.y, selection.origin_y);	// we need the upper-left
-	int x = min (selection.x, selection.origin_x);	// corner only
+	const int y = min (selection.y, selection.origin_y);	// we need the upper-left
+	const int x = min (selection.x, selection.origin_x);	// corner only
 	for (i = 0; i <= buffer->coordinates.y; i++) {
 		for (j = 0; j <= buffer->coordinates.x; j++) {
 			curs_mosAddch (current, y + i, x + j, ' ');
@@ -115,11 +116,14 @@ char Paste (CopyBuffer *buffer, CURS_MOS *current, Cursor cursor) {
 						buffer->coordinates.origin_x + j);
 				// if transparent pasting, and it's a ' ',
 				// leave the old char there
-				if (IS_(TRANSPARENT) && c == ' ')
+				if (IS_(TRANSPARENT) && c == ' ') {
 					continue;
+				}
 				// if outside CURS_MOS window, don't try to put 'c' in it, or it'll crash
-				else if (curs_mosAddch (current, cursor.y + i, cursor.x + j, c) == ERR)
+				else if (curs_mosAddch (current,
+							cursor.y + i, cursor.x + j, c)) {
 					break;
+				}
 			}
 		}
 
@@ -185,18 +189,15 @@ void ClearWin (CURS_MOS *current) {
 
 
 void dobox (CURS_MOS *img) {
-	int i;
 	const int y = img->img->height;
 	const int x = img->img->width;
-	// bottom
-	for (i = 0; i < x; i++) {
-		mvaddch (y, i, ACS_HLINE);
-	}
-	// right
-	for (i = 0; i < y; i++) {
-		mvaddch (i, x, ACS_VLINE);
-	}
-	// bottom-right corner
+
+	// lines
+	move (0, x);
+	vline (ACS_VLINE, y);
+	move (y, 0);
+	hline (ACS_HLINE, x);
+	// corner
 	mvaddch (y, x, ACS_LRCORNER);
 
 	refresh ();
@@ -286,8 +287,8 @@ void InsertCh (CURS_MOS *current, Cursor *cur, int c, Direction dir) {
 				case RIGHT:	++x;	break;
 			}
 			// read next char
-			mos_char aux = mosGetch (current->img, y, x);
-			mos_attr aux_attr = mosGetAttr (current->img, y, x);
+			mos_char aux = _curs_mosGetCh (current, y, x);
+			mos_attr aux_attr = _curs_mosGetAttr (current, y, x);
 			// add it in it's new place
 			curs_mosAddch (current, target_y, target_x, aux);
 			curs_mosSetAttr (current, target_y, target_x, aux_attr);
@@ -378,7 +379,7 @@ void EraseWord (Cursor *cursor, CURS_MOS *current, Direction dir) {
 			case RIGHT:	++x;	break;
 		}
 		// let's check what's in y/x
-		c = mosGetch (current->img, y, x);
+		c = mosGetCh (current->img, y, x);
 		// one more char to erase
 		i++;
 	} while (c && c != ' ');

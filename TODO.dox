@@ -7,6 +7,7 @@ curses based Mosaic Asc Art Editor
 
 @todo Resize form/window
 @todo apagar MOSAICs maiores ao trocar de página
+@todo ^Z (undo/redo)
 
 - @todo talvez mudar a seleção? pq ficar apagando pra reprintar é mei zuado, né =S
 - @todo UTF-8
