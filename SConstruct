@@ -16,15 +16,15 @@ if not GetOption ('help'):
         LIBS = ['panel', 'menu', 'form', 'curses', 
                 'mosaic', 'mosaic_color', 'mosaic_curses'],
         LIBPATH = ['/usr/lib', '/usr/local/lib'],
-        CCFLAGS = '-Wall -pipe -O2',
+        CCFLAGS = '-Wall -pipe -O2 -g',
         CPPPATH = ['#include', '/usr/include'],
     )
     env.Decider ('MD5-timestamp')
 
     # if user pass debug=1, add -g flag for the compiler
-    debug = ARGUMENTS.get ('debug', 0)
-    if int (debug):
-        env.Append (CCFLAGS = ' -g')
+    #debug = ARGUMENTS.get ('debug', 0)
+    #if int (debug):
+        #env.Append (CCFLAGS = ' -g')
 
     # build the editor in the 'build' directory, without duplicating
     VariantDir ('build', 'src', duplicate = 0)

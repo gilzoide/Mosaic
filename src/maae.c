@@ -101,7 +101,6 @@ void Cut (CopyBuffer *buffer, CURS_MOS *current, Cursor selection) {
 			curs_mosAddch (current, y + i, x + j, ' ');
 		}
 	}
-	DisplayCurrentMOSAIC (current);
 }
 
 
@@ -124,7 +123,7 @@ char Paste (CopyBuffer *buffer, CURS_MOS *current, Cursor cursor) {
 			}
 		}
 
-		DisplayCurrentMOSAIC (current);
+		DisplayCurrent (current);
 		return 1;
 	}
 	else {
@@ -148,7 +147,7 @@ CURS_MOS *CreateNewMOSAIC (IMGS *everyone, CURS_MOS *current) {
 	// copy if asked for a duplicate
 	if (duplicate) {
 		CopyMOSAIC (new_image->img, current->img);
-		RefreshCURS_MOS (new_image);
+		ENTER_(REDRAW);
 	}
 
 	// now there's one more CURS_MOS
@@ -163,13 +162,44 @@ CURS_MOS *CreateNewMOSAIC (IMGS *everyone, CURS_MOS *current) {
 		LinkCURS_MOS (current, new_image, dir);
 	}
 
+	DisplayCurrent (new_image);
+
 	return new_image;
+}
+
+
+void DisplayCurrent (CURS_MOS *current) {
+	dobox (current);
+	if (IS_(REDRAW)) {
+		RefreshCURS_MOS (current);
+		UN_(REDRAW);
+	}
+	DisplayCurrentMOSAIC (current);
 }
 
 
 void ClearWin (CURS_MOS *current) {
 	werase (current->win);
 	prefresh (current->win, current->y, current->x, 0, 0, LINES - 2, COLS - 1);
+}
+
+
+void dobox (CURS_MOS *img) {
+	int i;
+	const int y = img->img->height;
+	const int x = img->img->width;
+	// bottom
+	for (i = 0; i < x; i++) {
+		mvaddch (y, i, ACS_HLINE);
+	}
+	// right
+	for (i = 0; i < y; i++) {
+		mvaddch (i, x, ACS_VLINE);
+	}
+	// bottom-right corner
+	mvaddch (y, x, ACS_LRCORNER);
+
+	refresh ();
 }
 
 

@@ -6,8 +6,7 @@ curses based Mosaic Asc Art Editor
 @todo ver bonitim os menus
 
 @todo Resize form/window
-@todo Trim sem resize não põe borda
-@todo Trim vazio e com resize, segfaulta
+@todo apagar MOSAICs maiores ao trocar de página
 
 - @todo talvez mudar a seleção? pq ficar apagando pra reprintar é mei zuado, né =S
 - @todo UTF-8

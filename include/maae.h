@@ -103,11 +103,21 @@ char Paste (CopyBuffer *buffer, CURS_MOS *current, Cursor cursor);
  */
 CURS_MOS *CreateNewMOSAIC (IMGS *everyone, CURS_MOS *current);
 /**
+ * Displays the current MOSAIC, and it's border (using dobox)
+ *
+ * @param[in] current The current CURS_MOS
+ */
+void DisplayCurrent (CURS_MOS *current);
+/**
  * Clears current's WINDOW and refreshes the screen
  *
  * @param[in] current The current mosaic
  */
 void ClearWin (CURS_MOS *current);
+/**
+ * Draws the MOSAIC's border
+ */
+void dobox (CURS_MOS *img);
 /**
  * Insert a new char in current.
  *

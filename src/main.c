@@ -28,19 +28,27 @@ int main (int argc, char *argv[]) {
 	// the current image in edition
 	CURS_MOS *current = NULL;
 	// we really need a current image, so ask for it until user creates it!
-	// but if asked to open a file directly, creates a empty MOSAIC and loads it
+	// but if asked to open a file in argv, creates an empty MOSAIC and loads it
 	if (file_name) {
 		current = NewCURS_MOS (0, 0);
-		LoadCURS_MOS (current, file_name);
-		CircularIMGS (&everyone, current);
-		DisplayCurrentMOSAIC (current);
+		// try to load, but it might go wrong...
+		if (!LoadCURS_MOS (current, file_name)) {
+			CircularIMGS (&everyone, current);
+			ENTER_(REDRAW);
+		}
+		else {
+			FreeCURS_MOS (current);
+			current = NULL;
+		}
 	}
-	else while (!(current = CreateNewMOSAIC (&everyone, current)));
+	while (!current) {
+		current = CreateNewMOSAIC (&everyone, current);
+	}
 
+	// main loop!
 	while (!IS_(QUIT)) {
 		if (c == KEY_F(10)) {
 			c = Menu ();
-			DisplayCurrentMOSAIC (current);
 		}
 
 		switch (c) {
@@ -95,13 +103,11 @@ int main (int argc, char *argv[]) {
 			/* previous mosaic */
 			case KEY_PPAGE:
 				current = current->prev;
-				DisplayCurrentMOSAIC (current);
 				break;
 				
 			/* next mosaic */
 			case KEY_NPAGE:
 				current = current->next;
-				DisplayCurrentMOSAIC (current);
 				break;
 
 			/* move to first */
@@ -117,7 +123,7 @@ int main (int argc, char *argv[]) {
 			/* show help */
 			case KEY_F(1):
 				Help ();
-				DisplayCurrentMOSAIC (current);
+				DisplayCurrent (current);
 				break;
 				
 			/* new mosaic */
@@ -127,7 +133,6 @@ int main (int argc, char *argv[]) {
 				if (aux) {
 					current = aux;
 				}
-				DisplayCurrentMOSAIC (current);
 				break;
 
 			/* show about Window */
@@ -156,13 +161,11 @@ int main (int argc, char *argv[]) {
 			case KEY_CTRL_O:
 				switch (Load (current)) {
 					case 0:
-						RefreshCURS_MOS (current);
-						DisplayCurrentMOSAIC (current);
 						PrintHud ("Loaded successfully!", FALSE);
-						ENTER_(TOUCHED);
+						ENTER_(TOUCHED | REDRAW);
 						break;
 
-					case 1:
+					case ENODIMENSIONS:
 						PrintHud ("No dimensions in this file, dude! =/", TRUE);
 						break;
 
@@ -183,7 +186,7 @@ int main (int argc, char *argv[]) {
 			case KEY_CTRL_R:
 				ClearWin (current);
 				ResizeCURS_MOS (current, 20, 30);
-				RefreshCURS_MOS (current);
+				ENTER_(REDRAW);
 				break;
 				
 			/* box selection mode! */
@@ -212,7 +215,7 @@ int main (int argc, char *argv[]) {
 					// Trim and ask if want to resize it
 					TrimCURS_MOS (current, resize);
 					PrintHud ("Trimmed", FALSE);
-					RefreshCURS_MOS (current);
+					ENTER_(REDRAW);
 				}
 				break;
 
@@ -263,7 +266,6 @@ int main (int argc, char *argv[]) {
 			case '\t':
 				default_attr = AttrTable (current, cursor);
 				ChAttrs (current, &cursor, default_attr);
-				DisplayCurrentMOSAIC (current);
 				break;
 				
 			/* quit; aww =/ */
@@ -309,7 +311,6 @@ int main (int argc, char *argv[]) {
 			default:
 				if (isprint (c)) {
 					InsertCh (current, &cursor, c, default_direction);
-					DisplayCurrentMOSAIC (current);
 					ENTER_(TOUCHED);
 					// didn't erase anything, so move to the next
 					if (!IS_(NO_MOVING_CURSOR)) {
@@ -318,7 +319,6 @@ int main (int argc, char *argv[]) {
 					else { 	// we erased something, so it erased and that's that
 						UN_(NO_MOVING_CURSOR);
 					}
-					// refresh current
 				}
 				break;
 		}
@@ -326,9 +326,9 @@ int main (int argc, char *argv[]) {
 		// paint mode: paint it right away!
 		if (IS_(PAINT)) {
 			ChAttrs (current, &cursor, default_attr);
-			DisplayCurrentMOSAIC (current);
 			ENTER_(TOUCHED);
 		}
+		DisplayCurrent (current);
 		UpdateHud (cursor, default_direction);
 		
 		c = getch ();
