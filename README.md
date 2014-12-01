@@ -1,10 +1,10 @@
 Maae
 ====
 
-Curses based Mosaic Asc Art Editor
+Curses based Mosaic Asc Art Editor.
 
-For building and running maae, you need to install libmosaic:
-https://github.com/gilzoide/libmosaic.
+Run dependencies: [libmosaic](https://github.com/gilzoide/libmosaic).
 
-To build the project, use the scons script.
+Build dependencies: [scons](http://www.scons.org/).
+
 For more information on building maae, hit `scons -h` in your console.
