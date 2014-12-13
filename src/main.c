@@ -34,7 +34,6 @@ int main (int argc, char *argv[]) {
 		// try to load, but it might go wrong...
 		if (!LoadCURS_MOS (current, file_name)) {
 			CircularIMGS (&everyone, current);
-			ENTER_(REDRAW);
 		}
 		else {
 			FreeCURS_MOS (current);
@@ -44,6 +43,7 @@ int main (int argc, char *argv[]) {
 	while (!current) {
 		current = CreateNewMOSAIC (&everyone, current);
 	}
+	ENTER_(REDRAW);
 
 	// main loop!
 	while (!IS_(QUIT)) {
@@ -171,15 +171,15 @@ int main (int argc, char *argv[]) {
 						ENTER_(TOUCHED | REDRAW);
 						break;
 
-					case ENODIMENSIONS:
-						PrintHud ("No dimensions in this file, dude! =/", TRUE);
-						break;
-
 					case ERR:	// canceled
 						break;
 
 					case ENOENT:
 						PrintHud ("File doesn't exist", TRUE);
+						break;
+
+					case ENODIMENSIONS:
+						PrintHud ("No dimensions in this file, dude! =/", TRUE);
 						break;
 
 					default:
@@ -192,6 +192,8 @@ int main (int argc, char *argv[]) {
 			case KEY_CTRL_R:
 				ClearWin (current);
 				ResizeCURS_MOS (current, 20, 30);
+				// move to inside the resized MOSAIC
+				MoveResized (&cursor, current);
 				ENTER_(REDRAW);
 				break;
 				
@@ -220,6 +222,8 @@ int main (int argc, char *argv[]) {
 					ClearWin (current);
 					// Trim and ask if want to resize it
 					TrimCURS_MOS (current, resize);
+					// move to inside the resized MOSAIC
+					MoveResized (&cursor, current);
 					PrintHud ("Trimmed", FALSE);
 					ENTER_(REDRAW);
 				}

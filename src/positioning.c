@@ -141,6 +141,12 @@ void MoveAll (Cursor *position, CURS_MOS *current, Direction dir) {
 }
 
 
+void MoveResized (Cursor *position, CURS_MOS *current) {
+	MoveTo (position, current, min (position->y, current->img->height),
+			min (position->x, current->img->width));
+}
+
+
 void ChangeDefaultDirection (int c, Direction *dir) {
 	switch (c) {
 		case KEY_UP:	*dir = UP;		break;

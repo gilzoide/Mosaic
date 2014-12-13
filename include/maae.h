@@ -119,6 +119,10 @@ void ClearWin (CURS_MOS *current);
  */
 void dobox (CURS_MOS *img);
 /**
+ * Undraws the MOSAIC's border
+ */
+void unDobox (CURS_MOS *img);
+/**
  * Insert a new char in current.
  *
  * @note This function knows if in INSERT mode and takes care of it.

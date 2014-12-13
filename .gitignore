@@ -11,6 +11,6 @@ cscope.out
 *.mosi
 
 # scons stuff
-.sconsign*
+*scon*
 
 html

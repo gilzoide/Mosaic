@@ -173,8 +173,9 @@ CURS_MOS *CreateNewMOSAIC (IMGS *everyone, CURS_MOS *current) {
 
 
 void DisplayCurrent (CURS_MOS *current) {
-	dobox (current);
+	// things we don't always need to worry about
 	if (IS_(REDRAW)) {
+		dobox (current);
 		RefreshCURS_MOS (current);
 		UN_(REDRAW);
 	}
@@ -183,8 +184,12 @@ void DisplayCurrent (CURS_MOS *current) {
 
 
 void ClearWin (CURS_MOS *current) {
+	// CURS_MOS win
 	werase (current->win);
 	prefresh (current->win, current->y, current->x, 0, 0, LINES - 2, COLS - 1);
+	// clear border
+	unDobox (current);
+	refresh ();
 }
 
 
@@ -199,6 +204,22 @@ void dobox (CURS_MOS *img) {
 	hline (ACS_HLINE, x);
 	// corner
 	mvaddch (y, x, ACS_LRCORNER);
+
+	refresh ();
+}
+
+
+void unDobox (CURS_MOS *img) {
+	const int y = img->img->height;
+	const int x = img->img->width;
+
+	// lines
+	move (0, x);
+	vline (' ', y);
+	move (y, 0);
+	hline (' ', x);
+	// corner
+	mvaddch (y, x, ' ');
 
 	refresh ();
 }
@@ -379,10 +400,10 @@ void EraseWord (Cursor *cursor, CURS_MOS *current, Direction dir) {
 			case RIGHT:	++x;	break;
 		}
 		// let's check what's in y/x
-		c = mosGetCh (current->img, y, x);
+		c = curs_mosGetCh (current, y, x);
 		// one more char to erase
 		i++;
-	} while (c && c != ' ');
+	} while (c != ' ' && c);
 
 	while (i > 0 && i--) {
 		// let main's erasure work it's magic for the counted chars

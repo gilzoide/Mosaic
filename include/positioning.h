@@ -82,6 +82,16 @@ void Move (Cursor *position, CURS_MOS *current, Direction dir);
  */
 void MoveAll (Cursor *position, CURS_MOS *current, Direction dir);
 /**
+ * Move cursor inside the resized CURS_MOS
+ *
+ * This function takes care of moving the cursor in case of resizin,
+ * as the old cursor's position may be out of boundaries now.
+ *
+ * @param[in] position Actual working position
+ * @param[in] current Current image, for knowing the new boundaries
+ */
+void MoveResized (Cursor *position, CURS_MOS *current);
+/**
  * Changes the default direction for the movement
  * 
  * @param[in] c the key pressed, which we use to know what the desired direction is
