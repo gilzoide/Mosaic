@@ -11,6 +11,7 @@
 
 #include <mosaic/color.h>
 #include <mosaic/curs_mos.h>
+#include <mosaic/stream_io.h>
 #include "wins.h"
 #include "positioning.h"
 #include "state.h"
@@ -109,7 +110,9 @@ CURS_MOS *CreateNewMOSAIC (IMGS *everyone, CURS_MOS *current);
  */
 void DisplayCurrent (CURS_MOS *current);
 /**
- * Clears current's WINDOW and refreshes the screen
+ * Clears current's WINDOW and border and refreshes the screen
+ *
+ * @sa unDobox
  *
  * @param[in] current The current mosaic
  */
@@ -120,6 +123,8 @@ void ClearWin (CURS_MOS *current);
 void dobox (CURS_MOS *img);
 /**
  * Undraws the MOSAIC's border
+ *
+ * @note unDobox is just a @ref dobox with all chars as blanks
  */
 void unDobox (CURS_MOS *img);
 /**

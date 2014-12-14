@@ -14,7 +14,7 @@ and it can be uninstalled running `scons uninstall`.
 if not GetOption ('help'):
     env = Environment (
         LIBS = ['panel', 'menu', 'form', 'curses', 
-                'mosaic', 'mosaic_color', 'mosaic_curses'],
+                'mosaic', 'mosaic_color', 'mosaic_curses', 'mosaic_stream_io'],
         LIBPATH = ['/usr/lib', '/usr/local/lib'],
         CCFLAGS = '-Wall -pipe -O2 -g',
         CPPPATH = ['#include', '/usr/include'],

@@ -31,8 +31,9 @@ int main (int argc, char *argv[]) {
 	// but if asked to open a file in argv, creates an empty MOSAIC and loads it
 	if (file_name) {
 		current = NewCURS_MOS (0, 0);
+		int load_return = LoadCURS_MOS (current, file_name);
 		// try to load, but it might go wrong...
-		if (!LoadCURS_MOS (current, file_name)) {
+		if (load_return == 0 || load_return == EUNKNSTRGFMT) {
 			CircularIMGS (&everyone, current);
 		}
 		else {
@@ -180,6 +181,10 @@ int main (int argc, char *argv[]) {
 
 					case ENODIMENSIONS:
 						PrintHud ("No dimensions in this file, dude! =/", TRUE);
+						break;
+
+					case EUNKNSTRGFMT:
+						PrintHud ("Sorry, couldn't load attributes...", TRUE);
 						break;
 
 					default:
