@@ -195,11 +195,7 @@ int main (int argc, char *argv[]) {
 				
 			/* resize mosaic */
 			case KEY_CTRL_R:
-				ClearWin (current);
-				ResizeCURS_MOS (current, 20, 30);
-				// move to inside the resized MOSAIC
-				MoveResized (&cursor, current);
-				ENTER_(REDRAW);
+				Resize (current, &cursor);
 				break;
 				
 			/* box selection mode! */

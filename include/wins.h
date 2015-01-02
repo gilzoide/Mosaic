@@ -35,6 +35,9 @@
 #include "positioning.h"
 #include "keys.h"
 
+#define INITIAL_HEIGHT 30
+#define INITIAL_WIDTH 40
+
 /**
  * Initialize the HUD
  */
@@ -62,8 +65,7 @@ void About ();
 mos_attr AttrTable (CURS_MOS *current, Cursor cur);
 
 /**
- * Asks the user where to link the new image,
- * and it's size
+ * Asks the user where to link the new image, and it's size
  *
  * @param[out] new_height The height that the user chose
  * @param[out] new_width The width that the user chose
@@ -73,6 +75,15 @@ mos_attr AttrTable (CURS_MOS *current, Cursor cur);
  * @return ERR if user don't want to create the image; OK otherwise
  */
 char AskCreateNewMOSAIC (int *new_height, int *new_width, char *duplicate, enum direction *new_dir);
+/**
+ * Asks the user for the new image sizes, for resizing
+ *
+ * @param[out] new_height The new height
+ * @param[out] new_width The new width
+ *
+ * @return ERR if user don't want to resize the image; OK otherwise
+ */
+char AskResizeMOSAIC (int *new_height, int *new_width);
 
 /// Input/output, save/load
 enum io {

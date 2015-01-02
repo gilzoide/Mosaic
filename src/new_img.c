@@ -11,15 +11,14 @@ void InitNewMOSAIC (int initial_height, int initial_width) {
 			newMOSAIC_width, "NEW IMAGE");
 	newMOSAICPanel = new_panel (newMOSAICWindow);
 
-	// subwindow: inside the box
-	WINDOW *subwindow = derwin (newMOSAICWindow, 4, 6, 1, 12);
 	mvwaddstr (newMOSAICWindow, 1, 1, "Height");
 	mvwaddstr (newMOSAICWindow, 2, 1, "Width");
 	mvwaddstr (newMOSAICWindow, 3, 1, "Duplicate");
 	mvwaddstr (newMOSAICWindow, 4, 1, "Link image");
 
 	/* MAKING OF FORM */
-	FIELD **fields = (FIELD**) calloc (5, sizeof (FIELD*));
+	FIELD **fields = (FIELD **) malloc (5 * sizeof (FIELD *));
+
 	fields[0] = new_field (1, 3, 0, 0, 0, 0);
 	set_field_back (fields[0], A_BOLD);
 	field_opts_off (fields[0], O_PASSOK);
@@ -62,8 +61,12 @@ void InitNewMOSAIC (int initial_height, int initial_width) {
 	set_field_type (fields[3], TYPE_ENUM, directions, 0, 1);
 	set_field_buffer (fields[3], 0, directions[0]);
 
+	fields[4] = NULL;
+
 	// the FORM itself, WINDOW and post it!
 	newMOSAIC_form = new_form (fields);
+	// subwindow: inside the box
+	WINDOW *subwindow = derwin (newMOSAICWindow, 4, 6, 1, 12);
 	set_form_win (newMOSAIC_form, subwindow);
 	set_form_sub (newMOSAIC_form, subwindow);
 	post_form (newMOSAIC_form);

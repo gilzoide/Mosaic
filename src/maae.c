@@ -172,6 +172,19 @@ CURS_MOS *CreateNewMOSAIC (IMGS *everyone, CURS_MOS *current) {
 }
 
 
+void Resize (CURS_MOS *current, Cursor *cursor) {
+	int height, width;
+
+	if (AskResizeMOSAIC (&height, &width) != ERR) {
+		ClearWin (current);
+		ResizeCURS_MOS (current, height, width);
+		// move to inside the resized MOSAIC
+		MoveResized (cursor, current);
+		ENTER_(REDRAW);
+	}
+}
+
+
 void DisplayCurrent (CURS_MOS *current) {
 	// things we don't always need to worry about
 	if (IS_(REDRAW)) {

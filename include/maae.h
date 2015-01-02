@@ -17,9 +17,6 @@
 #include "state.h"
 #include "keys.h"
 
-#define INITIAL_HEIGHT 30
-#define INITIAL_WIDTH 40
-
 #define BOUNDARY_Y (LINES)
 #define BOUNDARY_X (COLS)
 
@@ -96,13 +93,19 @@ char Paste (CopyBuffer *buffer, CURS_MOS *current, Cursor cursor);
 /**
  * Create a new image and store it in the images list
  * 
- * @param[in,out] everyone The mosaics list
+ * @param[in|out] everyone The mosaics list
  * @param[in] current The current mosaic, a reference for the new one coming
  * 
  * @return pointer to the created CURS_MOS, to be stored in the 'current';
  * NULL if user canceled the creation
  */
 CURS_MOS *CreateNewMOSAIC (IMGS *everyone, CURS_MOS *current);
+/**
+ * Resizes the current image (or not, it's interactive)
+ *
+ * @param[in|out] current The target CURS_MOS
+ */
+void Resize (CURS_MOS *current, Cursor *cursor);
 /**
  * Displays the current MOSAIC, and it's border (using dobox)
  *

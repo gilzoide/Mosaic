@@ -7,7 +7,7 @@
 #include "save_load.c"
 #include "new_img.c"
 #include "attr_table.c"
-
+#include "resize.c"
 
 
 char AskQuit () {
@@ -148,6 +148,9 @@ void DestroyWins () {
 // New MOSAIC
 	DeleteForm (&newMOSAIC_form);
 	DeletePanel (&newMOSAICPanel);
+// Resize MOSAIC
+	DeleteForm (&resize_form);
+	DeletePanel (&resizePanel);
 // Load MOSAIC
 	DeleteForm (&saveloadMOSAIC_form);
 	DeletePanel (&saveloadMOSAICPanel);

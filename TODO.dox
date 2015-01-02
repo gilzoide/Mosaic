@@ -5,7 +5,7 @@ curses based Mosaic Asc Art Editor
 
 @todo ver bonitim os menus
 
-@todo Resize form/window
+@todo mosaic maior que a tela
 @todo ^Z (undo/redo)
 
 - @todo talvez mudar a seleção? pq ficar apagando pra reprintar é mei zuado, né =S
