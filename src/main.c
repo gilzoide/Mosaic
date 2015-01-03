@@ -117,6 +117,23 @@ int main (int argc, char *argv[]) {
 				current = current->next;
 				break;
 
+			/* go to page */
+			case KEY_CTRL_G:
+				{
+					int index;
+					index = PrintHud ("Image index:", SCAN);
+					if (index != ERR) {
+						CURS_MOS *aux = GoToPage (&everyone, index);
+						if (aux) {
+							current = aux;
+						}
+						else {
+							PrintHud ("Invalid index", FALSE);
+						}
+					}
+				}
+				break;
+
 			/* move to first */
 			case KEY_HOME:
 				MoveAll (&cursor, current, REVERSE (default_direction));
@@ -135,10 +152,12 @@ int main (int argc, char *argv[]) {
 				
 			/* new mosaic */
 			case KEY_F(2):
-				; CURS_MOS *aux = CreateNewMOSAIC (&everyone, current);
-				// aux was really created, so update the current curs_mos
-				if (aux) {
-					current = aux;
+				{
+					CURS_MOS *aux = CreateNewMOSAIC (&everyone, current);
+					// aux was really created, so update the current curs_mos
+					if (aux) {
+						current = aux;
+					}
 				}
 				break;
 

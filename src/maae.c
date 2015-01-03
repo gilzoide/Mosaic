@@ -173,7 +173,8 @@ CURS_MOS *CreateNewMOSAIC (IMGS *everyone, CURS_MOS *current) {
 
 
 void Resize (CURS_MOS *current, Cursor *cursor) {
-	int height, width;
+	int height = current->img->height;
+	int width = current->img->width;
 
 	if (AskResizeMOSAIC (&height, &width) != ERR) {
 		ClearWin (current);

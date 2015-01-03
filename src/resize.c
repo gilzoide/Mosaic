@@ -21,20 +21,12 @@ void InitResizeMOSAIC () {
 	field_opts_off (fields[0], O_PASSOK);
 	set_field_just (fields[0], JUSTIFY_LEFT);
 	set_field_type (fields[0], TYPE_INTEGER, 0, 1, 999);
-	// initial_height as a string, to start the buffer
-	char height[4];
-	sprintf (height, "%3d", INITIAL_HEIGHT);
-	set_field_buffer (fields[0], 0, height);
 
 	fields[1] = new_field (1, 3, 1, 0, 0, 0);
 	set_field_back (fields[1], A_BOLD);
 	field_opts_off (fields[1], O_PASSOK);
 	set_field_just (fields[1], JUSTIFY_LEFT);
 	set_field_type (fields[1], TYPE_INTEGER, 0, 1, 999);
-	// initial_width as a string, to start the buffer
-	char width[4];
-	sprintf (width, "%3d", INITIAL_WIDTH);
-	set_field_buffer (fields[1], 0, width);
 
 	fields[2] = NULL;
 
@@ -55,6 +47,15 @@ char AskResizeMOSAIC (int *new_height, int *new_width) {
 	if (!resizePanel) {
 		InitResizeMOSAIC ();
 	}
+
+	// current height, to start the buffer
+	char height[4];
+	sprintf (height, "%3d", *new_height);
+	set_field_buffer (form_fields (resize_form)[0], 0, height);
+	// current width, to start the buffer
+	char width[4];
+	sprintf (width, "%3d", *new_width);
+	set_field_buffer (form_fields (resize_form)[1], 0, width);
 
 	// display the panel
 	show_panel (resizePanel);

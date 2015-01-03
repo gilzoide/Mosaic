@@ -64,29 +64,33 @@ void InitMenus () {
 	int x_aux = 0;
 	file_menuWindow = CreateBoxedTitledWindow (MENU_HEIGHT, MENU_WIDTH, LINES - MENU_HEIGHT - 2, x_aux, "FILE");
 	
-	int num_items = 3;
+	int num_items = 4;
 	const char *file_titles[] = {
 		"Save File",
 		"Load File",
+		"Jump to Image",
 		"Exit Maae"
 	};
 	const char *file_descriptions[] = {
 		"^S",
 		"^O",
+		"^G",
 		"^Q"
 	};
 	// The choices are static so the userptr points to something that exists
 	static const int file_choices[] = {		
 		KEY_CTRL_S,
 		KEY_CTRL_O,
+		KEY_CTRL_G,
 		KEY_CTRL_Q
 	};
 	// create the items
-	items = (ITEM**) calloc (num_items + 1, sizeof (ITEM*));
+	items = (ITEM **) malloc ((num_items + 1) * sizeof (ITEM *));
 	for (i = 0; i < num_items; i++) {
 		items[i] = new_item (file_titles[i], file_descriptions[i]);
 		set_item_userptr (items[i], (void*) &file_choices[i]);
 	}
+	items[i] = NULL;
 	
 	// create the menu
 	file_menu = new_menu (items);
@@ -134,11 +138,12 @@ void InitMenus () {
 		KEY_CTRL_P
 	};
 	// create the items
-	items = (ITEM**) calloc (num_items + 1, sizeof (ITEM*));
+	items = (ITEM **) malloc ((num_items + 1) * sizeof (ITEM *));
 	for (i = 0; i < num_items; i++) {
 		items[i] = new_item (edit_titles[i], edit_descriptions[i]);
 		set_item_userptr (items[i], (void*) &edit_choices[i]);
 	}
+	items[i] = NULL;
 	
 	// create the menu
 	edit_menu = new_menu (items);
@@ -180,11 +185,12 @@ void InitMenus () {
 		KEY_CTRL_K
 	};
 	// create the items
-	items = (ITEM**) calloc (num_items + 1, sizeof (ITEM*));
+	items = (ITEM **) malloc ((num_items + 1) * sizeof (ITEM *));
 	for (i = 0; i < num_items; i++) {
 		items[i] = new_item (image_titles[i], image_descriptions[i]);
 		set_item_userptr (items[i], (void*) &image_choices[i]);
 	}
+	items[i] = NULL;
 	
 	// create the menu
 	image_menu = new_menu (items);
@@ -220,11 +226,12 @@ void InitMenus () {
 		KEY_F(12)
 	};
 	// create the items
-	items = (ITEM**) calloc (num_items + 1, sizeof (ITEM*));
+	items = (ITEM **) malloc ((num_items + 1) * sizeof (ITEM *));
 	for (i = 0; i < num_items; i++) {
 		items[i] = new_item (help_titles[i], help_descriptions[i]);
 		set_item_userptr (items[i], (void*) &help_choices[i]);
 	}
+	items[i] = NULL;
 	
 	// create the menu
 	help_menu = new_menu (items);

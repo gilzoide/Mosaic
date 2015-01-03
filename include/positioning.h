@@ -92,6 +92,18 @@ void MoveAll (Cursor *position, CURS_MOS *current, Direction dir);
  */
 void MoveResized (Cursor *position, CURS_MOS *current);
 /**
+ * Returns mosaic in `everyone[index]` (sort of)
+ *
+ * @note index starts from 0
+ *
+ * @param[in] everyone All the images
+ * @param[in] index The index of the wanted mosaic
+ *
+ * @return CURS_MOS at position index
+ * @return NULL if index greater than size
+ */
+CURS_MOS * GoToPage (IMGS *everyone, unsigned int index);
+/**
  * Changes the default direction for the movement
  * 
  * @param[in] c the key pressed, which we use to know what the desired direction is

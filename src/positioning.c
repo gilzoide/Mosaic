@@ -1,7 +1,5 @@
 #include "positioning.h"
 
-
-
 void InitCursor (Cursor *cur) {
 	cur->x = cur->y = cur->origin_x = cur->origin_y = 0;
 }
@@ -144,6 +142,21 @@ void MoveAll (Cursor *position, CURS_MOS *current, Direction dir) {
 void MoveResized (Cursor *position, CURS_MOS *current) {
 	MoveTo (position, current, min (position->y, current->img->height),
 			min (position->x, current->img->width));
+}
+
+
+CURS_MOS * GoToPage (IMGS *everyone, unsigned int index) {
+	if (index < everyone->size) {
+		CURS_MOS *aux;
+		for (aux = everyone->list; index; index--) {
+			aux = aux->next;
+		}
+
+		return aux;
+	}
+	else {
+		return NULL;
+	}
 }
 
 

@@ -76,12 +76,24 @@ int PrintHud (const char *message, char wait_for_input) {
 
 	int c = 0;
 	// wait for input
-	if (wait_for_input) {
-		c = getch ();
-	}
-	// if not, let the system know the message is there
-	else {
-		ENTER_(HUD_MESSAGE);
+	switch (wait_for_input) {
+		case TRUE:
+			c = getch ();
+			break;
+
+		case SCAN:
+			echo ();
+			waddch (hud, ' ');
+			wrefresh (hud);
+			if (wscanw (hud, "%d", &c) == ERR) {
+				c = ERR;
+			}
+			noecho ();
+			break;
+
+		case FALSE:
+			ENTER_(HUD_MESSAGE);
+			break;
 	}
 
 	return c;
