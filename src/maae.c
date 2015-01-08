@@ -383,7 +383,7 @@ int Save (CURS_MOS *current) {
 			strcat (file_name, ".mosi");
 		}
 
-		return SaveMOSAIC (current->img, file_name);
+		return SaveCURS_MOS (current, file_name);
 	}
 }
 
@@ -429,15 +429,4 @@ void EraseWord (Cursor *cursor, CURS_MOS *current, Direction dir) {
 void InformToggleState (State S, const char *if_s, const char *if_not_s) {
 	TOGGLE_(S);
 	IS_(S) ? PrintHud (if_s, FALSE) : PrintHud (if_not_s, FALSE);
-}
-
-
-void DestroyIMGS (IMGS *everyone) {
-	CURS_MOS *aux, *next;
-	int i;
-
-	for (aux = everyone->list, i = 0; i < everyone->size; i++, aux = next) {
-		next = aux->next;
-		FreeCURS_MOS (aux);
-	}
 }

@@ -5,7 +5,7 @@
 #ifndef POSITIONING_H
 #define POSITIONING_H
 
-#include "mosaic/curs_mos.h"
+#include "mosaic/cursmos.h"
 #include "state.h"
 
 /// UI current cursor position

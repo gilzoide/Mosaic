@@ -31,6 +31,7 @@
 #include <form.h>
 #include <string.h>
 #include <ctype.h>
+#include <stdlib.h>
 
 #include "positioning.h"
 #include "keys.h"

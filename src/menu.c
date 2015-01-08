@@ -43,7 +43,7 @@ void InitMenus () {
 	};
 	
 	ITEM **items;
-	items = (ITEM**) calloc (menu_numItems + 1, sizeof (ITEM*));
+	items = (ITEM **) calloc (menu_numItems + 1, sizeof (ITEM *));
 	int i;
 	for (i = 0; i < menu_numItems; i++) {
 		items[i] = new_item (menu_titles[i], menu_descriptions[i]);
@@ -88,7 +88,7 @@ void InitMenus () {
 	items = (ITEM **) malloc ((num_items + 1) * sizeof (ITEM *));
 	for (i = 0; i < num_items; i++) {
 		items[i] = new_item (file_titles[i], file_descriptions[i]);
-		set_item_userptr (items[i], (void*) &file_choices[i]);
+		set_item_userptr (items[i], (void *) &file_choices[i]);
 	}
 	items[i] = NULL;
 	
@@ -141,7 +141,7 @@ void InitMenus () {
 	items = (ITEM **) malloc ((num_items + 1) * sizeof (ITEM *));
 	for (i = 0; i < num_items; i++) {
 		items[i] = new_item (edit_titles[i], edit_descriptions[i]);
-		set_item_userptr (items[i], (void*) &edit_choices[i]);
+		set_item_userptr (items[i], (void *) &edit_choices[i]);
 	}
 	items[i] = NULL;
 	
@@ -188,7 +188,7 @@ void InitMenus () {
 	items = (ITEM **) malloc ((num_items + 1) * sizeof (ITEM *));
 	for (i = 0; i < num_items; i++) {
 		items[i] = new_item (image_titles[i], image_descriptions[i]);
-		set_item_userptr (items[i], (void*) &image_choices[i]);
+		set_item_userptr (items[i], (void *) &image_choices[i]);
 	}
 	items[i] = NULL;
 	
@@ -229,7 +229,7 @@ void InitMenus () {
 	items = (ITEM **) malloc ((num_items + 1) * sizeof (ITEM *));
 	for (i = 0; i < num_items; i++) {
 		items[i] = new_item (help_titles[i], help_descriptions[i]);
-		set_item_userptr (items[i], (void*) &help_choices[i]);
+		set_item_userptr (items[i], (void *) &help_choices[i]);
 	}
 	items[i] = NULL;
 	

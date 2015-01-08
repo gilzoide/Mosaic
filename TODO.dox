@@ -3,8 +3,11 @@
 
 curses based Mosaic Asc Art Editor
 
+
 @todo ver bonitim os menus
 @todo saber em qual página que tá
+
+@todo salvar/carregar vid
 
 @todo mosaic maior que a tela
 @todo ^Z (undo/redo)

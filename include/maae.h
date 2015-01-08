@@ -10,8 +10,8 @@
 #include <stdio.h>
 
 #include <mosaic/color.h>
-#include <mosaic/curs_mos.h>
-#include <mosaic/stream_io.h>
+#include <mosaic/cursmos.h>
+#include <mosaic/cursmos_stream_io.h>
 #include "wins.h"
 #include "positioning.h"
 #include "state.h"
@@ -189,13 +189,5 @@ void EraseWord (Cursor *cursor, CURS_MOS *current, Direction dir);
  * @param[in] if_not_s String to be printed if S is toggled OFF
  */
 void InformToggleState (State S, const char *if_s, const char *if_not_s);
-/**
- * Destroy and free memory from the images list
- * 
- * @warning This function should be called before exiting the program,
- * unless you know what you're doing...
- */
-void DestroyIMGS (IMGS *everyone);
-
 
 #endif

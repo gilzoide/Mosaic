@@ -120,8 +120,9 @@ int main (int argc, char *argv[]) {
 			/* go to page */
 			case KEY_CTRL_G:
 				{
-					int index;
-					index = PrintHud ("Image index:", SCAN);
+					char aux[20];
+					sprintf (aux, "Image index (0~%d):", everyone.size - 1);
+					int index = PrintHud (aux, SCAN);
 					if (index != ERR) {
 						CURS_MOS *aux = GoToPage (&everyone, index);
 						if (aux) {

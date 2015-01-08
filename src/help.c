@@ -23,16 +23,16 @@ void InitHelp () {
 	// the hotkeys
 	const char *hotkeys[] = {
 		"F1", "F10/Mouse Right Button", "^Q",
-		"Arrow Keys", "^D", "^A", "Page Up/Page Down", "Home/End", "Mouse Left Button", "Mouse Left Button double click",
+		"Arrow Keys", "^D", "^A", "Page Up/Page Down", "^G", "Home/End", "Mouse Left Button", "Mouse Left Button double click",
 		"^B", "^T", "^P", "Insert",
 		"F2", "^S", "^O", "^R", "^C/^X", "^V", "Tab", "^U", "^W"
 	};
 	// and how many are there for each subtitle
-	int n_hotkeys[] = {3, 7, 4, 9};
+	int n_hotkeys[] = {3, 8, 4, 9};
 	// what the hotkeys do
 	const char *explanations[] = {
 		"show this help", "show the menu", "quit Nmos",
-		"move through the mosaic", "change the moving direction after input (default direction)", "select all", "previous/next mosaic", "move to first/last character (in the default direction)", "move to", "select until",
+		"move through the mosaic", "change the moving direction after input (default direction)", "select all", "previous/next mosaic", "go to mosaic by index", "move to first/last character (in the default direction)", "move to", "select until",
 		"toggle box selection mode", "toggle transparent pasting mode", "toggle paint mode", "toggle insert mode",
 		"new mosaic", "save mosaic", "load mosaic", "resize mosaic", "copy/cut selection", "paste selection", "show the attribute table", "erase line", "erase word"
 	};
