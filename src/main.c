@@ -18,6 +18,7 @@ int main (int argc, char *argv[]) {
 	//  images
 	IMGS everyone;
 	InitIMGS (&everyone);
+	int current_index = 0;
 
 	int c = 0;
 	// Mouse support: bt1 and bt3 click
@@ -110,26 +111,37 @@ int main (int argc, char *argv[]) {
 			/* previous mosaic */
 			case KEY_PPAGE:
 				current = current->prev;
+				current_index = current_index - 1;
+				if (current_index < 0) {
+					current_index = everyone.size - 1;
+				}
+				VPrintHud (FALSE, "img %d", current_index);
 				break;
 				
 			/* next mosaic */
 			case KEY_NPAGE:
 				current = current->next;
+				current_index = current_index + 1;
+				if (current_index >= everyone.size) {
+					current_index = 0;
+				}
+				VPrintHud (FALSE, "img %d", current_index);
 				break;
 
 			/* go to page */
 			case KEY_CTRL_G:
 				{
-					char aux[20];
-					sprintf (aux, "Image index (0~%d):", everyone.size - 1);
-					int index = PrintHud (aux, SCAN);
+					int index = VPrintHud (SCAN,
+							"img %d. New image index (0~%d):",
+							current_index, everyone.size - 1);
 					if (index != ERR) {
 						CURS_MOS *aux = GoToPage (&everyone, index);
 						if (aux) {
 							current = aux;
+							current_index = index;
 						}
 						else {
-							PrintHud ("Invalid index", FALSE);
+							PrintHud (FALSE, "Invalid index");
 						}
 					}
 				}
@@ -171,14 +183,14 @@ int main (int argc, char *argv[]) {
 			case KEY_CTRL_S:
 				switch (Save (current)) {
 					case 0:
-						PrintHud ("Saved successfully!", FALSE);
+						PrintHud (FALSE, "Saved successfully!");
 						break;
 
 					case ERR:	// canceled
 						break;
 
 					default:
-						PrintHud ("Sorry, no can save this... =/", TRUE);
+						PrintHud (TRUE, "Sorry, no can save this... =/");
 						break;
 				}
 				UN_(TOUCHED);
@@ -188,7 +200,7 @@ int main (int argc, char *argv[]) {
 			case KEY_CTRL_O:
 				switch (Load (current)) {
 					case 0:
-						PrintHud ("Loaded successfully!", FALSE);
+						PrintHud (FALSE, "Loaded successfully!");
 						ENTER_(TOUCHED | REDRAW);
 						break;
 
@@ -196,19 +208,19 @@ int main (int argc, char *argv[]) {
 						break;
 
 					case ENOENT:
-						PrintHud ("File doesn't exist", TRUE);
+						PrintHud (TRUE, "File doesn't exist");
 						break;
 
 					case ENODIMENSIONS:
-						PrintHud ("No dimensions in this file, dude! =/", TRUE);
+						PrintHud (TRUE, "No dimensions in this file, dude! =/");
 						break;
 
 					case EUNKNSTRGFMT:
-						PrintHud ("Sorry, couldn't load attributes...", TRUE);
+						PrintHud (TRUE, "Sorry, couldn't load attributes...");
 						break;
 
 					default:
-						PrintHud ("Sorry, no can load this... =/", TRUE);
+						PrintHud (TRUE, "Sorry, no can load this... =/");
 						break;
 				}
 				break;
@@ -245,7 +257,7 @@ int main (int argc, char *argv[]) {
 					TrimCURS_MOS (current, resize);
 					// move to inside the resized MOSAIC
 					MoveResized (&cursor, current);
-					PrintHud ("Trimmed", FALSE);
+					PrintHud (FALSE, "Trimmed");
 					ENTER_(REDRAW);
 				}
 				break;
@@ -281,7 +293,7 @@ int main (int argc, char *argv[]) {
 				UN_(SELECTION);
 				// if the buffer was never used, sry
 				if (!Paste (&buffer, current, cursor)) {
-					PrintHud ("Nothing in the buffer...", TRUE);
+					PrintHud (TRUE, "Nothing in the buffer...");
 				}
 				else {
 					ENTER_(TOUCHED);

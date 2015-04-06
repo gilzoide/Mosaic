@@ -35,7 +35,7 @@ char AskMessage (const char *msg) {
 	strcpy (aux, msg);
 	strcpy (aux + size, " [y/N]");
 
-	return 'y' == tolower (PrintHud (aux, TRUE));
+	return 'y' == tolower (PrintHud (TRUE, aux));
 }
 
 

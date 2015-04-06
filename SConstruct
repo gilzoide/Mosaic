@@ -1,4 +1,4 @@
-# Maae, a curses Mosaic ASC Art Editor
+# Maae, the Mosaic ASC Art Editor
 # Created by Gil Barbosa Reis
 
 Help ("""
@@ -13,18 +13,19 @@ and it can be uninstalled running `scons uninstall`.
 
 if not GetOption ('help'):
     env = Environment (
-        LIBS = ['panel', 'menu', 'form', 'curses', 
-                'mosaic', 'mosaic_color', 'mosaic_curses', 'mosaic_stream_io'],
+        LIBS = ['panel', 'menu', 'form', 'curses'],
         LIBPATH = ['/usr/lib', '/usr/local/lib'],
-        CCFLAGS = '-Wall -pipe -O2 -g',
+        CCFLAGS = '-Wall -pipe -O2',
         CPPPATH = ['#include', '/usr/include'],
     )
     env.Decider ('MD5-timestamp')
 
-    # if user pass debug=1, add -g flag for the compiler
-    #debug = ARGUMENTS.get ('debug', 0)
-    #if int (debug):
-        #env.Append (CCFLAGS = ' -g')
+    env.ParseConfig ('pkg-config --libs --cflags mosaic mosaic_color cursmos cursmos_stream_io')
+
+    # if user pass debug=0, don't add the -g flag for the compiler
+    debug = ARGUMENTS.get ('debug', 1)
+    if int (debug):
+        env.Append (CCFLAGS = ' -g')
 
     # build the editor in the 'build' directory, without duplicating
     VariantDir ('build', 'src', duplicate = 0)

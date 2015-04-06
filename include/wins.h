@@ -46,21 +46,31 @@ void InitHud ();
 
 /// Updates the position in the HUD
 void UpdateHud (Cursor cur, Direction dir);
+
+/// For PrintHud execute a `scanw` instead of a getch
+#define SCAN 2
 /** 
  * Prints a message in the HUD and waits for keystroke
  * 
- * @param[in] message Message to be written in the HUD
  * @param[in] wait_for_input Do we have to wait for input?
  * Possible values:
- * - FALSE: don't wait
+ * - FALSE: don't wait (and return 0)
  * - TRUE: wait for a char from getch
  * - SCAN: wait for a number from scanw
+ * @param[in] message Message to be written in the HUD
  * 
  * @return the key pressed for leaving
  */
-int PrintHud (const char *message, char wait_for_input);
-/// For PrintHud execute a `scanw` instead of a getch
-#define SCAN 2
+int PrintHud (char wait_for_input, const char *message);
+/**
+ * A @ref PrintHud with variable argument, just like printf
+ *
+ * @param[in] wait_for_input Same as @ref PrintHud
+ * @param[in] message Formatted message to be written in the HUD
+ * @param[in] ... Variable arguments to make the string to be
+ *  passed to @ref PrintHud
+ */
+int VPrintHud (char wait_for_input, const char *message, ...);
 
 /// Draw the non-interactive help screen
 void Help ();

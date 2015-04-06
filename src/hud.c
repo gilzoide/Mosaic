@@ -65,7 +65,7 @@ void UpdateHud (Cursor cur, Direction dir) {
 }
 
 
-int PrintHud (const char *message, char wait_for_input) {
+int PrintHud (char wait_for_input, const char *message) {
 	// clear anything that was there
 	wmove (hud, 0, HUD_MSG_X);
 	wclrtoeol (hud);
@@ -97,4 +97,15 @@ int PrintHud (const char *message, char wait_for_input) {
 	}
 
 	return c;
+}
+
+
+int VPrintHud (char wait_for_input, const char *message, ...) {
+	char buffer[100];
+	va_list ap;
+	va_start (ap, message);
+	// make the string
+	vsprintf (buffer, message, ap);
+
+	return PrintHud (wait_for_input, buffer);
 }

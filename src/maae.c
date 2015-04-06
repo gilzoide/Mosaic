@@ -57,7 +57,7 @@ int toUTF8 (int c) {
 
 
 void DefaultDirection (Direction *dir) {
-	int c = PrintHud ("New default direction (arrow keys)", TRUE);
+	int c = PrintHud (TRUE, "New default direction (arrow keys)");
 	ChangeDefaultDirection (c, dir);
 }
 
@@ -99,7 +99,7 @@ void Cut (CopyBuffer *buffer, CURS_MOS *current, Cursor selection) {
 	const int x = min (selection.x, selection.origin_x);	// corner only
 	for (i = 0; i <= buffer->coordinates.y; i++) {
 		for (j = 0; j <= buffer->coordinates.x; j++) {
-			curs_mosAddch (current, y + i, x + j, ' ');
+			curs_mosSetCh (current, y + i, x + j, ' ');
 		}
 	}
 }
@@ -120,7 +120,7 @@ char Paste (CopyBuffer *buffer, CURS_MOS *current, Cursor cursor) {
 					continue;
 				}
 				// if outside CURS_MOS window, don't try to put 'c' in it, or it'll crash
-				else if (curs_mosAddch (current,
+				else if (curs_mosSetCh (current,
 							cursor.y + i, cursor.x + j, c)) {
 					break;
 				}
@@ -325,7 +325,7 @@ void InsertCh (CURS_MOS *current, Cursor *cur, int c, Direction dir) {
 			mos_char aux = _curs_mosGetCh (current, y, x);
 			mos_attr aux_attr = _curs_mosGetAttr (current, y, x);
 			// add it in it's new place
-			curs_mosAddch (current, target_y, target_x, aux);
+			curs_mosSetCh (current, target_y, target_x, aux);
 			curs_mosSetAttr (current, target_y, target_x, aux_attr);
 		}
 
@@ -341,7 +341,7 @@ void InsertCh (CURS_MOS *current, Cursor *cur, int c, Direction dir) {
 
 		for (y = ULy; y <= BRy; y++) {
 			for (x = ULx; x <= BRx; x++) {
-				curs_mosAddch (current, y, x, c);
+				curs_mosSetCh (current, y, x, c);
 			}
 		}
 
@@ -355,7 +355,7 @@ void InsertCh (CURS_MOS *current, Cursor *cur, int c, Direction dir) {
 		return;
 	}
 	// normal insertion
-	curs_mosAddch (current, y, x, c);
+	curs_mosSetCh (current, y, x, c);
 }
 
 
@@ -428,5 +428,5 @@ void EraseWord (Cursor *cursor, CURS_MOS *current, Direction dir) {
 
 void InformToggleState (State S, const char *if_s, const char *if_not_s) {
 	TOGGLE_(S);
-	IS_(S) ? PrintHud (if_s, FALSE) : PrintHud (if_not_s, FALSE);
+	IS_(S) ? PrintHud (FALSE, if_s) : PrintHud (FALSE, if_not_s);
 }
