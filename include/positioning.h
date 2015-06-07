@@ -40,10 +40,12 @@ typedef enum {
 #define REVERSE(dir) (3 - dir)
 
 
-/// Aux function: returns the greatest
-inline int min (int a, int b);
 /// Aux function: returns the smallest
-inline int max (int a, int b);
+#define min(a, b) \
+	(a) < (b) ? (a) : (b)
+/// Aux function: returns the greatest
+#define max(a, b) \
+	(a) > (b) ? (a) : (b)
 
 /// initializes the cursor values
 void InitCursor (Cursor *cursor);
