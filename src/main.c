@@ -32,11 +32,14 @@ int main (int argc, char *argv[]) {
 	// but if asked to open a file in argv, creates an empty MOSAIC and loads it
 	if (file_name) {
 		current = NewCURS_MOS (0, 0);
+		// try to load...
 		int load_return = LoadCURS_MOS (current, file_name);
-		// try to load, but it might go wrong...
+		// ... it may be alright...
 		if (load_return == 0 || load_return == EUNKNSTRGFMT) {
 			CircularIMGS (&everyone, current);
+			InitSaveLoadMOSAIC (file_name);
 		}
+		// ...but it might go wrong
 		else {
 			FreeCURS_MOS (current);
 			current = NULL;

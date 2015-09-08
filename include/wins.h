@@ -114,6 +114,12 @@ enum io {
  * @return File name
  */
 char *AskSaveLoadMOSAIC (enum io io);
+/**
+ * Inits the Save/Load form, with the possibility to specify it's starting value
+ *
+ * @param[in] file_name The initial file name. If NULL, nothing goes to the buffer
+ */
+void InitSaveLoadMOSAIC (const char *file_name);
 
 /**
  * Ask if the user wants to quit

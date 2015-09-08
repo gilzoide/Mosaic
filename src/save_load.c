@@ -4,8 +4,7 @@ FORM *saveloadMOSAIC_form;
 WINDOW *saveloadMOSAICWindow;
 PANEL *saveloadMOSAICPanel;
 
-
-void InitSaveLoadMOSAIC () {
+void InitSaveLoadMOSAIC (const char *file_name) {
 	saveloadMOSAICWindow = CreateCenteredBoxedTitledWindow (6, 
 			SAVELOAD_WIDTH + 2, "LOAD IMAGE");
 	saveloadMOSAICPanel = new_panel (saveloadMOSAICWindow);
@@ -16,24 +15,34 @@ void InitSaveLoadMOSAIC () {
 	WINDOW *subwindow = derwin (saveloadMOSAICWindow, 1, SAVELOAD_WIDTH, 3, 1);
 
 	/* MAKING OF FORM */
-	FIELD **fields = (FIELD**) calloc (2, sizeof (FIELD*));
+	FIELD **fields = (FIELD**) malloc (2 * sizeof (FIELD*));
 	fields[0] = new_field (1, SAVELOAD_WIDTH, 0, 0, 0, 0);
 	set_field_back (fields[0], A_BOLD);
 	field_opts_off (fields[0], O_PASSOK | O_STATIC);
+	// if opened maae with a file name, put it here please
+	if (file_name) {
+		set_field_buffer (fields[0], 0, file_name);
+	}
+	fields[1] = NULL;
 
 	// the FORM itself, WINDOW and post it!
 	saveloadMOSAIC_form = new_form (fields);
 	set_form_sub (saveloadMOSAIC_form, subwindow);
 	post_form (saveloadMOSAIC_form);
 
+	// as we can initialize the panel before calling it,
+	// hide already and update panels
 	wrefresh (saveloadMOSAICWindow);
+	hide_panel (saveloadMOSAICPanel);
+	update_panels ();
 }
 
 
 char *AskSaveLoadMOSAIC (enum io io) {
 	// creates it if not already there
-	if (!saveloadMOSAICPanel)
-		InitSaveLoadMOSAIC ();
+	if (!saveloadMOSAICPanel) {
+		InitSaveLoadMOSAIC (NULL);
+	}
 
 	// changes the title if saving or loading
 	if (io == save) {
