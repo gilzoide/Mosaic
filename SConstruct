@@ -2,7 +2,7 @@
 # Created by Gil Barbosa Reis
 
 Help ("""
-Welcome to the maae's build script
+Welcome to the maae's scons build script
 
 This package provides Maae: the Mosaic ASC Art Editor.
 The default build output is the build/ directory.

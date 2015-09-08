@@ -1,0 +1,21 @@
+-- our executable name
+exe = 'maae'
+
+executable = build {
+	input = {'main.c', 'maae.c', 'argpstuff.c', 'wins.c', 'positioning.c'},
+	flags = '-g -Wall -O2',
+	includes = {'mosaic', '../include'},
+	links = {'mosaic', 'mosaic_color', 'cursmos', 'cursmos_stream_io',
+			'ncurses', 'panel', 'form', 'menu'},
+	output = exe
+}
+
+
+install (executable, 'bin')
+
+
+-- "run" target
+target ('run', command {
+	cmd = utils.makePath (hell.outdir, exe),
+	runTarget = true
+})

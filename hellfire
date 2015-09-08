@@ -1,0 +1,17 @@
+hell.outdir = 'build'
+hell.help = [[
+Welcome to the maae's hell build script
+
+This package provides Maae: the Mosaic ASC Art Editor.
+The default build output is the "build/" directory.
+
+You can `hell install` it in the "$prefix/bin/" directory,
+and it can be uninstalled running `hell uninstall`. ]]
+
+if docs then
+	doxygen {
+		output = 'html'
+	}
+end
+
+feedHellFire 'src/hellfire'

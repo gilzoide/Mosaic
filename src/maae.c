@@ -107,7 +107,8 @@ void Cut (CopyBuffer *buffer, CURS_MOS *current, Cursor selection) {
 
 char Paste (CopyBuffer *buffer, CURS_MOS *current, Cursor cursor) {
 	if (buffer->buff != NULL) {
-		int i, j, c;
+		int i, j;
+		chtype c;
 		for (i = 0; i <= buffer->coordinates.y; i++) {
 			for (j = 0; j <= buffer->coordinates.x; j++) {
 				// read the char from the CopyBuffer
@@ -120,8 +121,12 @@ char Paste (CopyBuffer *buffer, CURS_MOS *current, Cursor cursor) {
 					continue;
 				}
 				// if outside CURS_MOS window, don't try to put 'c' in it, or it'll crash
+				// so, SetCh and SetAttr in the target
 				else if (curs_mosSetCh (current,
-							cursor.y + i, cursor.x + j, c)) {
+							cursor.y + i, cursor.x + j, c & A_CHARTEXT)
+						|| curs_mosSetAttr (current,
+							cursor.y + i, cursor.x + j, PAIR_NUMBER (c & A_COLOR)
+							| ((c & A_ATTRIBUTES & A_BOLD) ? BOLD : 0))) {
 					break;
 				}
 			}
