@@ -100,6 +100,7 @@ void Cut (CopyBuffer *buffer, CURS_MOS *current, Cursor selection) {
 	for (i = 0; i <= buffer->coordinates.y; i++) {
 		for (j = 0; j <= buffer->coordinates.x; j++) {
 			curs_mosSetCh (current, y + i, x + j, ' ');
+			curs_mosSetAttr (current, y + i, x + j, 0);
 		}
 	}
 }

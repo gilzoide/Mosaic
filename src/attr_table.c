@@ -6,7 +6,8 @@ PANEL *attrPanel;
 #define ATTR_WIDTH 23
 #define ATTR_TEST_Y (ATTR_HEIGHT - 2)
 #define ATTR_TEST_X 11
-#define ATTR_COLOR_X 9
+#define ATTR_COLOR_X 11
+#define ATTR_BOLD_X 8
 
 void InitAttrTable () {
 	attrWindow = CreateCenteredBoxedTitledWindow (ATTR_HEIGHT, ATTR_WIDTH,
@@ -14,15 +15,15 @@ void InitAttrTable () {
 	attrPanel = new_panel (attrWindow);
 
 	const char *colors[] = {
-		" normal",
-		"  black",
-		"    red",
-		"  green",
-		" yellow",
-		"   blue",
-		"magenta",
-		"   cyan",
-		"  white"
+		"1  normal",
+		"2   black",
+		"3     red",
+		"4   green",
+		"5  yellow",
+		"6    blue",
+		"7 magenta",
+		"8    cyan",
+		"9   white"
 	};
 
 	int i;
@@ -33,10 +34,10 @@ void InitAttrTable () {
 		mvwaddstr (attrWindow, 1 + i, 1, colors[i]);
 	}
 
-	mvwaddstr (attrWindow, ATTR_TEST_Y, 1, "[ ] ");
 	wattron (attrWindow, A_BOLD);
-	waddstr (attrWindow, "Bold");
+	mvwaddstr (attrWindow, ATTR_TEST_Y, 1, "0 Bold");
 	wstandend (attrWindow);
+	waddstr (attrWindow, "[ ]");
 }
 
 
@@ -46,8 +47,8 @@ int chooseAttr (mos_attr current_color) {
 	// is it bold yet?
 	// current chosen foreground, current chosen background, bold
 	mos_attr attrs[] = {
-		current_color / COLORS_STEP,
-		current_color % COLORS_STEP,
+		GetFore (current_color),
+		GetBack (current_color),
 		extractBold (&current_color)
 	};
 	int moving = 0;
@@ -56,39 +57,31 @@ int chooseAttr (mos_attr current_color) {
 		switch (c) {
 			// switch moving
 			case KEY_LEFT:
-				moving = (moving - 1);
-				if (moving < 0) {
-					moving = 2;
-				}
-				break;
-			
 			case KEY_RIGHT:
-				moving = (moving + 1) % 3;
+				moving = !moving;
 				break;
 
 			// switch values
 			case KEY_UP:
-				if (moving < 2) {
-					// erase } moving, before moving it
-					mvwaddstr (attrWindow, 1 + attrs[moving],
-							ATTR_COLOR_X, "           ");
-					attrs[moving]--;
-					if (attrs[moving] > COLORS_STEP) {
-						attrs[moving] = COLORS_STEP - 1;
-					}
+				// erase } moving, before moving it
+				mvwaddstr (attrWindow, 1 + attrs[moving],
+						ATTR_COLOR_X, "           ");
+				attrs[moving]--;
+				if (attrs[moving] > COLORS_STEP) {
+					attrs[moving] = COLORS_STEP - 1;
 				}
 				break;
 
 			case KEY_DOWN:
-				if (moving < 2) {
-					// erase } moving, before moving it
-					mvwaddstr (attrWindow, 1 + attrs[moving],
-							ATTR_COLOR_X, "           ");
-					attrs[moving]++;
-					attrs[moving] %= COLORS_STEP;
-				}
+				// erase } moving, before moving it
+				mvwaddstr (attrWindow, 1 + attrs[moving],
+						ATTR_COLOR_X, "           ");
+				attrs[moving]++;
+				attrs[moving] %= COLORS_STEP;
 				break;
 
+			// toggle BOLD
+			case '0':
 			case ' ':
 				attrs[2] ^= BOLD;
 				break;
@@ -101,25 +94,30 @@ int chooseAttr (mos_attr current_color) {
 				mvwaddstr (attrWindow, 1 + attrs[1],
 						ATTR_COLOR_X, "           ");
 				return (current_color | attrs[2]);
+
+			default:
+				if (isdigit (c)) {
+					// erase } moving, before moving it
+					mvwaddstr (attrWindow, 1 + attrs[moving],
+							ATTR_COLOR_X, "           ");
+					attrs[moving] = c - '1';
+					attrs[moving] %= COLORS_STEP;
+				}
 		}
 
 		// we write back before fore, so when they're both
 		// on the same line, both of them appear
 		mvwaddstr (attrWindow, 1 + attrs[1], ATTR_COLOR_X, "}      back");
 		mvwaddstr (attrWindow, 1 + attrs[0], ATTR_COLOR_X, "} fore");
-		mvwaddch (attrWindow, ATTR_TEST_Y, 2, attrs[2] ? 'X' : ' ');
+		mvwaddch (attrWindow, ATTR_TEST_Y, ATTR_BOLD_X, attrs[2] ? 'X' : ' ');
 
 		// Underline the moving attr
-		if (moving == 1) {
+		if (moving) {
 			mvwchgat (attrWindow, 1 + attrs[moving], ATTR_COLOR_X + 7, 4,
 					A_UNDERLINE, Normal, NULL);
 		}
-		else if (moving == 0) {
-			mvwchgat (attrWindow, 1 + attrs[moving], ATTR_COLOR_X + 2, 4,
-					A_UNDERLINE, Normal, NULL);
-		}
 		else {
-			mvwchgat (attrWindow, ATTR_TEST_Y, 2, 1,
+			mvwchgat (attrWindow, 1 + attrs[moving], ATTR_COLOR_X + 2, 4,
 					A_UNDERLINE, Normal, NULL);
 		}
 		// write the " TestArea "
