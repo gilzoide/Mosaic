@@ -10,8 +10,8 @@
 
 /// UI current cursor position
 typedef struct {
-	int y;	///< main y coordinate; upper-left corner
-	int x;	///< main x coordinate; upper-left corner
+	int y;	///< main y coordinate
+	int x;	///< main x coordinate
 	int origin_y;	///< origin of where box/selection started (y coordinate)
 	int origin_x;	///< origin of where box/selection started (x coordinate)
 } Cursor;
@@ -93,8 +93,9 @@ void MoveAll (Cursor *position, CURS_MOS *current, Direction dir);
  * @param[in] current Current image, for knowing the new boundaries
  */
 void MoveResized (Cursor *position, CURS_MOS *current);
+
 /**
- * Returns mosaic in `everyone[index]` (sort of)
+ * Returns mosaic in `everyone[index]' (sort of)
  *
  * @note index starts from 0
  *

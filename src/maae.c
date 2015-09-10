@@ -56,12 +56,6 @@ int toUTF8 (int c) {
 }
 
 
-void DefaultDirection (Direction *dir) {
-	int c = PrintHud (TRUE, "New default direction (arrow keys)");
-	ChangeDefaultDirection (c, dir);
-}
-
-
 void InitCopyBuffer (CopyBuffer *buffer) {
 	buffer->buff = NULL;
 	buffer->coordinates.x = buffer->coordinates.y = buffer->coordinates.origin_y = buffer->coordinates.origin_x = 0;
@@ -139,6 +133,90 @@ char Paste (CopyBuffer *buffer, CURS_MOS *current, Cursor cursor) {
 	else {
 		return 0;
 	}
+}
+
+
+Cursor MoveSelection (CURS_MOS *current, Cursor position) {
+	// store original position, so user can cancel
+	Cursor original_position = position;
+
+	// human readable variables
+	int ULy = min (position.origin_y, position.y);
+	int ULx = min (position.origin_x, position.x);
+	int BRy = max (position.origin_y, position.y);
+	int BRx = max (position.origin_x, position.x);
+	
+	// prepare the CopyBuffer and cut the selection
+	CopyBuffer copy;
+	InitCopyBuffer (&copy);
+
+	Cut (&copy, current, position);
+
+	// the panel we're going to move around
+	WINDOW *win = subpad (copy.buff, BRy - ULy + 1, BRx - ULx + 1, ULy, ULx);
+
+	// input
+	int c;
+	MEVENT event;
+	do {
+		c = getch ();
+
+		// maybe move
+		switch (c) {
+			/* Mouse event: clicked the window, just move */
+			case KEY_MOUSE:
+				getmouse (&event);
+				MoveTo (&position, current, event.y, event.x);
+				break;
+
+			/* move up */
+			case KEY_UP:
+				Move (&position, current, UP);
+				break;
+
+			/* move down */
+			case KEY_DOWN:
+				Move (&position, current, DOWN);
+				break;
+
+			/* move left */
+			case KEY_LEFT:
+				Move (&position, current, LEFT);
+				break;
+
+			/* move right */
+			case KEY_RIGHT:
+				Move (&position, current, RIGHT);
+				break;
+		}
+
+		// first, display current img (which is behind)
+		DisplayCurrent (current);
+		// then our selection
+		prefresh (win, 0, 0, position.y, position.x,
+				current->img->height - 1, current->img->width - 1);
+	} while (c != KEY_ESC && c != '\n');
+
+	// canceled, let's go back to original position
+	if (c == KEY_ESC) {
+		position = original_position;
+	}
+
+	// c'mon, make a move!
+	Paste (&copy, current, position);
+
+	// delete auxiliary window
+	delwin (win);
+	// and copy buffer
+	DestroyCopyBuffer (&copy);
+
+	return position;
+}
+
+
+void DefaultDirection (Direction *dir) {
+	int c = PrintHud (TRUE, "New default direction (arrow keys)");
+	ChangeDefaultDirection (c, dir);
 }
 
 
@@ -261,18 +339,18 @@ void ChAttrs (CURS_MOS *current, Cursor *cur, mos_attr attr) {
 		}
 
 		// Retract selection
-		UN_(SELECTION);
+		/*UN_(SELECTION);*/
 		cur->origin_y = cur->y;
 		cur->origin_x = cur->x;
 		// don't move after input, please
 		ENTER_(NO_MOVING_CURSOR);
-		// don't insert c at next position
-		return;
 	}
-	// normal insertion
-	y = cur->y;
-	x = cur->x;
-	curs_mosSetAttr (current, y, x, attr);
+	else {
+		// normal insertion
+		y = cur->y;
+		x = cur->x;
+		curs_mosSetAttr (current, y, x, attr);
+	}
 }
 
 

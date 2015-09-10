@@ -70,12 +70,8 @@ int main (int argc, char *argv[]) {
 			/* Mouse event: clicked the window, or help/menu/quit */
 			case KEY_MOUSE:
 				getmouse (&event);
-				// bt1 click: MoveTo
-				if (event.bstate & BUTTON1_CLICKED) {
-					UN_(SELECTION);
-					UnprintSelection (current);
-				}
-				else if (event.bstate & BUTTON1_DOUBLE_CLICKED) {
+				// bt1 double click: select until
+				if (event.bstate & BUTTON1_DOUBLE_CLICKED) {
 					ENTER_(SELECTION);
 				}
 				// bt3 (right button) click: Menu (yep, anywhere)
@@ -83,6 +79,7 @@ int main (int argc, char *argv[]) {
 					ungetch (KEY_F(10));
 					break;
 				}
+				// bt1: move to mouse anyway
 				MoveTo (&cursor, current, event.y, event.x);
 				break;
 				
@@ -265,9 +262,11 @@ int main (int argc, char *argv[]) {
 				}
 				break;
 
-			/* toggle paint mode! */
+			/* toggle paint mode (or just paint SELECTION) */
 			case KEY_CTRL_P:
 				InformToggleState (PAINT, "Paint mode ON", "Paint mode OFF");
+				default_attr = curs_mosGetAttr (current, cursor.origin_y,
+						cursor.origin_x);
 				break;
 
 			/* toggle transparent paste */
@@ -301,6 +300,14 @@ int main (int argc, char *argv[]) {
 				else {
 					ENTER_(TOUCHED);
 				}
+				break;
+
+			/* enter moving mode */
+			case KEY_CTRL_N:
+				UnprintSelection (current);
+				UN_(SELECTION);
+				PrintHud (FALSE, "Move selection. ENTER to accept, ESC to cancel");
+				cursor = MoveSelection (current, cursor);
 				break;
 
 			/* toggle insert mode */

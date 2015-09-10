@@ -31,13 +31,6 @@ void CursInit ();
  */
 int toUTF8 ();
 
-
-
-/**
- * Asks for the user's choice for which direction he wants
- */
-void DefaultDirection (Direction *dir);
-
 /**
  * The copy buffer
  * 
@@ -67,28 +60,34 @@ void DestroyCopyBuffer (CopyBuffer *buffer);
 /**
  * Copies the current selection (may be only one char, whatever) into the buffer
  * 
+ * @param[out] buffer The copy buffer, to be stored the copied data
  * @param[in] current The current mosaic, to be copied from
  * @param[in] selection The selection to be copied
- * @param[out] buffer The copy buffer, to be stored the copied data
  */
 void Copy (CopyBuffer *buffer, CURS_MOS *current, Cursor selection);
 /**
  * Copies the current selection (may be only one char, whatever)
  * into the buffer and erase the selection
  * 
+ * @param[out] buffer The copy buffer, to be stored the copied data
  * @param[in] current The current mosaic, to be copied from
  * @param[in] selection The selection to be copied
- * @param[out] buffer The copy buffer, to be stored the copied data
  */
 void Cut (CopyBuffer *buffer, CURS_MOS *current, Cursor selection);
 /**
  * Copies the current selection (may be only one char, whatever) into the buffer
  * 
+ * @param[out] buffer The copy buffer, where the data is stored
  * @param[in] current The current mosaic, to be pasted to
  * @param[in] cursor The position to paste from
- * @param[out] buffer The copy buffer, where the data is stored
  */
 char Paste (CopyBuffer *buffer, CURS_MOS *current, Cursor cursor);
+
+
+/**
+ * Asks for the user's choice for which direction he wants
+ */
+void DefaultDirection (Direction *dir);
 
 /**
  * Create a new image and store it in the images list
@@ -130,6 +129,18 @@ void dobox (CURS_MOS *img);
  * @note unDobox is just a @ref dobox with all chars as blanks
  */
 void unDobox (CURS_MOS *img);
+/**
+ * Moves the current selection
+ *
+ * @note This function only returns to `main` when moving selection is complete
+ * (either applied, or cancelled)
+ *
+ * @param[in] current Current image, so we can cut the selection
+ *
+ * @return New position, if move accepted
+ * @return Original position otherwise
+ */
+Cursor MoveSelection (CURS_MOS *current, Cursor position);
 /**
  * Insert a new char in current.
  *

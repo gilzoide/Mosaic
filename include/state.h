@@ -6,9 +6,9 @@
 #define STATE_H
 
 /**
- * Nmos State
+ * Maae State
  * 
- * It's used to store states along Nmos run. They are boolean values,
+ * It's used to store states along Maae run. They are boolean values,
  * witch may be on or off. Use the defined macros to handle it, as they 
  * are here to simplify the process and make the code more readable.
  * 
@@ -18,7 +18,7 @@
  * @sa TOGGLE_(a)
  */
 typedef short State;
-State state;	///< the global Nmos State
+State state;	///< the global Maae State
 
 /* Some 'boolean' states, might be in or not */
 /** Was something changed? To ask if you really want to exit =P */
@@ -44,6 +44,8 @@ State state;	///< the global Nmos State
 #define PAINT				0x0040
 /** Needs to redraw the whole whing! */
 #define REDRAW				0x0080
+/** When moving a selection */
+#define MOVING				0x0100
 /** Quit the sw (to break the main loop) */
 #define QUIT				0x8000
 

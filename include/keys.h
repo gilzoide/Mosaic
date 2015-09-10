@@ -14,6 +14,7 @@
 #define KEY_CTRL_D 4
 #define KEY_CTRL_G 7
 #define KEY_CTRL_K 11
+#define KEY_CTRL_N 14
 #define KEY_CTRL_O 15
 #define KEY_CTRL_P 16
 #define KEY_CTRL_Q 17
