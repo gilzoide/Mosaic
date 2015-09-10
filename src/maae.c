@@ -192,9 +192,10 @@ Cursor MoveSelection (CURS_MOS *current, Cursor position) {
 
 		// first, display current img (which is behind)
 		DisplayCurrent (current);
-		// then our selection
-		prefresh (win, 0, 0, position.y, position.x,
-				current->img->height - 1, current->img->width - 1);
+		// then our selection, respecting the current "block" (for mosaics bigger than the screen)
+		prefresh (win, 0, 0, position.y % MOSAIC_PAD_HEIGHT, position.x % MOSAIC_PAD_WIDTH,
+				min (current->img->height - (current->y * MOSAIC_PAD_HEIGHT) - 1, MOSAIC_PAD_HEIGHT) - 1,
+				min (current->img->width - (current->x * MOSAIC_PAD_WIDTH) - 1, MOSAIC_PAD_WIDTH) - 1);
 	} while (c != KEY_ESC && c != '\n');
 
 	// canceled, let's go back to original position
