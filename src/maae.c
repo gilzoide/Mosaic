@@ -274,7 +274,7 @@ void DisplayCurrent (CURS_MOS *current) {
 	// things we don't always need to worry about
 	if (IS_(REDRAW)) {
 		dobox (current);
-		RefreshCURS_MOS (current);
+		RewriteCURS_MOS (current);
 		UN_(REDRAW);
 	}
 	DisplayCurrentMOSAIC (current);
@@ -284,7 +284,7 @@ void DisplayCurrent (CURS_MOS *current) {
 void ClearWin (CURS_MOS *current) {
 	// CURS_MOS win
 	werase (current->win);
-	prefresh (current->win, current->y, current->x, 0, 0, LINES - 2, COLS - 1);
+	prefresh (current->win, current->y, current->x, 0, 0, MOSAIC_PAD_HEIGHT, MOSAIC_PAD_WIDTH);
 	// clear border
 	unDobox (current);
 	refresh ();
@@ -292,16 +292,22 @@ void ClearWin (CURS_MOS *current) {
 
 
 void dobox (CURS_MOS *img) {
-	const int y = img->img->height;
-	const int x = img->img->width;
+	int y = img->img->height - (img->y * MOSAIC_PAD_HEIGHT);
+	int x = img->img->width - (img->x * MOSAIC_PAD_WIDTH);
 
 	// lines
-	move (0, x);
-	vline (ACS_VLINE, y);
-	move (y, 0);
-	hline (ACS_HLINE, x);
-	// corner
-	mvaddch (y, x, ACS_LRCORNER);
+	if (x < MOSAIC_PAD_WIDTH) {
+		move (0, x);
+		vline (ACS_VLINE, min (y, MOSAIC_PAD_HEIGHT));
+	}
+	if (y < MOSAIC_PAD_HEIGHT) {
+		move (y, 0);
+		hline (ACS_HLINE, min (x, MOSAIC_PAD_WIDTH));
+	}
+	if (x < MOSAIC_PAD_WIDTH && y < MOSAIC_PAD_HEIGHT) {
+		// corner
+		mvaddch (y, x, ACS_LRCORNER);
+	}
 
 	refresh ();
 }
@@ -414,7 +420,7 @@ void InsertCh (CURS_MOS *current, Cursor *cur, int c, Direction dir) {
 		}
 
 		// redraw WINDOW
-		RefreshCURS_MOS (current);
+		RewriteCURS_MOS (current);
 	}
 	// selection mode: fill the selection with the char c
 	else if (IS_(SELECTION)) {

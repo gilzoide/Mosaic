@@ -1,7 +1,18 @@
 #include "positioning.h"
+#include "wins.h"
 
 void InitCursor (Cursor *cur) {
 	cur->x = cur->y = cur->origin_x = cur->origin_y = 0;
+}
+
+
+void DisplayCurrentMOSAIC (CURS_MOS *current) {
+	show_panel (current->pan);
+	update_panels ();
+	doupdate ();
+	prefresh (current->win,
+			current->y * MOSAIC_PAD_HEIGHT, current->x * MOSAIC_PAD_WIDTH,
+			0, 0, MOSAIC_PAD_HEIGHT - 1, MOSAIC_PAD_WIDTH - 1);
 }
 
 
@@ -10,61 +21,22 @@ void PrintSelection (Cursor *position, CURS_MOS *current) {
 	int ULx = min (position->origin_x, position->x);
 	int BRy = max (position->origin_y, position->y);
 	int BRx = max (position->origin_x, position->x);
-	
+
+	// undo
 	UnprintSelection (current);
-	
+
+	// redo
 	int i;
 	for (i = ULy; i <= BRy; i++) {
-		mvwchgat (current->win, i, ULx, BRx - ULx + 1, A_REVERSE, 0, NULL);
+		mvwchgat (current->win, i, ULx, BRx - ULx + 1, A_REVERSE, Normal, NULL);
 	}
-	/*
-	char vertical = 0, horizontal = 0;
-	
-	switch (dir) {
-		case UP:
-			if (position.origin_y > position.y)
-				mvwchgat (current->win, 
-			else
-			
-			break;
-			
-		case DOWN:
-			if (position.origin_y < position.y)
-			
-			else
-			
-			break;
-			
-		case LEFT:
-			if (position.origin_x > position.x)
-			
-			else
-			
-			break;
-			
-		case RIGHT:
-			if (position.origin_x < position.x)
-			
-			else
-			
-			break;
-	}
-	
-	if (vertical < 0)
-		mvwchgat (current->win, );
-	else if	(vertical > 0)
-		mvwchgat (current->win, );
-	else if (horizontal < 0)
-		mvwchgat (current->win, );
-	else
-		mvwchgat (current->win, );
-	*/
+
 	DisplayCurrentMOSAIC (current);
 }
 
 
 void UnprintSelection (CURS_MOS *current) {
-	RefreshCURS_MOS (current);
+	RewriteCURS_MOS (current);
 }
 
 
@@ -87,7 +59,20 @@ void MoveTo (Cursor *position, CURS_MOS *current, int y, int x) {
 		PrintSelection (position, current);
 	}
 
-	move (y, x);
+	// cache old CURS_MOS::y/x
+	int old_curs_mos_y = current->y;
+	int old_curs_mos_x = current->x;
+	
+	// update
+	current->y = y / MOSAIC_PAD_HEIGHT;
+	current->x = x / MOSAIC_PAD_WIDTH;
+
+	// if we changed block, reprint it all
+	if (current->y != old_curs_mos_y || current->x != old_curs_mos_x) {
+		erase ();
+		ReHud ();
+		ENTER_(REDRAW);
+	}
 }
 
 

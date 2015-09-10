@@ -8,6 +8,9 @@
 #include "mosaic/cursmos.h"
 #include "state.h"
 
+#define MOSAIC_PAD_HEIGHT (LINES - 2)
+#define MOSAIC_PAD_WIDTH (COLS - 1)
+
 /// UI current cursor position
 typedef struct {
 	int y;	///< main y coordinate
@@ -49,6 +52,11 @@ typedef enum {
 
 /// initializes the cursor values
 void InitCursor (Cursor *cursor);
+
+/**
+ * Displays current CURS_MOS, just that
+ */
+void DisplayCurrent (CURS_MOS *current);
 
 /**
  * Prints in the current window the selection box

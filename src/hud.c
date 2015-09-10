@@ -3,7 +3,12 @@ WINDOW *hud;
 
 void InitHud () {
 	hud = subwin (stdscr, 1, COLS, LINES - 1, 0);
+	ReHud ();
+}
 
+
+void ReHud () {
+	wmove (hud, 0, 0);
 	wattron (hud, A_BOLD);
 	waddstr (hud, "F1: ");
 	wattroff (hud, A_BOLD);
@@ -61,7 +66,7 @@ void UpdateHud (Cursor cur, Direction dir) {
 	mvwprintw (hud, 0, COLS - HUD_CURSOR_X + 4, "%dx%d", cur.y, cur.x);
 	mvwaddch (hud, 0, COLS - 1, arrow);
 	wrefresh (hud);
-	move (cur.y, cur.x);
+	move (cur.y % MOSAIC_PAD_HEIGHT, cur.x % MOSAIC_PAD_WIDTH);
 }
 
 

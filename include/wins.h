@@ -43,6 +43,10 @@
  * Initialize the HUD
  */
 void InitHud ();
+/**
+ * Redraw the HUD
+ */
+void ReHud ();
 
 /// Updates the position in the HUD
 void UpdateHud (Cursor cur, Direction dir);
