@@ -137,14 +137,20 @@ char Paste (CopyBuffer *buffer, CURS_MOS *current, Cursor cursor) {
 
 
 Cursor MoveSelection (CURS_MOS *current, Cursor position) {
-	// store original position, so user can cancel
-	Cursor original_position = position;
-
 	// human readable variables
 	int ULy = min (position.origin_y, position.y);
 	int ULx = min (position.origin_x, position.x);
 	int BRy = max (position.origin_y, position.y);
 	int BRx = max (position.origin_x, position.x);
+
+	// normalize position...
+	position.y = ULy;
+	position.x = ULx;
+	position.origin_y = BRy;
+	position.origin_x = BRx;
+
+	// ...and store original position, so user can cancel
+	Cursor original_position = position;
 	
 	// prepare the CopyBuffer and cut the selection
 	CopyBuffer copy;
@@ -346,7 +352,7 @@ void ChAttrs (CURS_MOS *current, Cursor *cur, mos_attr attr) {
 		}
 
 		// Retract selection
-		/*UN_(SELECTION);*/
+		UN_(SELECTION);
 		cur->origin_y = cur->y;
 		cur->origin_x = cur->x;
 		// don't move after input, please
