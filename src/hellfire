@@ -15,8 +15,7 @@ install (executable, 'bin')
 
 
 -- "run" target
-target ('run', command {
+exclusiveTarget ('run', command {
 	command = utils.makePath (hell.outdir, exe),
-	args = args,
-	runTarget = true
+	args = arg,
 })

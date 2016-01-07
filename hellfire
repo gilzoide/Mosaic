@@ -8,10 +8,8 @@ The default build output is the "build/" directory.
 You can `hell install` it in the "$prefix/bin/" directory,
 and it can be uninstalled running `hell uninstall`. ]]
 
-if docs then
-	doxygen {
-		output = 'html'
-	}
-end
+exclusiveTarget ('docs', doxygen {
+	output = 'html'
+})
 
 feedHellFire 'src/hellfire'

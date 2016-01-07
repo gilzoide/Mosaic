@@ -37,22 +37,25 @@ void InitAttrTable () {
 	wattron (attrWindow, A_BOLD);
 	mvwaddstr (attrWindow, ATTR_TEST_Y, 1, "0 Bold");
 	wstandend (attrWindow);
-	waddstr (attrWindow, "[ ]");
+	waddstr (attrWindow, "[ ]  TestArea");
 }
 
 
 int chooseAttr (mos_attr current_color) {
 	// input from user
 	int c = 0;
-	// is it bold yet?
+
+	// is current_color bold?
+	mos_attr current_bold = extractBold (&current_color);
 	// current chosen foreground, current chosen background, bold
 	mos_attr attrs[] = {
 		GetFore (current_color),
 		GetBack (current_color),
-		extractBold (&current_color)
+		current_bold
 	};
 	int moving = 0;
 
+	PrintHud (FALSE, "Choose colors with arrows. Space or '0' for bold");
 	do {
 		switch (c) {
 			// switch moving
@@ -93,7 +96,7 @@ int chooseAttr (mos_attr current_color) {
 						ATTR_COLOR_X, "           ");
 				mvwaddstr (attrWindow, 1 + attrs[1],
 						ATTR_COLOR_X, "           ");
-				return (current_color | attrs[2]);
+				return (current_color | current_bold);
 
 			default:
 				if (isdigit (c)) {
@@ -120,13 +123,9 @@ int chooseAttr (mos_attr current_color) {
 			mvwchgat (attrWindow, 1 + attrs[moving], ATTR_COLOR_X + 2, 4,
 					A_UNDERLINE, Normal, NULL);
 		}
-		// write the " TestArea "
-		wattrset (attrWindow, COLOR_PAIR (attrs[0] * COLORS_STEP + attrs[1]));
-		if (attrs[2]) {
-			wattron (attrWindow, A_BOLD);
-		}
-		mvwaddstr (attrWindow, ATTR_TEST_Y, ATTR_TEST_X, " TestArea ");
-		wstandend (attrWindow);
+		// changes " TestArea " attributes
+		mvwchgat (attrWindow, ATTR_TEST_Y, ATTR_TEST_X, 10,
+				attrs[2] ? A_BOLD : 0, attrs[0] * COLORS_STEP + attrs[1], NULL);
 
 		wrefresh (attrWindow);
 
