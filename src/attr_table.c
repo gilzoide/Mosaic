@@ -8,6 +8,7 @@ PANEL *attrPanel;
 #define ATTR_TEST_X 11
 #define ATTR_COLOR_X 11
 #define ATTR_BOLD_X 8
+#define ATTR_UNDERLINE_X 13
 
 void InitAttrTable () {
 	attrWindow = CreateCenteredBoxedTitledWindow (ATTR_HEIGHT, ATTR_WIDTH,
@@ -34,8 +35,12 @@ void InitAttrTable () {
 		mvwaddstr (attrWindow, 1 + i, 1, colors[i]);
 	}
 
+	wattron (attrWindow, A_UNDERLINE);
+	mvwaddstr (attrWindow, ATTR_TEST_Y - 1, 1, "0 Underline");
+	wstandend (attrWindow);
+	waddstr (attrWindow, "[ ]");
 	wattron (attrWindow, A_BOLD);
-	mvwaddstr (attrWindow, ATTR_TEST_Y, 1, "0 Bold");
+	mvwaddstr (attrWindow, ATTR_TEST_Y, 1, "a Bold");
 	wstandend (attrWindow);
 	waddstr (attrWindow, "[ ]  TestArea");
 }
@@ -47,15 +52,17 @@ int chooseAttr (mos_attr current_color) {
 
 	// is current_color bold?
 	mos_attr current_bold = extractBold (&current_color);
+	mos_attr current_underline = extractUnderline (&current_color);
 	// current chosen foreground, current chosen background, bold
 	mos_attr attrs[] = {
 		GetFore (current_color),
 		GetBack (current_color),
+		current_underline,
 		current_bold
 	};
 	int moving = 0;
 
-	PrintHud (FALSE, "Choose colors with arrows. Space or '0' for bold");
+	PrintHud (FALSE, "Choose colors with arrows. '0' for underline, 'a' for bold");
 	do {
 		switch (c) {
 			// switch moving
@@ -83,10 +90,14 @@ int chooseAttr (mos_attr current_color) {
 				attrs[moving] %= COLORS_STEP;
 				break;
 
-			// toggle BOLD
+			// toggle UNDERLINE
 			case '0':
-			case ' ':
-				attrs[2] ^= BOLD;
+				attrs[2] ^= UNDERLINE;
+				break;
+
+			// toggle BOLD
+			case 'a':
+				attrs[3] ^= BOLD;
 				break;
 
 			// cancelled, so return what came
@@ -96,7 +107,7 @@ int chooseAttr (mos_attr current_color) {
 						ATTR_COLOR_X, "           ");
 				mvwaddstr (attrWindow, 1 + attrs[1],
 						ATTR_COLOR_X, "           ");
-				return (current_color | current_bold);
+				return (current_color | current_bold | current_underline);
 
 			default:
 				if (isdigit (c)) {
@@ -112,7 +123,10 @@ int chooseAttr (mos_attr current_color) {
 		// on the same line, both of them appear
 		mvwaddstr (attrWindow, 1 + attrs[1], ATTR_COLOR_X, "}      back");
 		mvwaddstr (attrWindow, 1 + attrs[0], ATTR_COLOR_X, "} fore");
-		mvwaddch (attrWindow, ATTR_TEST_Y, ATTR_BOLD_X, attrs[2] ? 'X' : ' ');
+		mvwaddch (attrWindow, ATTR_TEST_Y - 1, ATTR_UNDERLINE_X,
+				attrs[2] ? 'X' : ' ');
+		mvwaddch (attrWindow, ATTR_TEST_Y, ATTR_BOLD_X,
+				attrs[3] ? 'X' : ' ');
 
 		// Underline the moving attr
 		if (moving) {
@@ -125,7 +139,8 @@ int chooseAttr (mos_attr current_color) {
 		}
 		// changes " TestArea " attributes
 		mvwchgat (attrWindow, ATTR_TEST_Y, ATTR_TEST_X, 10,
-				attrs[2] ? A_BOLD : 0, attrs[0] * COLORS_STEP + attrs[1], NULL);
+				(attrs[2] ? A_UNDERLINE : 0) | (attrs[3] ? A_BOLD : 0),
+				attrs[0] * COLORS_STEP + attrs[1], NULL);
 
 		wrefresh (attrWindow);
 
@@ -136,7 +151,7 @@ int chooseAttr (mos_attr current_color) {
 	mvwaddstr (attrWindow, 1 + attrs[0], ATTR_COLOR_X, "           ");
 	mvwaddstr (attrWindow, 1 + attrs[1], ATTR_COLOR_X, "           ");
 
-	return ((attrs[0] * COLORS_STEP + attrs[1]) | attrs[2]);
+	return ((attrs[0] * COLORS_STEP + attrs[1]) | attrs[2] | attrs[3]);
 }
 
 

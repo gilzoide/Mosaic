@@ -364,6 +364,7 @@ int main (int argc, char *argv[]) {
 			default:
 				if (isprint (c)) {
 					InsertCh (current, &cursor, c, default_direction);
+					ChAttrs (current, &cursor, default_attr);
 					ENTER_(TOUCHED);
 					// didn't erase anything, so move to the next
 					if (!IS_(NO_MOVING_CURSOR)) {

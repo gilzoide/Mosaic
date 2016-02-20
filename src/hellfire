@@ -3,7 +3,7 @@ exe = 'maae'
 
 executable = build {
 	input = {'main.c', 'maae.c', 'argpstuff.c', 'wins.c', 'positioning.c'},
-	flags = '-g -Wall -O2',
+	flags = '-Wall -O2' .. (debug == '1' and ' -g' or ''),
 	includes = {'mosaic', '../include'},
 	links = {'mosaic', 'mosaic_color', 'cursmos', 'cursmos_stream_io',
 			'ncurses', 'panel', 'form', 'menu'},

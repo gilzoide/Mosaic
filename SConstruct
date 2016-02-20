@@ -22,8 +22,8 @@ if not GetOption ('help'):
 
     env.ParseConfig ('pkg-config --libs --cflags mosaic mosaic_color cursmos cursmos_stream_io')
 
-    # if user pass debug=0, don't add the -g flag for the compiler
-    debug = ARGUMENTS.get ('debug', 1)
+    # if user pass debug=1, add the -g flag for the compiler
+    debug = ARGUMENTS.get ('debug', 0)
     if int (debug):
         env.Append (CCFLAGS = ' -g')
 
