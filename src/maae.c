@@ -367,70 +367,13 @@ void ChAttrs (CURS_MOS *current, Cursor *cur, mos_attr attr) {
 }
 
 
-void InsertCh (CURS_MOS *current, Cursor *cur, int c, Direction dir) {
+void InsertCh (CURS_MOS *current, Cursor *cur, int c, mos_attr attr,
+		Direction dir) {
 	int y = cur->y;
 	int x = cur->x;
-	// insert mode: need to push everyone one char in dir
-	if (IS_(INSERT)) {
-		// moving coordinate and the stop point (cur->x or cur->y)
-		// 	note that moving is just a reference to the moving variable,
-		// 	so that we don't need to know which one is the moving one at
-		// 	the verification
-		int *moving, end;
-		switch (dir) {
-			case UP:
-				y = 0;
-				moving = &y;
-				end = cur->y;
-				break;
 
-			case DOWN:
-				y = current->img->height;
-				moving = &y;
-				end = cur->y;
-				break;
-
-			case LEFT:
-				x = 0;
-				moving = &x;
-				end = cur->x;
-				break;
-
-			case RIGHT:
-				x = current->img->width;
-				moving = &x;
-				end = cur->x;
-				break;
-
-			default:
-				moving = &y;
-				end = cur->y;
-		}
-
-		while (*moving != end) {
-			// update target_y/target_x: where we'll put the copied chars
-			int target_y = y;
-			int target_x = x;
-			// go in reverse moving the chars
-			switch (REVERSE (dir)) {
-				case UP:	--y;	break;
-				case DOWN:	++y;	break;
-				case LEFT:	--x;	break;
-				case RIGHT:	++x;	break;
-			}
-			// read next char
-			mos_char aux = _curs_mosGetCh (current, y, x);
-			mos_attr aux_attr = _curs_mosGetAttr (current, y, x);
-			// add it in it's new place
-			curs_mosSetCh (current, target_y, target_x, aux);
-			curs_mosSetAttr (current, target_y, target_x, aux_attr);
-		}
-
-		// redraw WINDOW
-		RewriteCURS_MOS (current);
-	}
 	// selection mode: fill the selection with the char c
-	else if (IS_(SELECTION)) {
+	if (IS_(SELECTION)) {
 		int ULy = min (cur->origin_y, cur->y);
 		int ULx = min (cur->origin_x, cur->x);
 		int BRy = max (cur->origin_y, cur->y);
@@ -439,6 +382,7 @@ void InsertCh (CURS_MOS *current, Cursor *cur, int c, Direction dir) {
 		for (y = ULy; y <= BRy; y++) {
 			for (x = ULx; x <= BRx; x++) {
 				curs_mosSetCh (current, y, x, c);
+				curs_mosSetAttr (current, y, x, attr);
 			}
 		}
 
@@ -451,8 +395,70 @@ void InsertCh (CURS_MOS *current, Cursor *cur, int c, Direction dir) {
 		// don't insert c at next position
 		return;
 	}
-	// normal insertion
-	curs_mosSetCh (current, y, x, c);
+	// insert mode: need to push everyone one char in dir
+	else  {
+		if (IS_(INSERT)) {
+			// moving coordinate and the stop point (cur->x or cur->y)
+			// 	note that moving is just a reference to the moving variable,
+			// 	so that we don't need to know which one is the moving one at
+			// 	the verification
+			int *moving, end;
+			switch (dir) {
+				case UP:
+					y = 0;
+					moving = &y;
+					end = cur->y;
+					break;
+
+				case DOWN:
+					y = current->img->height;
+					moving = &y;
+					end = cur->y;
+					break;
+
+				case LEFT:
+					x = 0;
+					moving = &x;
+					end = cur->x;
+					break;
+
+				case RIGHT:
+					x = current->img->width;
+					moving = &x;
+					end = cur->x;
+					break;
+
+				default:
+					moving = &y;
+					end = cur->y;
+			}
+
+			while (*moving != end) {
+				// update target_y/target_x: where we'll put the copied chars
+				int target_y = y;
+				int target_x = x;
+				// go in reverse moving the chars
+				switch (REVERSE (dir)) {
+					case UP:	--y;	break;
+					case DOWN:	++y;	break;
+					case LEFT:	--x;	break;
+					case RIGHT:	++x;	break;
+				}
+				// read next char
+				mos_char aux = _curs_mosGetCh (current, y, x);
+				mos_attr aux_attr = _curs_mosGetAttr (current, y, x);
+				// add it in it's new place
+				curs_mosSetCh (current, target_y, target_x, aux);
+				curs_mosSetAttr (current, target_y, target_x, aux_attr);
+			}
+
+			// redraw WINDOW
+			RewriteCURS_MOS (current);
+		}
+		// normal insertion
+		curs_mosSetCh (current, y, x, c);
+		curs_mosSetAttr (current, y, x, attr);
+	}
 }
 
 

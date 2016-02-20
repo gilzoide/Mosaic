@@ -152,9 +152,11 @@ Cursor MoveSelection (CURS_MOS *current, Cursor position);
  * @param[in,out] current Target CURS_MOS
  * @param[in] cur Cursor
  * @param[in] c Char to be inserted
+ * @param[in] attr Attribute to be inserted
  * @param[in] dir Direction in which to insert c
  */
-void InsertCh (CURS_MOS *current, Cursor *cur, int c, Direction dir);
+void InsertCh (CURS_MOS *current, Cursor *cur, int c, mos_attr attr,
+		Direction dir);
 /**
  * Change chars' attrs in current.
  *

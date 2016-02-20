@@ -363,8 +363,8 @@ int main (int argc, char *argv[]) {
 			/* write at the mosaic, and show it to us */
 			default:
 				if (isprint (c)) {
-					InsertCh (current, &cursor, c, default_direction);
-					ChAttrs (current, &cursor, default_attr);
+					InsertCh (current, &cursor, c, default_attr, default_direction);
+					ChAttrs (current, &cursor, c != ' ' ? default_attr : Normal);
 					ENTER_(TOUCHED);
 					// didn't erase anything, so move to the next
 					if (!IS_(NO_MOVING_CURSOR)) {
